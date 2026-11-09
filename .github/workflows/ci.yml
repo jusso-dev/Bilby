@@ -72,6 +72,11 @@ jobs:
       - name: Test (whole workspace)
         if: runner.os != 'Linux'
         run: cargo test --workspace --locked
+      # Prints timings and what each collector saw on the runner, so a PR
+      # can quote them. These are smoke tests that already ran above.
+      - name: Windows collector output
+        if: runner.os == 'Windows'
+        run: cargo test -p bilby-collect-windows --locked -- --nocapture --test-threads 1
 
   copy-lint:
     runs-on: ubuntu-latest
