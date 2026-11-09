@@ -37,6 +37,7 @@ crates/
     src/score.rs            findings -> traffic light
     src/paths.rs            pure path normalisation and PathClass classification
     src/cim.rs              WMI datetime and OLE date parsing
+    src/data/               windows_core_processes.toml (where each core Windows program belongs)
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
     tests/fixtures/         JSON snapshots used by unit tests
@@ -48,7 +49,7 @@ crates/
     src/cache.rs            per-scan FileFacts cache keyed by (path, size, mtime)
     src/files.rs            file_facts(): everything about one file in one call
     src/defender.rs         protection status: Defender, Security Center, firewall, UAC, updates
-    src/processes.rs
+    src/processes.rs        Toolhelp snapshot, PROCESS_QUERY_LIMITED_INFORMATION only, WMI command lines
     src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
     src/network.rs
     src/browser.rs
@@ -158,6 +159,10 @@ Most rules depend on three facts about a file, worked out once per scan by `bilb
 ## Rules and fixtures
 
 Rules get a `RuleContext` holding the suppressions and `now`, the scan's start time. Rules never read the clock, so the same fixture gives the same findings on any day. `tests/rules.rs` runs every JSON fixture under `tests/fixtures/<family>/` and checks that each rule in `all_rules()` has a `fires` and a `lookalike` fixture, a row in `docs/signals.md`, and `title`, `what`, `why` and `todo` copy keyed by its rule id.
+
+### Cross-family facts
+
+Some findings mean more together. An unsigned program in AppData is Low on its own, but it's more interesting if the same file also starts by itself or connects out. `RuleContext::with_relations(now, snapshot)` builds a map from normalised file path to `Relation`s (`StartsByItself`, `OutboundConnection`, `ListeningPort`). `RuleContext::related(path)` reads it. Each family adds its relations in `rules::relations_from` as its collector lands: persistence in #9 to #11, network in #12. Rules only ever raise confidence this way. They never lower a finding because of it.
 
 ## Signal families (Windows)
 

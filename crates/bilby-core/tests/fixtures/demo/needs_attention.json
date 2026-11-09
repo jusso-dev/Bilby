@@ -8,7 +8,7 @@
       "family": "processes",
       "severity": "high",
       "confidence": "high",
-      "title_key": "proc.masquerade",
+      "title_key": "proc.masquerade.system_name",
       "vars": { "name": "svchost.exe", "location": "location.downloads" },
       "evidence": [
         { "process": { "pid": 7312, "name": "svchost.exe", "path": "C:\\Users\\<user>\\Downloads\\svchost.exe", "parent": "explorer.exe" } },

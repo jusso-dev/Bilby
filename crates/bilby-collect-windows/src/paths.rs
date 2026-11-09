@@ -4,7 +4,9 @@
 use std::collections::BTreeMap;
 
 use bilby_core::paths::KnownFolders;
-use windows::Win32::Storage::FileSystem::{GetDriveTypeW, GetLogicalDrives, GetTempPathW};
+use windows::Win32::Storage::FileSystem::{
+    GetDriveTypeW, GetLogicalDrives, GetLongPathNameW, GetTempPathW,
+};
 use windows::Win32::System::Com::CoTaskMemFree;
 use windows::Win32::System::SystemInformation::{
     GetSystemDirectoryW, GetSystemWindowsDirectoryW, GetSystemWow64DirectoryW,
@@ -45,6 +47,29 @@ fn known_folder(id: &GUID) -> Option<String> {
     text
 }
 
+/// Expands 8.3 short names (`C:\Users\RUNNER~1\...`) to the long form, so
+/// short and long spellings of a folder classify the same. Returns the input
+/// unchanged if Windows can't expand it (for example the file is gone).
+pub fn long_path(path: &str) -> String {
+    if !path.contains('~') {
+        return path.to_owned();
+    }
+    let wide = HSTRING::from(path);
+    // SAFETY: `wide` is NUL-terminated. With no buffer the call returns the
+    // length needed, including the terminator.
+    let needed = unsafe { GetLongPathNameW(&wide, None) };
+    if needed == 0 {
+        return path.to_owned();
+    }
+    let mut buf = vec![0u16; needed as usize];
+    // SAFETY: `buf` has the length Windows asked for.
+    let written = unsafe { GetLongPathNameW(&wide, Some(&mut buf)) } as usize;
+    if written == 0 || written >= buf.len() {
+        return path.to_owned();
+    }
+    String::from_utf16_lossy(&buf[..written])
+}
+
 /// Resolves every folder classification needs. Anything Windows can't tell
 /// us falls back to the usual default under the system drive.
 pub fn known_folders() -> KnownFolders {
@@ -59,7 +84,7 @@ pub fn known_folders() -> KnownFolders {
     let syswow64 = from_buffer(|b| unsafe { GetSystemWow64DirectoryW(b) });
     // SAFETY: as above.
     let temp = from_buffer(|b| unsafe { GetTempPathW(b) })
-        .map(|t| t.trim_end_matches('\\').to_owned())
+        .map(|t| long_path(t.trim_end_matches('\\')))
         .unwrap_or_default();
 
     let drive = system_root.get(..2).unwrap_or("C:").to_owned();

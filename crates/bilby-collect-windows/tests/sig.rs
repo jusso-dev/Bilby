@@ -161,6 +161,57 @@ fn middle_of_first_section(pe: &[u8]) -> Option<usize> {
     })
 }
 
+/// The 8.3 short form of `path`, from Windows, or `None` if this volume
+/// doesn't keep short names.
+fn short_path(path: &str) -> Option<String> {
+    use windows::Win32::Storage::FileSystem::GetShortPathNameW;
+    use windows::core::HSTRING;
+    let wide = HSTRING::from(path);
+    // SAFETY: NUL-terminated input; first call only reports the length.
+    let needed = unsafe { GetShortPathNameW(&wide, None) };
+    if needed == 0 {
+        return None;
+    }
+    let mut buf = vec![0u16; needed as usize];
+    // SAFETY: buffer of the length Windows asked for.
+    let written = unsafe { GetShortPathNameW(&wide, Some(&mut buf)) } as usize;
+    (written > 0 && written < buf.len()).then(|| String::from_utf16_lossy(&buf[..written]))
+}
+
+#[test]
+fn short_names_classify_like_long_names() {
+    let f = known_folders();
+    let cache = FileCache::new();
+    let me = std::env::current_exe().expect("current exe");
+    let copy = temp_copy(&me, "bilby-short-name-test.exe");
+    let long = copy.to_string_lossy().into_owned();
+    let Some(short) = short_path(&long).filter(|s| s.contains('~')) else {
+        println!("no 8.3 short name for {long}; skipping");
+        let _ = std::fs::remove_file(copy);
+        return;
+    };
+    let facts = file_facts(&short, &f, &cache);
+    println!(
+        "{short} -> {:?}, user-writable {}",
+        facts.class, facts.user_writable
+    );
+    assert_eq!(
+        facts.class,
+        bilby_core::snapshot::PathClass::Temp,
+        "{short}"
+    );
+    assert!(facts.user_writable);
+    // `temp_dir()` itself may be a short path (it is on the runner), so
+    // compare against the long form of the original, which has no `~`.
+    let expanded = bilby_collect_windows::paths::long_path(&short);
+    assert!(!expanded.contains('~'), "{expanded}");
+    assert_eq!(
+        expanded.to_lowercase(),
+        bilby_collect_windows::paths::long_path(&long).to_lowercase()
+    );
+    let _ = std::fs::remove_file(copy);
+}
+
 #[test]
 fn missing_file_is_an_error_not_unsigned() {
     let status = verify(r"C:\definitely\not\here\bilby.exe");

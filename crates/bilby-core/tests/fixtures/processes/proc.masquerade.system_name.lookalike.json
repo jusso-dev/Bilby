@@ -1,0 +1,193 @@
+{
+  "note": "32-bit svchost in SysWOW64 is genuine.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "processes": [
+      {
+        "pid": 600,
+        "ppid": 500,
+        "name": "wininit.exe",
+        "image_path": "C:\\Windows\\System32\\wininit.exe",
+        "created": "2026-11-09T07:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\wininit.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 700,
+        "ppid": 600,
+        "name": "services.exe",
+        "image_path": "C:\\Windows\\System32\\services.exe",
+        "created": "2026-11-09T07:00:01Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\services.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 720,
+        "ppid": 600,
+        "name": "lsass.exe",
+        "image_path": "C:\\Windows\\System32\\lsass.exe",
+        "created": "2026-11-09T07:00:01Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\lsass.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1016,
+        "ppid": 700,
+        "name": "svchost.exe",
+        "image_path": "C:\\Windows\\System32\\svchost.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\svchost.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1020,
+        "ppid": 700,
+        "name": "svchost.exe",
+        "image_path": "C:\\Windows\\System32\\svchost.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\svchost.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1024,
+        "ppid": 3000,
+        "name": "explorer.exe",
+        "image_path": "C:\\Windows\\explorer.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\explorer.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1028,
+        "ppid": 700,
+        "name": "svchost.exe",
+        "image_path": "C:\\Windows\\SysWOW64\\svchost.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\SysWOW64\\svchost.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      }
+    ]
+  },
+  "expect": [],
+  "absent": [
+    "proc.masquerade.system_name",
+    "proc.masquerade.lookalike",
+    "proc.unsigned_user_writable",
+    "proc.unsigned_appdata",
+    "proc.core_parent",
+    "proc.core_duplicate",
+    "proc.script_host_encoded"
+  ]
+}

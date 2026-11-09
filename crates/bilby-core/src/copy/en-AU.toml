@@ -36,6 +36,11 @@ medium = "This is likely, but check first."
 low = "This might be nothing."
 
 [location]
+public = "the shared Public folder"
+recycle_bin = "the Recycle Bin"
+program_data = "a shared program folder"
+removable = "a removable drive"
+network = "a network drive"
 downloads = "your Downloads folder"
 temp = "a temporary folder"
 desktop = "your Desktop"
@@ -64,14 +69,53 @@ tamper = "Tamper protection"
 product_state = "Windows Security product state"
 firewall_profiles_off = "Firewall off for"
 last_update = "Last successful update"
+related = "Also seen"
+parent = "Started by"
+command_line = "Command line"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
-[proc.masquerade]
+[proc.masquerade.system_name]
 title = "A program is pretending to be part of Windows."
 what = "A file called {name} is running from {location}."
 why = "The real {name} only lives inside Windows' own folder, so this is a common trick."
 todo = "Ask Windows Security to scan it. Bilby can start that for you."
+
+[proc.masquerade.lookalike]
+title = "A program has a name very like part of Windows."
+what = "A file called {name} is running from {location}. Its name is one letter away from {real}, a part of Windows."
+why = "Harmful programs often pick names that look like Windows' own so they don't stand out."
+todo = "Ask Windows Security to scan it. Bilby can start that for you."
+
+[proc.unsigned_user_writable]
+title = "A program without a digital signature is running from an unusual place."
+what = "{name} is running from {location}. It has no valid digital signature (a seal that shows who made it)."
+why = "Installed programs are usually signed and kept in Program Files. Downloads and temporary folders are where unwanted programs often land."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+
+[proc.unsigned_appdata]
+title = "An unsigned program is running from a hidden folder."
+what = "{name} is running from {location} and has no digital signature."
+why = "Many ordinary apps do this, so it's probably fine. It's only worth a look if you don't recognise it."
+todo = "Check whether you recognise the name. If not, ask someone you trust to look."
+
+[proc.core_parent]
+title = "A core Windows program was started in an unusual way."
+what = "{name} was started by {parent}. Normally only Windows' own start-up program starts it."
+why = "This is a sign that something may be imitating a part of Windows."
+todo = "Ask someone you trust to look at this computer."
+
+[proc.core_duplicate]
+title = "A part of Windows that should run once is running more than once."
+what = "There are {count} copies of {name} running. Windows only ever runs one."
+why = "An extra copy can be a harmful program using the same name."
+todo = "Ask Windows Security to run a full scan."
+
+[proc.script_host_encoded]
+title = "A hidden PowerShell command is running."
+what = "PowerShell is running a command that has been scrambled or hidden so it can't be read easily."
+why = "Normal programs rarely hide their commands like this. Harmful programs often do."
+todo = "Ask someone you trust to look at this computer."
 
 [persist.run_key_unsigned]
 title = "A program starts by itself from an unusual folder."
