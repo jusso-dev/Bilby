@@ -1,0 +1,7 @@
+# cargo-audit policy. Keep the ignore list in step with deny.toml, where each
+# entry has its reason and review date.
+[advisories]
+ignore = [
+  "RUSTSEC-2024-0370", # proc-macro-error unmaintained, Linux-only gtk via tauri. Review 09-05-2027.
+  "RUSTSEC-2024-0429", # glib unsound VariantStrIter, Linux-only gtk via tauri. Review 09-05-2027.
+]
