@@ -30,8 +30,8 @@ use windows::Win32::Security::Cryptography::{
 use windows::Win32::Security::WinTrust::{
     WINTRUST_ACTION_GENERIC_VERIFY_V2, WINTRUST_CATALOG_INFO, WINTRUST_DATA,
     WINTRUST_DATA_UNION_CHOICE, WINTRUST_FILE_INFO, WTD_CACHE_ONLY_URL_RETRIEVAL,
-    WTD_CHOICE_CATALOG, WTD_CHOICE_FILE, WTD_REVOKE_NONE, WTD_SAFER_FLAG, WTD_STATEACTION_CLOSE,
-    WTD_STATEACTION_VERIFY, WTD_UI_NONE, WTHelperGetProvSignerFromChain,
+    WTD_CHOICE_CATALOG, WTD_CHOICE_FILE, WTD_REVOCATION_CHECK_NONE, WTD_REVOKE_NONE,
+    WTD_STATEACTION_CLOSE, WTD_STATEACTION_VERIFY, WTD_UI_NONE, WTHelperGetProvSignerFromChain,
     WTHelperProvDataFromStateData, WinVerifyTrust,
 };
 use windows::core::{HRESULT, HSTRING, PCWSTR};
@@ -182,7 +182,11 @@ fn win_verify_trust(choice: WINTRUST_DATA_UNION_CHOICE, union_ptr: *mut c_void) 
         fdwRevocationChecks: WTD_REVOKE_NONE,
         dwUnionChoice: choice,
         dwStateAction: WTD_STATEACTION_VERIFY,
-        dwProvFlags: WTD_CACHE_ONLY_URL_RETRIEVAL | WTD_SAFER_FLAG,
+        // No revocation checks and cache-only URL retrieval: no network.
+        // WTD_SAFER_FLAG is deliberately not set. Microsoft documents it as
+        // "Not supported", and with it a tampered file reported
+        // TRUST_E_NOSIGNATURE (unsigned) instead of a bad digest.
+        dwProvFlags: WTD_CACHE_ONLY_URL_RETRIEVAL | WTD_REVOCATION_CHECK_NONE,
         ..Default::default()
     };
     // Both union members are pointers; the choice above says which one
