@@ -65,6 +65,57 @@ pub fn verify(path: &str) -> SignatureStatus {
     }
 }
 
+/// Checks many files at once, spread over the machine's cores. Results are
+/// in the same order as `paths`. Each worker thread keeps its own catalog
+/// contexts, so this is much faster than calling [`verify`] in a loop.
+pub fn verify_many(paths: &[String]) -> Vec<SignatureStatus> {
+    let workers = std::thread::available_parallelism()
+        .map_or(4, std::num::NonZero::get)
+        .min(paths.len().max(1));
+    let chunk = paths.len().div_ceil(workers).max(1);
+    std::thread::scope(|scope| {
+        let handles: Vec<_> = paths
+            .chunks(chunk)
+            .map(|part| scope.spawn(move || part.iter().map(|p| verify(p)).collect::<Vec<_>>()))
+            .collect();
+        handles
+            .into_iter()
+            .flat_map(|h| {
+                h.join().unwrap_or_else(|_| {
+                    vec![
+                        SignatureStatus::Error {
+                            reason: "signature check panicked".to_owned()
+                        };
+                        chunk
+                    ]
+                })
+            })
+            .take(paths.len())
+            .collect()
+    })
+}
+
+/// The raw `WinVerifyTrust` result for the embedded signature only, as an
+/// HRESULT. For tests and the helper view.
+#[doc(hidden)]
+pub fn embedded_hresult(path: &str) -> i32 {
+    OwnedHandle::open_read(path).map_or_else(
+        |e| e.code().0,
+        |file| {
+            let wide = HSTRING::from(path);
+            let mut info = WINTRUST_FILE_INFO {
+                cbStruct: cb::<WINTRUST_FILE_INFO>(),
+                pcwszFilePath: PCWSTR(wide.as_ptr()),
+                hFile: file.raw(),
+                pgKnownSubject: ptr::null_mut(),
+            };
+            win_verify_trust(WTD_CHOICE_FILE, ptr::from_mut(&mut info).cast())
+                .result
+                .0
+        },
+    )
+}
+
 enum Outcome {
     NoSignature,
     Done(SignatureStatus),
@@ -354,10 +405,7 @@ fn verify_catalog_with(
     if info == 0 {
         return None;
     }
-    let info = CatInfo {
-        admin,
-        info,
-    };
+    let info = CatInfo { admin, info };
     let mut catalog = CATALOG_INFO {
         cbStruct: cb::<CATALOG_INFO>(),
         ..Default::default()

@@ -8,7 +8,7 @@ use std::time::Instant;
 use bilby_collect_windows::cache::FileCache;
 use bilby_collect_windows::files::file_facts;
 use bilby_collect_windows::paths::known_folders;
-use bilby_collect_windows::sig::verify;
+use bilby_collect_windows::sig::{embedded_hresult, verify, verify_many};
 use bilby_core::snapshot::{PathClass, SignatureStatus};
 
 fn system32() -> PathBuf {
@@ -105,7 +105,12 @@ fn tampered_signed_file_is_invalid() {
     bytes[offset] ^= 0xFF;
     std::fs::write(&copy, bytes).expect("write copy");
     let status = verify(&copy.to_string_lossy());
-    println!("tampered copy of {}: {status:?}", signed.display());
+    println!(
+        "tampered copy of {}: {status:?}, embedded HRESULT {:#010x} (original {:#010x})",
+        signed.display(),
+        embedded_hresult(&copy.to_string_lossy()),
+        embedded_hresult(&signed.to_string_lossy()),
+    );
     assert!(
         matches!(status, SignatureStatus::Invalid { .. }),
         "{status:?}"
@@ -154,26 +159,44 @@ fn verifying_300_files_cold_is_fast_enough() {
         .collect();
     files.sort();
     files.truncate(300);
+    let paths: Vec<String> = files
+        .iter()
+        .map(|p| p.to_string_lossy().into_owned())
+        .collect();
+
     let start = Instant::now();
-    let mut signed = 0;
-    for path in &files {
-        if verify(&path.to_string_lossy()).is_signed() {
-            signed += 1;
+    let results = verify_many(&paths);
+    let elapsed = start.elapsed();
+    let signed = results.iter().filter(|s| s.is_signed()).count();
+    println!(
+        "verify_many: {} files in {:.2}s on {} cores, {signed} signed",
+        paths.len(),
+        elapsed.as_secs_f64(),
+        std::thread::available_parallelism().map_or(0, std::num::NonZero::get),
+    );
+    for (path, status) in paths.iter().zip(&results) {
+        if !status.is_signed() {
+            println!("  not signed: {path}: {status:?}");
         }
     }
-    let elapsed = start.elapsed();
-    println!(
-        "verified {} files in {:.2}s, {signed} signed",
-        files.len(),
-        elapsed.as_secs_f64()
-    );
-    assert!(files.len() >= 100, "expected plenty of System32 binaries");
+    assert_eq!(results.len(), paths.len());
+    assert!(paths.len() >= 100, "expected plenty of System32 binaries");
     assert!(
-        signed * 10 >= files.len() * 9,
+        signed * 10 >= paths.len() * 9,
         "almost all System32 files should be signed"
     );
     assert!(
         elapsed.as_secs() < 15,
         "issue #6 limit is 15 s for 300 files"
+    );
+
+    // Warm: a second single-threaded pass, for comparison only.
+    let start = Instant::now();
+    for p in paths.iter().take(50) {
+        let _ = verify(p);
+    }
+    println!(
+        "single thread, warm: 50 files in {:.2}s",
+        start.elapsed().as_secs_f64()
     );
 }
