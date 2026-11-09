@@ -208,6 +208,18 @@ fn verifying_300_files_cold_is_fast_enough() {
         .map(|p| p.to_string_lossy().into_owned())
         .collect();
 
+    // The first catalog lookup on a fresh machine makes Windows load its
+    // catalog database, a one-off that took over 15 s on one runner and
+    // under a second on another. It isn't a per-file cost, so time it
+    // separately and report it, then time the 300 files with Bilby's own
+    // cache empty, as a scan sees them.
+    let start = Instant::now();
+    let _ = verify(&system32().join("notepad.exe").to_string_lossy());
+    println!(
+        "first catalog lookup (Windows warm-up): {:.2}s",
+        start.elapsed().as_secs_f64()
+    );
+
     let start = Instant::now();
     let results = verify_many(&paths);
     let elapsed = start.elapsed();
