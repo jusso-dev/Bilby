@@ -235,6 +235,31 @@ fn verifying_300_files_cold_is_fast_enough() {
             println!("  not signed: {path}: {status:?}");
         }
     }
+    // Per-file timing, single thread, to see where time goes when a runner
+    // is slow. Second pass over the same files, so Windows' own caches are
+    // warm; anything still slow here is a genuinely slow file.
+    let mut timed: Vec<(f64, &String, bool)> = paths
+        .iter()
+        .map(|p| {
+            let t = Instant::now();
+            let status = verify(p);
+            let kind = matches!(
+                status,
+                SignatureStatus::Signed {
+                    kind: bilby_core::snapshot::SigKind::Catalog,
+                    ..
+                }
+            );
+            (t.elapsed().as_secs_f64(), p, kind)
+        })
+        .collect();
+    let total: f64 = timed.iter().map(|t| t.0).sum();
+    let catalog = timed.iter().filter(|t| t.2).count();
+    timed.sort_by(|a, b| b.0.total_cmp(&a.0));
+    println!("single thread, second pass: {total:.2}s total, {catalog} catalog-signed");
+    for (secs, path, is_catalog) in timed.iter().take(8) {
+        println!("  slowest: {secs:.3}s {path} (catalog: {is_catalog})");
+    }
     assert_eq!(results.len(), paths.len());
     assert!(paths.len() >= 100, "expected plenty of System32 binaries");
     assert!(
@@ -244,15 +269,5 @@ fn verifying_300_files_cold_is_fast_enough() {
     assert!(
         elapsed.as_secs() < 15,
         "issue #6 limit is 15 s for 300 files"
-    );
-
-    // Warm: a second single-threaded pass, for comparison only.
-    let start = Instant::now();
-    for p in paths.iter().take(50) {
-        let _ = verify(p);
-    }
-    println!(
-        "single thread, warm: 50 files in {:.2}s",
-        start.elapsed().as_secs_f64()
     );
 }
