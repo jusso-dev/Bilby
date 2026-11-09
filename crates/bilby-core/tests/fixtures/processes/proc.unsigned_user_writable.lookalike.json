@@ -1,0 +1,279 @@
+{
+  "note": "VS Code, Discord, a self-built tool in C:\\dev, an unsigned vendor service in a ProgramData subfolder, and a signed installer in Downloads: all quiet.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "processes": [
+      {
+        "pid": 600,
+        "ppid": 500,
+        "name": "wininit.exe",
+        "image_path": "C:\\Windows\\System32\\wininit.exe",
+        "created": "2026-11-09T07:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\wininit.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 700,
+        "ppid": 600,
+        "name": "services.exe",
+        "image_path": "C:\\Windows\\System32\\services.exe",
+        "created": "2026-11-09T07:00:01Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\services.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 720,
+        "ppid": 600,
+        "name": "lsass.exe",
+        "image_path": "C:\\Windows\\System32\\lsass.exe",
+        "created": "2026-11-09T07:00:01Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\lsass.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1016,
+        "ppid": 700,
+        "name": "svchost.exe",
+        "image_path": "C:\\Windows\\System32\\svchost.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\svchost.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1020,
+        "ppid": 700,
+        "name": "svchost.exe",
+        "image_path": "C:\\Windows\\System32\\svchost.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\System32\\svchost.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1024,
+        "ppid": 3000,
+        "name": "explorer.exe",
+        "image_path": "C:\\Windows\\explorer.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Windows\\explorer.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1028,
+        "ppid": 3000,
+        "name": "Code.exe",
+        "image_path": "C:\\Users\\Alex\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Users\\Alex\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Corporation",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "user_app_programs",
+          "user_writable": true
+        }
+      },
+      {
+        "pid": 1032,
+        "ppid": 3000,
+        "name": "Discord.exe",
+        "image_path": "C:\\Users\\Alex\\AppData\\Local\\Discord\\app-1.0.9\\Discord.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Users\\Alex\\AppData\\Local\\Discord\\app-1.0.9\\Discord.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Discord Inc.",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "user_app_programs",
+          "user_writable": true
+        }
+      },
+      {
+        "pid": 1036,
+        "ppid": 3000,
+        "name": "mytool.exe",
+        "image_path": "C:\\dev\\tools\\mytool.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\dev\\tools\\mytool.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": "unsigned",
+          "class": "other",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1040,
+        "ppid": 700,
+        "name": "vendor.exe",
+        "image_path": "C:\\ProgramData\\Vendor\\vendor.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\ProgramData\\Vendor\\vendor.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": "unsigned",
+          "class": "program_data",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 1044,
+        "ppid": 3000,
+        "name": "setup.exe",
+        "image_path": "C:\\Users\\Alex\\Downloads\\setup.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 0,
+        "command_line": null,
+        "file": {
+          "path": "C:\\Users\\Alex\\Downloads\\setup.exe",
+          "exists": true,
+          "size": 50000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Mozilla Corporation",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "downloads",
+          "user_writable": true
+        }
+      }
+    ]
+  },
+  "expect": [],
+  "absent": [
+    "proc.masquerade.system_name",
+    "proc.masquerade.lookalike",
+    "proc.unsigned_user_writable",
+    "proc.unsigned_appdata",
+    "proc.core_parent",
+    "proc.core_duplicate",
+    "proc.script_host_encoded"
+  ]
+}

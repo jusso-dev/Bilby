@@ -252,9 +252,39 @@ pub struct UpdateStatus {
     pub history_count: u32,
 }
 
-/// One running program. Filled in by the processes issue.
+/// One running program. Anything Windows wouldn't tell us without admin is
+/// `None`; that's normal for other users' and protected processes.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct ProcessFact {}
+pub struct ProcessFact {
+    /// Process id.
+    pub pid: u32,
+    /// Parent process id, as recorded when this process started. The parent
+    /// may have exited and its id been reused since.
+    pub ppid: u32,
+    /// Image file name, for example `svchost.exe`.
+    pub name: String,
+    /// Full image path.
+    #[serde(default)]
+    pub image_path: Option<String>,
+    /// When the process started (UTC).
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub created: Option<time::OffsetDateTime>,
+    /// Terminal Services session id.
+    #[serde(default)]
+    pub session_id: Option<u32>,
+    /// Account the process runs as, `DOMAIN\user`.
+    #[serde(default)]
+    pub user: Option<String>,
+    /// Running elevated.
+    #[serde(default)]
+    pub is_elevated: Option<bool>,
+    /// Command line, only for the current user's processes without admin.
+    #[serde(default)]
+    pub command_line: Option<String>,
+    /// Facts about the image file.
+    #[serde(default)]
+    pub file: Option<FileFacts>,
+}
 
 /// Startup items. Filled in by the startup items issues.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]

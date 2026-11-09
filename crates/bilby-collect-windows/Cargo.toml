@@ -42,6 +42,10 @@ windows = { version = "0.62.2", default-features = false, features = [
   "Win32_System_UpdateAgent",            # update history (defender.rs)
   "Win32_System_Ole",                    # VARIANT_BOOL used by the COM getters
   "Win32_System_Variant",                # required by the UpdateAgent bindings
+  "Win32_Security",                      # token user and elevation (processes.rs)
+  "Win32_System_Diagnostics_ToolHelp",   # process snapshot (processes.rs)
+  "Win32_System_Threading",              # OpenProcess, image path, times (processes.rs)
+  "Win32_System_RemoteDesktop",          # ProcessIdToSessionId (processes.rs)
 ] }
 sha2 = "0.10.9"
 time = { version = "0.3.55", default-features = false, features = ["std"] }
@@ -49,3 +53,6 @@ time = { version = "0.3.55", default-features = false, features = ["std"] }
 # feature off: Bilby parses CIM datetimes itself in bilby-core.
 wmi = { version = "0.18.4", default-features = false }
 serde = { version = "1.0.229", features = ["derive"] }
+
+[dev-dependencies]
+time = { version = "0.3.55", default-features = false, features = ["std", "macros"] }

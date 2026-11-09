@@ -2,14 +2,28 @@
 //! family. Every rule needs a row in `docs/signals.md` and fixtures for
 //! "fires" and "look-alike".
 
+pub mod processes;
 pub mod protection;
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 use time::OffsetDateTime;
 
 use crate::model::{Confidence, Evidence, Finding, NextStepKind, Severity, SignalFamily, Subject};
 use crate::snapshot::SystemSnapshot;
+
+/// Something another signal family knows about a file, used to raise
+/// confidence across families: an unsigned program in `AppData` means more
+/// if it also starts by itself.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Relation {
+    /// The file is the target of a startup item (Run key, task, service...).
+    StartsByItself,
+    /// A process running this file has an outbound connection.
+    OutboundConnection,
+    /// A process running this file is listening for connections.
+    ListeningPort,
+}
 
 /// Context every rule can read. Known-good lists are filled in by #18.
 #[derive(Debug, Clone)]
@@ -19,16 +33,53 @@ pub struct RuleContext {
     /// When the scan ran. Rules use this for ages ("updated 9 days ago") so
     /// they never read the clock themselves and fixtures stay repeatable.
     pub now: OffsetDateTime,
+    /// Cross-family facts keyed by normalised, lower-case file path. Built
+    /// once per scan by [`RuleContext::with_relations`].
+    relations: HashMap<String, BTreeSet<Relation>>,
 }
 
 impl RuleContext {
-    /// A context for a scan at `now` with nothing suppressed.
+    /// A context for a scan at `now` with nothing suppressed and no
+    /// cross-family facts.
     pub fn at(now: OffsetDateTime) -> Self {
         Self {
             suppressed: HashSet::new(),
             now,
+            relations: HashMap::new(),
         }
     }
+
+    /// A context with cross-family facts worked out from `snap`. Families
+    /// add what they know in `relations_from` as their collectors land.
+    pub fn with_relations(now: OffsetDateTime, snap: &SystemSnapshot) -> Self {
+        let mut ctx = Self::at(now);
+        ctx.relations = relations_from(snap);
+        ctx
+    }
+
+    /// Records a cross-family fact about a file. For tests and for
+    /// families whose facts aren't in the snapshot yet.
+    pub fn relate(&mut self, path: &str, relation: Relation) {
+        self.relations
+            .entry(path.to_lowercase())
+            .or_default()
+            .insert(relation);
+    }
+
+    /// What other families know about the file at `path` (normalised,
+    /// any case).
+    pub fn related(&self, path: &str) -> BTreeSet<Relation> {
+        self.relations
+            .get(&path.to_lowercase())
+            .cloned()
+            .unwrap_or_default()
+    }
+}
+
+/// Cross-family facts from a snapshot. Persistence (#9 to #11) and network
+/// (#12) add theirs here.
+fn relations_from(_snap: &SystemSnapshot) -> HashMap<String, BTreeSet<Relation>> {
+    HashMap::new()
 }
 
 /// A single check over a snapshot.
@@ -45,6 +96,7 @@ pub trait Rule {
 pub fn all_rules() -> Vec<Box<dyn Rule>> {
     let mut rules = Vec::new();
     rules.extend(protection::rules());
+    rules.extend(processes::rules());
     rules
 }
 

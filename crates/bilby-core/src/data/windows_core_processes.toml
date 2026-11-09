@@ -1,0 +1,150 @@
+# Windows programs that only belong in Windows' own folders. Used by the
+# proc.masquerade.* rules. Folders are relative to %SystemRoot% and compared
+# after normalisation.
+#
+# Checked against the windows-latest runner (Windows Server 2025, image
+# windows-2025-vs2026 20261103.629) by the processes smoke test in
+# crates/bilby-collect-windows/tests/processes.rs, which prints every core
+# process it sees with its path and parent. Rows marked "not seen on runner"
+# didn't run there and follow Microsoft's documentation and Windows 11.
+#
+# folders: where the real one lives. parents: expected parent names (empty
+# means don't check). single: only one should ever run.
+
+[[process]]
+name = "smss.exe"
+folders = ["System32"]
+parents = ["system", "smss.exe"]
+single = false
+
+[[process]]
+name = "csrss.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "wininit.exe"
+folders = ["System32"]
+parents = []
+single = true
+
+[[process]]
+name = "winlogon.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "services.exe"
+folders = ["System32"]
+parents = ["wininit.exe"]
+single = true
+
+[[process]]
+name = "lsass.exe"
+folders = ["System32"]
+parents = ["wininit.exe"]
+single = true
+
+[[process]]
+name = "lsaiso.exe"
+folders = ["System32"]
+parents = ["wininit.exe"]
+single = true
+
+[[process]]
+name = "svchost.exe"
+folders = ["System32", "SysWOW64"]
+parents = ["services.exe", "msmpeng.exe"]
+single = false
+
+[[process]]
+name = "taskhostw.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "sihost.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "fontdrvhost.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "dwm.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "ctfmon.exe"
+folders = ["System32", "SysWOW64"]
+parents = []
+single = false
+
+[[process]]
+name = "conhost.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "dllhost.exe"
+folders = ["System32", "SysWOW64"]
+parents = []
+single = false
+
+[[process]]
+name = "rundll32.exe"
+folders = ["System32", "SysWOW64"]
+parents = []
+single = false
+
+[[process]]
+name = "spoolsv.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "runtimebroker.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "searchindexer.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "explorer.exe"
+folders = ["", "SysWOW64"]
+parents = []
+single = false
+
+[[process]]
+name = "userinit.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "audiodg.exe"
+folders = ["System32"]
+parents = []
+single = false
+
+[[process]]
+name = "wmiprvse.exe"
+folders = ["System32\\wbem", "SysWOW64\\wbem"]
+parents = []
+single = false
