@@ -44,29 +44,6 @@ pub static CORE: LazyLock<HashMap<String, CoreProcess>> = LazyLock::new(|| {
         .collect()
 });
 
-/// Publishers whose signature means a look-alike name is a coincidence, not
-/// a trick. #18 replaces this with the shared known-publisher list.
-const KNOWN_PUBLISHERS: &[&str] = &[
-    "Microsoft Windows",
-    "Microsoft Windows Publisher",
-    "Microsoft Corporation",
-    "Google LLC",
-    "Mozilla Corporation",
-    "Apple Inc.",
-    "Adobe Inc.",
-    "Discord Inc.",
-    "Zoom Video Communications, Inc.",
-    "Valve Corp.",
-    "Spotify AB",
-    "Dropbox, Inc",
-];
-
-fn known_publisher(file: &FileFacts) -> bool {
-    file.signature
-        .publisher()
-        .is_some_and(|p| KNOWN_PUBLISHERS.iter().any(|k| k.eq_ignore_ascii_case(p)))
-}
-
 /// Is `file` validly signed as part of Windows?
 fn windows_component(file: &FileFacts) -> bool {
     matches!(
@@ -334,9 +311,13 @@ pub fn imitates(name: &str) -> Option<&'static str> {
 }
 
 fn lookalike(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
-    let hits = procs
-        .iter()
-        .filter(|p| imitates(&p.name).is_some() && !p.file.as_ref().is_some_and(known_publisher));
+    // Only unsigned (or tampered, or unverifiable) look-alikes. A valid
+    // signature from anyone trusted means the name is a coincidence, and
+    // without the file we can't tell, so stay quiet rather than turn the
+    // light red on a name alone.
+    let hits = procs.iter().filter(|p| {
+        imitates(&p.name).is_some() && p.file.as_ref().is_some_and(|f| !f.signature.is_signed())
+    });
     distinct_by_file(hits)
         .into_iter()
         .map(|p| {
@@ -505,33 +486,63 @@ fn core_duplicate(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
 /// Does this PowerShell command line hide what it runs? Matches
 /// `-EncodedCommand` and every prefix PowerShell accepts for it (`-e`,
 /// `-ec`, `-enc`...), with `-` or `/`. Also a hidden window together with
-/// download-and-run phrases.
+/// download-and-run commands.
+///
+/// Only PowerShell's own parameters count. Scanning stops at `-File` and at
+/// `-Command`: everything after `-File <script>` goes to the script, and
+/// `-Command` text is PowerShell code, not flags. Download-and-run words are
+/// matched as whole words inside that code, so `iexplore` isn't `iex`.
 pub fn encoded_powershell(command_line: &str) -> bool {
     let lower = command_line.to_lowercase();
     let tokens: Vec<&str> = lower.split_whitespace().collect();
-    let encoded = tokens.iter().any(|t| {
-        let flag = t.trim_start_matches(['-', '/', '\u{2013}', '\u{2014}']);
-        if t.len() == flag.len() || flag.is_empty() {
-            return false;
+    let flag_of = |t: &str| -> Option<String> {
+        let f = t.trim_start_matches(['-', '/', '\u{2013}', '\u{2014}']);
+        (f.len() < t.len() && !f.is_empty()).then(|| f.to_owned())
+    };
+    // Skip the program itself, then read flags until -File or -Command.
+    let mut encoded = false;
+    let mut hidden = false;
+    let mut code = String::new();
+    let mut i = 1;
+    while i < tokens.len() {
+        let Some(flag) = flag_of(tokens[i]) else {
+            // A bare word where a flag was expected: PowerShell treats the
+            // rest as a command.
+            code = tokens[i..].join(" ");
+            break;
+        };
+        if flag == "ec" || ("encodedcommand".starts_with(&flag) && !flag.starts_with("ex")) {
+            encoded = true;
+            break;
         }
-        // PowerShell accepts any unambiguous prefix of -EncodedCommand, and
-        // the documented aliases -ec and -enc. "-e" resolves to it too.
-        // "-ex..." is -ExecutionPolicy, not this.
-        flag == "ec" || ("encodedcommand".starts_with(flag) && !flag.starts_with("ex"))
+        if flag.len() >= 2 && "file".starts_with(&flag) {
+            break;
+        }
+        if "command".starts_with(&flag) {
+            code = tokens[i + 1..].join(" ");
+            break;
+        }
+        if "windowstyle".starts_with(&flag) {
+            hidden |= tokens.get(i + 1).is_some_and(|v| v.starts_with("hid"));
+            i += 2;
+            continue;
+        }
+        i += 1;
+    }
+    if encoded {
+        return true;
+    }
+    let words: Vec<&str> = code
+        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '-'))
+        .filter(|w| !w.is_empty())
+        .collect();
+    let downloads = words.iter().any(|w| {
+        matches!(
+            *w,
+            "iex" | "invoke-expression" | "downloadstring" | "frombase64string"
+        )
     });
-    let hidden = tokens.windows(2).any(|w| {
-        let flag = w[0].trim_start_matches(['-', '/']);
-        !flag.is_empty() && "windowstyle".starts_with(flag) && w[1].starts_with("hid")
-    });
-    let downloads = [
-        "iex",
-        "invoke-expression",
-        "downloadstring",
-        "frombase64string",
-    ]
-    .iter()
-    .any(|k| lower.contains(k));
-    encoded || (hidden && downloads)
+    hidden && downloads
 }
 
 fn script_host_encoded(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
@@ -637,6 +648,7 @@ mod tests {
             "pwsh /enc UwB0AGEA",
             "powershell -w hidden -c \"iex (New-Object Net.WebClient).DownloadString('x')\"",
             "powershell -WindowStyle Hidden -Command IEX $x",
+            "powershell -NoP -W Hidden -C \"[Convert]::FromBase64String($s)\"",
         ] {
             assert!(encoded_powershell(yes), "{yes}");
         }
@@ -646,6 +658,14 @@ mod tests {
             "powershell -NoProfile -Command Get-Date",
             "powershell -w hidden -File C:\\tools\\backup.ps1",
             "powershell -NonInteractive -c \"Write-Output 'iexplore'\"",
+            // After -File, flags belong to the script.
+            "powershell -File x.ps1 -e foo",
+            "powershell -NoProfile -File C:\\tools\\run.ps1 -enc data",
+            // A hidden window running iexplore or iexpress isn't iex.
+            "powershell -w hidden -c Start-Process iexplore.exe",
+            "powershell -WindowStyle Hidden -Command iexpress /n x.sed",
+            // iex in the script's own arguments isn't PowerShell running it.
+            "powershell -w hidden -File update.ps1 iex",
         ] {
             assert!(!encoded_powershell(no), "{no}");
         }

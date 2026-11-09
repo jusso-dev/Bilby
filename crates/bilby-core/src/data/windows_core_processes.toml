@@ -5,7 +5,7 @@
 # Checked on 10-11-2026 against the windows-latest runner (Windows Server
 # 2025, image windows-2025-vs2026 20261103.629) by the processes smoke test
 # in crates/bilby-collect-windows/tests/processes.rs, which prints every
-# core process it sees with its path, parent and user. 16 of 23 rows ran
+# core process it sees with its path, parent and user. 18 of 23 rows ran
 # there and matched. Rows marked "not seen on runner" follow Microsoft's
 # documentation and a standard Windows 11 install.
 #
