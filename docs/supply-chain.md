@@ -10,7 +10,7 @@ Bilby reads private parts of a computer, so the code that goes into it has to be
 - **cargo-deny** (`deny.toml`) runs on every PR:
   - Advisories: yanked crates are denied. Any ignored advisory has an id, a reason and a review date.
   - Licences: MIT, Apache-2.0 (with or without LLVM exception), BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Zlib and CC0-1.0. MPL-2.0 is allowed only per crate, with a reason. Anything else, including GPL, fails.
-  - Bans: `openssl`, `openssl-sys` and `native-tls` are denied (use `rustls`). Wildcard versions are denied. Duplicate versions only warn, because Tauri's tree has some we can't avoid.
+  - Bans: `openssl`, `openssl-sys` and `native-tls` are denied (use `rustls`). Wildcard versions are denied, except path dependencies between Bilby's own unpublished workspace crates (`allow-wildcard-paths`). Duplicate versions only warn, because Tauri's tree has some we can't avoid.
   - Sources: crates.io only. No git dependencies or other registries.
 - **cargo-audit** runs on every PR and every Monday at 07:00 UTC (`.github/workflows/audit.yml`). Its ignore list is in `.cargo/audit.toml` and matches `deny.toml`.
 - **Actions pinned by commit SHA**, with the version in a comment. Workflows have `contents: read` unless a job truly needs more.

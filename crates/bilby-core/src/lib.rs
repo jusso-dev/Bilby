@@ -1,12 +1,11 @@
 //! Platform-neutral core of Bilby: the data model, rules, scoring and copy.
 //!
 //! Nothing in this crate touches the operating system. Collectors fill a
-//! snapshot, and the rules here turn that snapshot into findings.
+//! [`snapshot::SystemSnapshot`], the [`rules`] turn it into findings, and
+//! [`score::overall`] turns findings into a traffic light.
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn crate_builds() {
-        assert_eq!(env!("CARGO_PKG_NAME"), "bilby-core");
-    }
-}
+pub mod demo;
+pub mod model;
+pub mod rules;
+pub mod score;
+pub mod snapshot;

@@ -1,0 +1,37 @@
+{
+  "started_at": "2026-11-09T09:00:00Z",
+  "finished_at": "2026-11-09T09:00:41Z",
+  "light": "healthy",
+  "findings": [
+    {
+      "rule_id": "drivers.memory_integrity_off",
+      "family": "drivers",
+      "severity": "info",
+      "confidence": "high",
+      "title_key": "drivers.memory_integrity_off",
+      "vars": {},
+      "evidence": [
+        { "text": { "label_key": "evidence.setting", "value": "HypervisorEnforcedCodeIntegrity = 0" } }
+      ],
+      "next_step": { "open_setting": "windows_security.device_security" },
+      "subject": { "setting": "device_guard.hvci" }
+    }
+  ],
+  "checked": [
+    { "id": "protection.defender", "family": "protection", "status": "ran" },
+    { "id": "protection.firewall", "family": "protection", "status": "ran" },
+    { "id": "processes", "family": "processes", "status": "ran" },
+    { "id": "persistence.run_keys", "family": "persistence", "status": "ran" },
+    { "id": "persistence.tasks", "family": "persistence", "status": "ran" },
+    { "id": "persistence.services", "family": "persistence", "status": "ran" },
+    { "id": "network", "family": "network", "status": "ran" },
+    { "id": "browser", "family": "browser", "status": "ran" },
+    { "id": "tamper.hosts", "family": "tamper", "status": "ran" },
+    { "id": "tamper.proxy", "family": "tamper", "status": "ran" },
+    { "id": "tamper.root_certs", "family": "tamper", "status": "ran" },
+    { "id": "drivers", "family": "drivers", "status": "ran" },
+    { "id": "reputation", "family": "reputation", "status": { "skipped": "check.skipped.online_off" } }
+  ],
+  "machine": { "os_name": "Windows 11 Home", "os_version": "24H2 (26100.2314)", "arch": "x64" },
+  "bilby_version": "0.1.0"
+}

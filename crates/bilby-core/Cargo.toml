@@ -7,5 +7,12 @@ repository.workspace = true
 rust-version.workspace = true
 publish = false
 
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+# Same versions Tauri already pulls in, so no new copies in the tree.
+sha2 = "0.10.9"
+time = { version = "0.3.55", default-features = false, features = ["std", "serde-well-known"] }
+
 [lints]
 workspace = true

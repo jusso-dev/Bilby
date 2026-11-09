@@ -58,6 +58,12 @@ cd app/src-tauri && cargo tauri dev     # opens the Bilby window
 cargo test --workspace --locked         # from the repository root
 ```
 
+Demo mode shows a fixed report after a short pretend check, so you can work on the screens on any computer:
+
+```
+cd app/src-tauri && cargo tauri dev -- -- --demo attention   # or healthy, worth
+```
+
 To check the Windows build from a Mac or Linux machine, Tauri needs a resource compiler. Put LLVM's `llvm-rc` on your `PATH` (on a Mac, `brew install llvm` and add `$(brew --prefix llvm)/bin`), then run:
 
 ```
