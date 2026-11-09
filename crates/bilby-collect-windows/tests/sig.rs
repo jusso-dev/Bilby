@@ -67,33 +67,51 @@ fn test_binary_copy_is_unsigned() {
 
 #[test]
 fn tampered_signed_file_is_invalid() {
-    // Find a file with an embedded signature: tampering with a
-    // catalog-signed file just makes it "unsigned" (its hash is no longer in
-    // any catalog), which is a different, also correct, result.
+    // Pick a file whose *copy* still verifies with an embedded signature.
+    // Checking the original isn't enough: Windows caches signature results
+    // on system files, so an original can verify even when its copy
+    // doesn't. Catalog-signed files also don't qualify: once tampered, their
+    // hash is in no catalog, so they read as Unsigned, which is correct but
+    // a different case.
     let dir = system32();
-    let candidate = [
-        "mrt.exe",
-        "wuauclt.exe",
-        "ntoskrnl.exe",
-        "notepad.exe",
-        "cmd.exe",
+    let mut candidates: Vec<PathBuf> = [
+        r"C:\Program Files\Git\cmd\git.exe",
+        r"C:\Program Files\PowerShell\7\pwsh.exe",
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
     ]
     .iter()
-    .map(|n| dir.join(n))
-    .find(|p| {
-        matches!(
-            verify(&p.to_string_lossy()),
+    .map(PathBuf::from)
+    .collect();
+    candidates.extend(
+        ["mrt.exe", "notepad.exe", "cmd.exe"]
+            .iter()
+            .map(|n| dir.join(n)),
+    );
+
+    let mut chosen = None;
+    for original in candidates.iter().filter(|p| p.exists()) {
+        let copy = temp_copy(original, "bilby-tamper-candidate.exe");
+        let status = verify(&copy.to_string_lossy());
+        println!(
+            "candidate {}: unmodified copy is {status:?}",
+            original.display()
+        );
+        if matches!(
+            status,
             SignatureStatus::Signed {
                 kind: bilby_core::snapshot::SigKind::Embedded,
                 ..
             }
-        )
-    });
-    let Some(signed) = candidate else {
-        println!("no embedded-signed candidate on this runner; skipping");
-        return;
+        ) {
+            chosen = Some((original.clone(), copy));
+            break;
+        }
+        let _ = std::fs::remove_file(copy);
+    }
+    let Some((signed, copy)) = chosen else {
+        panic!("no candidate's copy has an embedded signature on this runner");
     };
-    let copy = temp_copy(&signed, "bilby-tampered.exe");
     let mut bytes = std::fs::read(&copy).expect("read copy");
     // Flip a byte in the middle of the first section with data. Section
     // contents are covered by the signature's digest; headers and the
