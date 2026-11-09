@@ -1,0 +1,65 @@
+{
+  "note": "Passive Defender always reports real-time off; Norton is protecting.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "protection": {
+      "defender": {
+        "am_service_enabled": true,
+        "antivirus_enabled": true,
+        "real_time_protection_enabled": false,
+        "behavior_monitor_enabled": true,
+        "ioav_protection_enabled": true,
+        "antivirus_signature_age_days": 0,
+        "antivirus_signature_last_updated": "2026-11-09T03:00:00Z",
+        "quick_scan_age_days": 1,
+        "full_scan_age_days": 20,
+        "is_tamper_protected": true,
+        "am_running_mode": "Passive Mode"
+      },
+      "detections": [],
+      "antivirus_products": [
+        {
+          "display_name": "Windows Defender",
+          "product_state": 393472,
+          "path": "windowsdefender://"
+        },
+        {
+          "display_name": "Norton 360",
+          "product_state": 397312,
+          "path": "C:\\Program Files\\Norton\\Engine\\x.exe"
+        }
+      ],
+      "firewall_products": [],
+      "firewall": {
+        "domain_enabled": true,
+        "private_enabled": true,
+        "public_enabled": true,
+        "current_domain": false,
+        "current_private": true,
+        "current_public": false
+      },
+      "uac": {
+        "enable_lua": 1,
+        "consent_prompt_behavior_admin": 5
+      },
+      "updates": {
+        "last_success": "2026-10-20T02:00:00Z",
+        "history_count": 40
+      }
+    }
+  },
+  "expect": [],
+  "absent": [
+    "protection.no_active_av",
+    "protection.realtime_off",
+    "protection.signatures_stale",
+    "protection.detection_active",
+    "protection.detection_resolved",
+    "protection.detection_executed",
+    "protection.tamper_off",
+    "protection.third_party_off",
+    "protection.firewall_off",
+    "protection.uac_off",
+    "protection.updates_old"
+  ]
+}

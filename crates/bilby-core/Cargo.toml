@@ -20,4 +20,5 @@ time = { version = "0.3.55", default-features = false, features = ["std", "serde
 workspace = true
 
 [dev-dependencies]
+time = { version = "0.3.55", default-features = false, features = ["std", "macros"] }
 regex = "1.13.1"

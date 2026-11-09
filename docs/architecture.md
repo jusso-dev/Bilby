@@ -36,6 +36,7 @@ crates/
     src/rules/              one module per signal family, pure functions snapshot -> findings
     src/score.rs            findings -> traffic light
     src/paths.rs            pure path normalisation and PathClass classification
+    src/cim.rs              WMI datetime and OLE date parsing
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
     tests/fixtures/         JSON snapshots used by unit tests
@@ -46,7 +47,7 @@ crates/
     src/hash.rs             streaming SHA-256, files over 512 MiB skipped
     src/cache.rs            per-scan FileFacts cache keyed by (path, size, mtime)
     src/files.rs            file_facts(): everything about one file in one call
-    src/defender.rs         protection status and detections
+    src/defender.rs         protection status: Defender, Security Center, firewall, UAC, updates
     src/processes.rs
     src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
     src/network.rs
@@ -153,6 +154,10 @@ Most rules depend on three facts about a file, worked out once per scan by `bilb
 - **Signature** (`SignatureStatus`): `Signed { publisher, issuer, kind, is_windows_component }`, `Unsigned`, `Invalid` (tampered), `Untrusted` (chain problem) or `Error` (couldn't check). The embedded signature is checked first, then the Windows catalogs, because most Windows files are catalog-signed. `is_windows_component` needs both a Microsoft root and the Windows System Component Verification EKU (`1.3.6.1.4.1.311.10.3.6`), so a third party with an ordinary Microsoft-issued certificate doesn't count. Revocation checks are off and URL retrieval is cache-only, so verifying never touches the network.
 - **Folder class** (`PathClass`) from `bilby_core::paths::classify`: pure string work over a `KnownFolders` the collector fills from Windows, so it's unit tested on any OS. The most specific folder wins (Temp inside `%LOCALAPPDATA%` is Temp).
 - **User-writable**: Temp, Downloads, Desktop, Documents, user app data and user app installs, Public, Recycle Bin, removable drives, and files directly in the `ProgramData` root.
+
+## Rules and fixtures
+
+Rules get a `RuleContext` holding the suppressions and `now`, the scan's start time. Rules never read the clock, so the same fixture gives the same findings on any day. `tests/rules.rs` runs every JSON fixture under `tests/fixtures/<family>/` and checks that each rule in `all_rules()` has a `fires` and a `lookalike` fixture, a row in `docs/signals.md`, and `title`, `what`, `why` and `todo` copy keyed by its rule id.
 
 ## Signal families (Windows)
 

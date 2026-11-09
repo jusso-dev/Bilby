@@ -278,6 +278,12 @@ fn referenced_keys() -> BTreeSet<String> {
     let any_string = Regex::new(r#""([a-z0-9_]+\.[a-z0-9_.]+)""#).expect("valid regex");
 
     let mut keys = BTreeSet::new();
+    // Every rule's id is the copy prefix for its title, what, why and todo.
+    for rule in bilby_core::rules::all_rules() {
+        for part in ["title", "what", "why", "todo"] {
+            keys.insert(format!("{}.{part}", rule.id()));
+        }
+    }
     for path in paths {
         // This file names keys in its own tests; don't count those.
         if path.ends_with("tests/copy_lint.rs") {
