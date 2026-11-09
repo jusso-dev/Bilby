@@ -13,7 +13,9 @@ use crate::{hash, sig};
 /// `cache` so repeat lookups in one scan are free. Never follows the path
 /// anywhere it doesn't say: reparse points are reported as the path given.
 pub fn file_facts(path: &str, folders: &KnownFolders, cache: &FileCache) -> FileFacts {
-    let classified = classify(path, folders);
+    // Classify the long form, so a short 8.3 spelling can't dodge a folder
+    // class. The reported path stays as Windows gave it.
+    let classified = classify(&crate::paths::long_path(path), folders);
     let meta = std::fs::metadata(path)
         .ok()
         .filter(std::fs::Metadata::is_file);
