@@ -19,7 +19,8 @@ pub struct CoreProcess {
     pub name: String,
     /// Expected folders relative to `%SystemRoot%`; `""` is the root itself.
     pub folders: Vec<String>,
-    /// Expected parent names, lower case. Empty means not checked.
+    /// The only programs allowed to start it, lower case. Empty means not
+    /// checked. Only `lsass.exe` and `services.exe` set it today.
     #[serde(default)]
     pub parents: Vec<String>,
     /// Only one should ever run.
@@ -435,13 +436,20 @@ fn core_parent(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
     let by_pid: HashMap<u32, &ProcessFact> = procs.iter().map(|p| (p.pid, p)).collect();
     procs
         .iter()
-        .filter(|p| matches!(p.name.to_lowercase().as_str(), "lsass.exe" | "services.exe"))
         .filter_map(|p| {
+            let core = CORE.get(&p.name.to_lowercase())?;
+            if core.parents.is_empty() {
+                return None;
+            }
             let parent = by_pid.get(&p.ppid)?;
             // The parent id may have been reused by a newer process. Only
             // trust it if the parent started before the child.
             let older = matches!((parent.created, p.created), (Some(pc), Some(cc)) if pc <= cc);
-            if !older || parent.name.eq_ignore_ascii_case("wininit.exe") {
+            let expected = core
+                .parents
+                .iter()
+                .any(|e| e.eq_ignore_ascii_case(&parent.name));
+            if !older || expected {
                 return None;
             }
             Some(
@@ -568,6 +576,17 @@ mod tests {
         assert!(CORE.len() >= 23);
         assert!(CORE.contains_key("svchost.exe"));
         assert!(CORE["lsass.exe"].single);
+        // Only the programs proc.core_parent checks have parents listed.
+        let with_parents: Vec<&str> = {
+            let mut v: Vec<&str> = CORE
+                .values()
+                .filter(|c| !c.parents.is_empty())
+                .map(|c| c.name.as_str())
+                .collect();
+            v.sort_unstable();
+            v
+        };
+        assert_eq!(with_parents, ["lsass.exe", "services.exe"]);
     }
 
     #[test]

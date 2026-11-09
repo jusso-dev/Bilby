@@ -69,6 +69,23 @@ fn processes_collector_runs() {
         }
     }
 
+    // What the process rules make of a real, clean-ish machine. Printed,
+    // not asserted: runners aren't home PCs, but anything that fires here
+    // is a false-alarm candidate worth a look.
+    let snap = bilby_core::snapshot::SystemSnapshot {
+        processes: Some(procs.clone()),
+        ..Default::default()
+    };
+    let ctx = bilby_core::rules::RuleContext::at(time::OffsetDateTime::now_utc());
+    let findings = bilby_core::rules::evaluate_all(&snap, &ctx);
+    println!("process findings on this runner: {}", findings.len());
+    for f in &findings {
+        println!(
+            "  finding {} {:?}/{:?} {:?}",
+            f.rule_id, f.severity, f.confidence, f.subject
+        );
+    }
+
     assert!(procs.len() >= 20, "at least 20 processes");
     assert!(
         windows_components >= 5,
