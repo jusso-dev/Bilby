@@ -201,9 +201,13 @@ fn short_names_classify_like_long_names() {
         "{short}"
     );
     assert!(facts.user_writable);
+    // `temp_dir()` itself may be a short path (it is on the runner), so
+    // compare against the long form of the original, which has no `~`.
+    let expanded = bilby_collect_windows::paths::long_path(&short);
+    assert!(!expanded.contains('~'), "{expanded}");
     assert_eq!(
-        bilby_collect_windows::paths::long_path(&short).to_lowercase(),
-        long.to_lowercase()
+        expanded.to_lowercase(),
+        bilby_collect_windows::paths::long_path(&long).to_lowercase()
     );
     let _ = std::fs::remove_file(copy);
 }
