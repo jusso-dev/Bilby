@@ -1,5 +1,7 @@
 # Bilby
 
+[![CI](https://github.com/jusso-dev/Bilby/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jusso-dev/Bilby/actions/workflows/ci.yml)
+
 Bilby is a free desktop app that answers one question for people who aren't technical: is something wrong with my computer?
 
 You press **Check my computer**. A minute later Bilby tells you one of three things:
