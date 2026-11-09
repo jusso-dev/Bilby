@@ -95,13 +95,11 @@ fn tampered_signed_file_is_invalid() {
     };
     let copy = temp_copy(&signed, "bilby-tampered.exe");
     let mut bytes = std::fs::read(&copy).expect("read copy");
-    // Flip a byte inside the first section's code, which the signature's
-    // digest covers. Section raw data starts at the PE header's
-    // SizeOfHeaders (usually 0x400), so 0x400 + 0x100 sits in code without
-    // breaking the headers. Breaking the headers instead makes Windows treat
-    // the file as an unknown format, which reads as unsigned, not tampered.
-    let offset = 0x500;
-    assert!(bytes.len() > offset, "file too small");
+    // Flip a byte in the middle of the first section with data. Section
+    // contents are covered by the signature's digest; headers and the
+    // certificate table partly aren't, and breaking them makes Windows see
+    // no signature at all rather than a tampered one.
+    let offset = middle_of_first_section(&bytes).expect("a PE file with sections");
     bytes[offset] ^= 0xFF;
     std::fs::write(&copy, bytes).expect("write copy");
     let status = verify(&copy.to_string_lossy());
@@ -116,6 +114,34 @@ fn tampered_signed_file_is_invalid() {
         "{status:?}"
     );
     let _ = std::fs::remove_file(copy);
+}
+
+/// File offset of the middle of the first section that has raw data, from
+/// the PE headers: `e_lfanew` at 0x3C, then `PE\0\0`, the 20-byte COFF header
+/// and the optional header, then 40-byte section headers.
+fn middle_of_first_section(pe: &[u8]) -> Option<usize> {
+    let u16_at = |o: usize| {
+        pe.get(o..o + 2)
+            .map(|b| usize::from(u16::from_le_bytes([b[0], b[1]])))
+    };
+    let u32_at = |o: usize| {
+        pe.get(o..o + 4)
+            .map(|b| u32::from_le_bytes([b[0], b[1], b[2], b[3]]) as usize)
+    };
+    let pe_header = u32_at(0x3C)?;
+    if pe.get(pe_header..pe_header + 4)? != b"PE\0\0" {
+        return None;
+    }
+    let coff = pe_header + 4;
+    let sections = u16_at(coff + 2)?;
+    let optional_size = u16_at(coff + 16)?;
+    let table = coff + 20 + optional_size;
+    (0..sections).find_map(|i| {
+        let header = table + i * 40;
+        let raw_size = u32_at(header + 16)?;
+        let raw_pointer = u32_at(header + 20)?;
+        (raw_size > 0 && raw_pointer + raw_size <= pe.len()).then_some(raw_pointer + raw_size / 2)
+    })
 }
 
 #[test]
