@@ -1,10 +1,12 @@
 //! The app's only IPC surface. Each command renders a screen or fragment as
 //! an HTML string with Askama (auto-escaping on) and the webview swaps it in.
 
+use std::collections::BTreeMap;
 use std::sync::Mutex;
 use std::time::Duration;
 
 use askama::Template;
+use bilby_core::copy;
 use bilby_core::demo::{self, DemoKind};
 use bilby_core::model::{Light, ScanReport};
 use serde::Serialize;
@@ -28,29 +30,38 @@ struct Progress {
 /// How long the fake demo scan takes, in steps of 250 ms.
 const DEMO_STEPS: u32 = 12;
 
+/// Askama filters. `{{ "home.button"|t }}` looks a key up in the copy
+/// catalogue. The text is still escaped like any other value.
+// Askama's `filter_fn` requires a `Result` return and generates an
+// `#[inline(always)]` method with an unused `self`. These lints only fire on
+// that required shape and the generated code.
+#[allow(clippy::inline_always, clippy::unused_self, clippy::unnecessary_wraps)]
+mod filters {
+    use askama::Values;
+
+    #[askama::filter_fn]
+    pub fn t(key: impl std::fmt::Display, _: &dyn Values) -> askama::Result<&'static str> {
+        Ok(bilby_core::copy::t(&key.to_string()))
+    }
+}
+
 /// The home screen with the one big button.
 #[derive(Template)]
 #[template(path = "home.html")]
-struct Home<'a> {
-    heading: &'a str,
-    button: &'a str,
-}
+struct Home;
 
 /// Placeholder results until the results screen lands (#23).
 #[derive(Template)]
 #[template(path = "results.html")]
-struct Results<'a> {
-    headline: &'a str,
-    findings: usize,
+struct Results {
+    headline_key: &'static str,
+    placeholder: String,
 }
 
 /// Renders the home screen.
 #[tauri::command]
 pub fn render_home() -> Result<String, String> {
-    render(&Home {
-        heading: "Bilby",
-        button: "Check my computer",
-    })
+    render(&Home)
 }
 
 /// Runs a scan and returns the results screen. In demo mode this waits about
@@ -59,7 +70,7 @@ pub fn render_home() -> Result<String, String> {
 pub async fn start_scan(app: AppHandle, state: State<'_, AppState>) -> Result<String, String> {
     let Some(kind) = state.demo else {
         // The real scan arrives with the orchestration issue (#17).
-        return Err("Checking isn't available in this build yet.".into());
+        return Err(copy::t("scan.not_available").to_owned());
     };
     for done in 1..=DEMO_STEPS {
         tauri::async_runtime::spawn_blocking(|| std::thread::sleep(Duration::from_millis(250)))
@@ -81,14 +92,15 @@ pub async fn start_scan(app: AppHandle, state: State<'_, AppState>) -> Result<St
 }
 
 fn render_results(report: &ScanReport) -> Result<String, String> {
-    let headline = match report.light {
-        Light::Healthy => "Looks healthy",
-        Light::WorthALook => "Worth a look",
-        Light::NeedsAttention => "Needs attention",
+    let headline_key = match report.light {
+        Light::Healthy => "light.healthy.headline",
+        Light::WorthALook => "light.worth_a_look.headline",
+        Light::NeedsAttention => "light.needs_attention.headline",
     };
+    let vars = BTreeMap::from([("count".to_owned(), report.findings.len().to_string())]);
     render(&Results {
-        headline,
-        findings: report.findings.len(),
+        headline_key,
+        placeholder: copy::tf("results.placeholder", &vars),
     })
 }
 

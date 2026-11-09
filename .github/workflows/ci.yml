@@ -72,7 +72,18 @@ jobs:
       - name: Test (whole workspace)
         if: runner.os != 'Linux'
         run: cargo test --workspace --locked
-      # copy-lint: issue #5 adds a step running the copy lint test here.
+
+  copy-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - name: Copy lint (docs/copy-guide.md)
+        run: cargo test -p bilby-core --locked --test copy_lint -- --nocapture
 
   build-app:
     runs-on: windows-latest
