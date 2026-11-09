@@ -1,0 +1,36 @@
+name: Weekly audit
+
+# Runs cargo-audit against the latest advisory database every Monday, so new
+# advisories show up even when nobody opens a PR. A failed run is the alert;
+# nothing is opened automatically.
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_AUDIT_VERSION: "0.22.2"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+      - name: Cache cargo-audit
+        id: cargo-audit
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cargo/bin/cargo-audit
+          key: cargo-audit-${{ runner.os }}-${{ env.CARGO_AUDIT_VERSION }}
+      - name: Install cargo-audit
+        if: steps.cargo-audit.outputs.cache-hit != 'true'
+        run: cargo install cargo-audit --locked --version ${{ env.CARGO_AUDIT_VERSION }}
+      - run: cargo audit --deny warnings
