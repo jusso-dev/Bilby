@@ -14,7 +14,17 @@ async function show(command, args = {}) {
 
 // Click handlers keyed by data-action. Filled in as screens land.
 const actions = {
-  "start-scan": () => {},
+  // Placeholder until the progress screen (#22): disable the button while
+  // the scan runs, then show whatever screen Rust returns.
+  "start-scan": async (button) => {
+    button.disabled = true;
+    try {
+      await show("start_scan");
+    } catch (message) {
+      button.disabled = false;
+      button.insertAdjacentText("afterend", ` ${message}`);
+    }
+  },
 };
 
 document.addEventListener("click", (event) => {

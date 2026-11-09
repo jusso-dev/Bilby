@@ -161,6 +161,7 @@ name = "bilby"
 version = "0.1.0"
 dependencies = [
  "askama",
+ "bilby-core",
  "serde",
  "serde_json",
  "tauri",
@@ -177,6 +178,12 @@ dependencies = [
 [[package]]
 name = "bilby-core"
 version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2",
+ "time",
+]
 
 [[package]]
 name = "bilby-fix"

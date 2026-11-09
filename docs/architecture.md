@@ -102,11 +102,11 @@ pub enum Severity { Info, Low, Medium, High }
 pub enum Confidence { Low, Medium, High }
 
 pub struct Finding {
-    pub rule_id: &'static str,          // e.g. "proc.masquerade.system_name"
+    pub rule_id: String,                // e.g. "proc.masquerade.system_name"
     pub family: SignalFamily,           // Protection, Processes, Persistence, Network, Browser, Tamper, Drivers, Reputation
     pub severity: Severity,
     pub confidence: Confidence,
-    pub title_key: &'static str,        // copy key, e.g. "proc.masquerade.title"
+    pub title_key: String,              // copy key prefix, e.g. "proc.masquerade"
     pub vars: BTreeMap<String, String>, // values substituted into copy, all escaped on render
     pub evidence: Vec<Evidence>,        // technical facts for the helper view
     pub next_step: NextStepKind,        // what the UI offers: Learn, OpenSetting, AskDefender, Fix(FixId), TalkToHelper
@@ -114,14 +114,20 @@ pub struct Finding {
 }
 
 pub struct ScanReport {
-    pub started_at, pub finished_at,
+    pub started_at, pub finished_at,    // UTC, RFC 3339 in JSON
     pub light: Light,
     pub findings: Vec<Finding>,
-    pub checked: Vec<CheckStatus>,      // every check with Ran | Skipped(reason) | NeedsAdmin | Failed(reason)
+    pub checked: Vec<Check>,            // every check: id, family, status Ran | Skipped(reason) | NeedsAdmin | Failed(reason)
     pub machine: MachineSummary,        // OS version, edition, arch; hostname and user only if the user opts in on export
-    pub bilby_version: &'static str,
+    pub bilby_version: String,
 }
 ```
+
+Ids and copy keys are `String` rather than `&'static str` so reports and fixtures can be read back from JSON. `Finding::id()` is the first 16 hex characters of SHA-256 over the rule id, a zero byte and the JSON of the subject. It's stable across runs and builds, and it's what suppressions store.
+
+### Demo mode
+
+`bilby --demo <healthy|worth|attention>` (in development: `cargo tauri dev -- -- --demo attention`) makes the scan command send progress events for about three seconds and then return a fixed report from `crates/bilby-core/tests/fixtures/demo/`. The light is recomputed from the fixture's findings, so a fixture can't show a light it doesn't earn.
 
 ## Scoring
 
