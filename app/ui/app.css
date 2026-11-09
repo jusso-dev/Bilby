@@ -1,0 +1,36 @@
+/* Placeholder styles. The design milestone (#20) replaces these with tokens. */
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-size: 112.5%; /* 18px base */
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+}
+
+#screen {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+#screen:focus {
+  outline: none;
+}
+
+.big-button {
+  font: inherit;
+  font-size: 1.4rem;
+  padding: 1rem 2.5rem;
+  min-height: 3.5rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+
+.big-button:focus-visible {
+  outline: 3px solid currentcolor;
+  outline-offset: 3px;
+}
