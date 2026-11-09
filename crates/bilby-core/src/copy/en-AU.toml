@@ -47,10 +47,23 @@ other = "an unusual folder"
 
 [check.skipped]
 online_off = "Online checks are switched off."
+no_defender = "Windows Security's antivirus isn't installed on this computer."
+no_security_center = "This edition of Windows doesn't keep a list of security programs."
+update_history = "Windows Update's history couldn't be read."
 
 [evidence]
 setting = "Setting"
 signature_age = "Virus definitions age"
+antivirus_enabled = "Antivirus switched on"
+running_mode = "Antivirus mode"
+realtime = "Real-time protection"
+threat = "Threat"
+resource = "Affected item"
+detected_at = "First detected"
+tamper = "Tamper protection"
+product_state = "Windows Security product state"
+firewall_profiles_off = "Firewall off for"
+last_update = "Last successful update"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -78,11 +91,71 @@ what = "Windows is set to send web traffic through {proxy}."
 why = "Some workplaces and security tools do this on purpose. Unwanted programs sometimes do it to watch what you browse."
 todo = "If you didn't set this up, Bilby can switch it off, and you can undo that later."
 
+[protection.no_active_av]
+title = "No antivirus is protecting this computer."
+what = "Windows Security's antivirus is switched off, and no other antivirus reports being on."
+why = "Without antivirus, harmful files can run without anything checking them."
+todo = "Open Windows Security and turn on virus and threat protection."
+
+[protection.realtime_off]
+title = "Windows Security's real-time protection is off."
+what = "Windows Security is your antivirus, but it isn't checking files as they open."
+why = "Without it, harmful files can run before anything checks them."
+todo = "Open Windows Security and turn real-time protection back on."
+
 [protection.signatures_stale]
 title = "Windows Security's virus definitions are out of date."
 what = "The last update was {days} days ago."
 why = "Old definitions can miss newer threats."
 todo = "Open Windows Security and check for updates."
+
+[protection.detection_active]
+title = "Windows Security found something it hasn't dealt with yet."
+what = "It found {threat} in the last 30 days, and it's still listed as active."
+why = "Something harmful may still be on this computer."
+todo = "Open Windows Security, go to Protection history and follow its advice."
+
+[protection.detection_resolved]
+title = "Windows Security caught something and dealt with it."
+what = "It handled {count} thing(s) in the last 30 days. The most recent was {threat}."
+why = "This usually means your protection is working. It's worth knowing where it came from."
+todo = "Have a look at Protection history in Windows Security. Nothing else is needed."
+
+[protection.detection_executed]
+title = "Something Windows Security caught had already started running."
+what = "Windows Security dealt with {threat}, but it reports it ran before it was stopped."
+why = "A program that ran may have changed things before it was removed."
+todo = "Ask someone you trust to look at this computer, and run a full scan in Windows Security."
+
+[protection.tamper_off]
+title = "Tamper protection is off."
+what = "This Windows Security setting stops other programs from switching your protection off."
+why = "Some harmful programs try to turn antivirus off. Tamper protection blocks that."
+todo = "Open Windows Security and turn on tamper protection."
+
+[protection.third_party_off]
+title = "Your antivirus reports that it's switched off."
+what = "{product} is installed but reports being off, and Windows Security isn't covering for it."
+why = "Without antivirus, harmful files can run without anything checking them."
+todo = "Open {product} and switch it back on, or check whether its subscription has ended."
+
+[protection.firewall_off]
+title = "Windows Firewall is off."
+what = "The firewall is off for the network you're connected to."
+why = "The firewall blocks unwanted connections from other computers."
+todo = "Open Windows Security and turn the firewall on."
+
+[protection.uac_off]
+title = "User Account Control is switched off."
+what = "Windows no longer asks before programs make changes that need administrator access."
+why = "That prompt is what stops a program from quietly changing system settings."
+todo = "Ask someone you trust to switch User Account Control back on."
+
+[protection.updates_old]
+title = "Windows hasn't updated for a while."
+what = "The last update that installed successfully was {days} days ago."
+why = "Updates fix security problems that harmful programs use to get in."
+todo = "Open Windows Update and check for updates."
 
 [drivers.memory_integrity_off]
 title = "Memory integrity is switched off."

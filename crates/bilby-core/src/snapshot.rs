@@ -59,9 +59,198 @@ impl Default for SystemSnapshot {
     }
 }
 
-/// Protection status. Filled in by the protection issue.
+/// Protection status: antivirus, firewall, UAC and Windows Update. Every
+/// part is optional because each comes from a different source that can be
+/// missing or need admin.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct ProtectionFacts {}
+pub struct ProtectionFacts {
+    /// Microsoft Defender status (`MSFT_MpComputerStatus`).
+    #[serde(default)]
+    pub defender: Option<DefenderStatus>,
+    /// Defender detections from the last 30 days. `None` if they couldn't
+    /// be read (often needs admin).
+    #[serde(default)]
+    pub detections: Option<Vec<Detection>>,
+    /// Antivirus products registered with Windows Security Center
+    /// (`root\SecurityCenter2`). `None` on Windows Server, where it doesn't
+    /// exist.
+    #[serde(default)]
+    pub antivirus_products: Option<Vec<SecurityProduct>>,
+    /// Third-party firewalls registered with Windows Security Center.
+    #[serde(default)]
+    pub firewall_products: Option<Vec<SecurityProduct>>,
+    /// Windows Firewall per profile.
+    #[serde(default)]
+    pub firewall: Option<FirewallStatus>,
+    /// User Account Control settings.
+    #[serde(default)]
+    pub uac: Option<UacStatus>,
+    /// Newest successful Windows Update install, if any was found.
+    #[serde(default)]
+    pub updates: Option<UpdateStatus>,
+}
+
+/// The parts of `MSFT_MpComputerStatus` Bilby uses. Raw values, no
+/// judgement.
+// Mirrors Windows' own boolean fields one to one, so a struct of bools
+// is the honest shape.
+#[allow(clippy::struct_excessive_bools)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DefenderStatus {
+    /// `AMServiceEnabled`.
+    pub am_service_enabled: bool,
+    /// `AntivirusEnabled`.
+    pub antivirus_enabled: bool,
+    /// `RealTimeProtectionEnabled`.
+    pub real_time_protection_enabled: bool,
+    /// `BehaviorMonitorEnabled`.
+    pub behavior_monitor_enabled: bool,
+    /// `IoavProtectionEnabled` (scanning downloads and attachments).
+    pub ioav_protection_enabled: bool,
+    /// `AntivirusSignatureAge`, in days.
+    #[serde(default)]
+    pub antivirus_signature_age_days: Option<u32>,
+    /// `AntivirusSignatureLastUpdated`.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub antivirus_signature_last_updated: Option<time::OffsetDateTime>,
+    /// `QuickScanAge`, in days.
+    #[serde(default)]
+    pub quick_scan_age_days: Option<u32>,
+    /// `FullScanAge`, in days.
+    #[serde(default)]
+    pub full_scan_age_days: Option<u32>,
+    /// `IsTamperProtected`.
+    #[serde(default)]
+    pub is_tamper_protected: Option<bool>,
+    /// `AMRunningMode` as Windows reports it, for example `Normal`,
+    /// `Passive Mode` or `EDR Block Mode`.
+    #[serde(default)]
+    pub am_running_mode: Option<String>,
+}
+
+impl DefenderStatus {
+    /// Defender is the active antivirus: switched on and not in passive
+    /// mode (passive means another antivirus is in charge).
+    pub fn is_active(&self) -> bool {
+        self.antivirus_enabled && !self.is_passive()
+    }
+
+    /// Defender is in passive mode.
+    pub fn is_passive(&self) -> bool {
+        self.am_running_mode
+            .as_deref()
+            .is_some_and(|m| m.to_ascii_lowercase().contains("passive"))
+    }
+}
+
+/// One Defender detection (`MSFT_MpThreatDetection` joined with
+/// `MSFT_MpThreat`).
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Detection {
+    /// `ThreatID`.
+    pub threat_id: String,
+    /// `ThreatName`, for example `Virus:DOS/EICAR_Test_File`.
+    #[serde(default)]
+    pub threat_name: Option<String>,
+    /// `InitialDetectionTime`.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub initial_detection_time: Option<time::OffsetDateTime>,
+    /// `LastThreatStatusChangeTime`.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub last_status_change_time: Option<time::OffsetDateTime>,
+    /// `ThreatStatusID`.
+    #[serde(default)]
+    pub threat_status_id: Option<u32>,
+    /// `ActionSuccess`.
+    #[serde(default)]
+    pub action_success: Option<bool>,
+    /// `IsActive` from `MSFT_MpThreat`.
+    #[serde(default)]
+    pub is_active: Option<bool>,
+    /// `DidThreatExecute` from `MSFT_MpThreat`.
+    #[serde(default)]
+    pub did_threat_execute: Option<bool>,
+    /// `SeverityID` from `MSFT_MpThreat`.
+    #[serde(default)]
+    pub severity_id: Option<u32>,
+    /// `Resources`: affected files and keys, as Defender lists them.
+    #[serde(default)]
+    pub resources: Vec<String>,
+    /// `ProcessName`.
+    #[serde(default)]
+    pub process_name: Option<String>,
+}
+
+/// A product registered with Windows Security Center.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SecurityProduct {
+    /// `displayName`.
+    pub display_name: String,
+    /// `productState`, undocumented bit field. See
+    /// `crate::rules::protection::decode_product_state`.
+    pub product_state: u32,
+    /// `pathToSignedProductExe`.
+    #[serde(default)]
+    pub path: Option<String>,
+}
+
+/// Windows Firewall, per network profile.
+// Mirrors Windows' own boolean fields one to one, so a struct of bools
+// is the honest shape.
+#[allow(clippy::struct_excessive_bools)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FirewallStatus {
+    /// Domain profile on.
+    pub domain_enabled: bool,
+    /// Private profile on.
+    pub private_enabled: bool,
+    /// Public profile on.
+    pub public_enabled: bool,
+    /// Profiles in use right now (`CurrentProfileTypes`).
+    pub current_domain: bool,
+    /// Private is a current profile.
+    pub current_private: bool,
+    /// Public is a current profile.
+    pub current_public: bool,
+}
+
+impl FirewallStatus {
+    /// Names of current profiles whose firewall is off.
+    pub fn current_profiles_off(&self) -> Vec<&'static str> {
+        let mut off = Vec::new();
+        for (current, enabled, name) in [
+            (self.current_domain, self.domain_enabled, "domain"),
+            (self.current_private, self.private_enabled, "private"),
+            (self.current_public, self.public_enabled, "public"),
+        ] {
+            if current && !enabled {
+                off.push(name);
+            }
+        }
+        off
+    }
+}
+
+/// User Account Control registry values.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct UacStatus {
+    /// `EnableLUA`. `None` if the value is absent (Windows treats that as on).
+    #[serde(default)]
+    pub enable_lua: Option<u32>,
+    /// `ConsentPromptBehaviorAdmin`.
+    #[serde(default)]
+    pub consent_prompt_behavior_admin: Option<u32>,
+}
+
+/// Windows Update history.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct UpdateStatus {
+    /// Date of the newest update that installed successfully.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub last_success: Option<time::OffsetDateTime>,
+    /// Entries in the update history.
+    pub history_count: u32,
+}
 
 /// One running program. Filled in by the processes issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]

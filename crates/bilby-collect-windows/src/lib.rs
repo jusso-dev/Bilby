@@ -7,6 +7,7 @@
 #![cfg(windows)]
 
 pub mod cache;
+pub mod defender;
 pub mod files;
 pub mod handle;
 pub mod hash;

@@ -37,6 +37,15 @@ windows = { version = "0.62.2", default-features = false, features = [
   "Win32_System_WindowsProgramming",     # DRIVE_REMOVABLE, DRIVE_REMOTE
   "Win32_System_Com",                    # CoTaskMemFree for SHGetKnownFolderPath
   "Win32_UI_Shell",                      # SHGetKnownFolderPath, FOLDERID_*
+  "Win32_NetworkManagement_WindowsFirewall", # INetFwPolicy2 (defender.rs)
+  "Win32_System_Registry",               # RegGetValueW, read-only (defender.rs)
+  "Win32_System_UpdateAgent",            # update history (defender.rs)
+  "Win32_System_Ole",                    # VARIANT_BOOL used by the COM getters
+  "Win32_System_Variant",                # required by the UpdateAgent bindings
 ] }
 sha2 = "0.10.9"
 time = { version = "0.3.55", default-features = false, features = ["std"] }
+# WMI queries. MIT or Apache-2.0, reuses our windows 0.62. Default chrono
+# feature off: Bilby parses CIM datetimes itself in bilby-core.
+wmi = { version = "0.18.4", default-features = false }
+serde = { version = "1.0.229", features = ["derive"] }
