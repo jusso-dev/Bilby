@@ -26,6 +26,20 @@ fn protection_collector_runs() {
         .as_ref()
         .expect("Defender status readable on a runner");
     assert!(defender.am_running_mode.is_some(), "running mode reported");
+    // "Never" sentinels must not come through as huge ages.
+    for age in [
+        defender.antivirus_signature_age_days,
+        defender.quick_scan_age_days,
+        defender.full_scan_age_days,
+    ]
+    .into_iter()
+    .flatten()
+    {
+        assert!(
+            age <= bilby_core::cim::MAX_AGE_DAYS,
+            "age {age} looks like a sentinel"
+        );
+    }
     // Documented allowed failures: detections can need admin. Nothing else
     // should fail outright on a runner.
     for c in &collected.checks {

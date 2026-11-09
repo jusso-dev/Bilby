@@ -39,6 +39,16 @@ pub fn parse_datetime(s: &str) -> Option<OffsetDateTime> {
     )
 }
 
+/// Largest believable age in days for Defender's `*Age` fields (about 30
+/// years). Windows reports "never" as 65535, or as 4294967295 (-1 as an
+/// unsigned 32-bit number), depending on the build.
+pub const MAX_AGE_DAYS: u32 = 11_000;
+
+/// A Defender age in days, or `None` for the "never" values.
+pub fn age_days(raw: u32) -> Option<u32> {
+    (raw <= MAX_AGE_DAYS).then_some(raw)
+}
+
 /// Converts an OLE Automation date (days since 1899-12-30, as Windows Update
 /// reports them) to UTC. Fractions are the time of day.
 pub fn from_ole_date(days: f64) -> Option<OffsetDateTime> {
@@ -87,6 +97,15 @@ mod tests {
         assert_eq!(parse_datetime("2026110909"), None);
         assert_eq!(parse_datetime("20261109090000x000000+000"), None);
         assert_eq!(parse_datetime(""), None);
+    }
+
+    #[test]
+    fn age_sentinels_mean_never() {
+        assert_eq!(age_days(0), Some(0));
+        assert_eq!(age_days(6), Some(6));
+        assert_eq!(age_days(65_535), None);
+        // Seen on a windows-2025 runner for QuickScanAge with no scan yet.
+        assert_eq!(age_days(4_294_967_295), None);
     }
 
     #[test]

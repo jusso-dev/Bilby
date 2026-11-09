@@ -234,11 +234,11 @@ fn defender_status(con: &WMIConnection) -> Result<Option<DefenderStatus>, WMIErr
         real_time_protection_enabled: get_bool(r, "RealTimeProtectionEnabled").unwrap_or(false),
         behavior_monitor_enabled: get_bool(r, "BehaviorMonitorEnabled").unwrap_or(false),
         ioav_protection_enabled: get_bool(r, "IoavProtectionEnabled").unwrap_or(false),
-        // 65535 means "never" for these ages.
-        antivirus_signature_age_days: get_u32(r, "AntivirusSignatureAge").filter(|d| *d != 65535),
+        // Windows reports "never" as 65535 or 4294967295; age_days drops both.
+        antivirus_signature_age_days: get_u32(r, "AntivirusSignatureAge").and_then(cim::age_days),
         antivirus_signature_last_updated: get_time(r, "AntivirusSignatureLastUpdated"),
-        quick_scan_age_days: get_u32(r, "QuickScanAge").filter(|d| *d != 65535),
-        full_scan_age_days: get_u32(r, "FullScanAge").filter(|d| *d != 65535),
+        quick_scan_age_days: get_u32(r, "QuickScanAge").and_then(cim::age_days),
+        full_scan_age_days: get_u32(r, "FullScanAge").and_then(cim::age_days),
         is_tamper_protected: get_bool(r, "IsTamperProtected"),
         am_running_mode: get_string(r, "AMRunningMode"),
     }))
