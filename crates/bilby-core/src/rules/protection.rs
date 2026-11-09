@@ -243,6 +243,7 @@ fn detection_finding(
     severity: Severity,
     confidence: Confidence,
     d: &Detection,
+    resources: &[&str],
 ) -> Finding {
     let mut b = FindingBuilder::new(
         id,
@@ -259,7 +260,7 @@ fn detection_finding(
         "evidence.threat",
         d.threat_name.as_deref().unwrap_or(&d.threat_id),
     );
-    for resource in &d.resources {
+    for resource in resources {
         b = b.text("evidence.resource", resource);
     }
     if let Some(t) = d.initial_detection_time {
@@ -269,18 +270,42 @@ fn detection_finding(
 }
 
 fn detection_active(p: &ProtectionFacts, ctx: &RuleContext) -> Vec<Finding> {
-    recent(p, ctx)
+    by_threat(recent(p, ctx).into_iter().filter(|d| unresolved(d)))
         .into_iter()
-        .filter(|d| unresolved(d))
-        .map(|d| {
+        .map(|(d, resources)| {
             detection_finding(
                 "protection.detection_active",
                 Severity::High,
                 Confidence::High,
                 d,
+                &resources,
             )
         })
         .collect()
+}
+
+/// Groups detection rows by threat. Defender can log several rows for one
+/// threat (one per time it was seen), and one finding per threat keeps
+/// finding ids unique. Returns the newest row of each group with every
+/// affected resource from all its rows, in first-seen order.
+fn by_threat<'a>(rows: impl Iterator<Item = &'a Detection>) -> Vec<(&'a Detection, Vec<&'a str>)> {
+    let mut groups: Vec<(&Detection, Vec<&str>)> = Vec::new();
+    for row in rows {
+        let idx = groups
+            .iter()
+            .position(|(d, _)| d.threat_id == row.threat_id)
+            .unwrap_or_else(|| {
+                groups.push((row, Vec::new()));
+                groups.len() - 1
+            });
+        let resources = &mut groups[idx].1;
+        for r in &row.resources {
+            if !resources.contains(&r.as_str()) {
+                resources.push(r);
+            }
+        }
+    }
+    groups
 }
 
 fn detection_resolved(p: &ProtectionFacts, ctx: &RuleContext) -> Vec<Finding> {
@@ -295,11 +320,13 @@ fn detection_resolved(p: &ProtectionFacts, ctx: &RuleContext) -> Vec<Finding> {
         return Vec::new();
     }
     let newest = recent[0];
+    let resources: Vec<&str> = newest.resources.iter().map(String::as_str).collect();
     let mut f = detection_finding(
         "protection.detection_resolved",
         Severity::Low,
         Confidence::High,
         newest,
+        &resources,
     );
     f.subject = Subject::Setting("defender.detections.resolved".to_owned());
     f.vars.insert("count".to_owned(), recent.len().to_string());
@@ -307,18 +334,22 @@ fn detection_resolved(p: &ProtectionFacts, ctx: &RuleContext) -> Vec<Finding> {
 }
 
 fn detection_executed(p: &ProtectionFacts, ctx: &RuleContext) -> Vec<Finding> {
-    recent(p, ctx)
-        .into_iter()
-        .filter(|d| !unresolved(d) && d.did_threat_execute == Some(true))
-        .map(|d| {
-            detection_finding(
-                "protection.detection_executed",
-                Severity::Medium,
-                Confidence::Medium,
-                d,
-            )
-        })
-        .collect()
+    by_threat(
+        recent(p, ctx)
+            .into_iter()
+            .filter(|d| !unresolved(d) && d.did_threat_execute == Some(true)),
+    )
+    .into_iter()
+    .map(|(d, resources)| {
+        detection_finding(
+            "protection.detection_executed",
+            Severity::Medium,
+            Confidence::Medium,
+            d,
+            &resources,
+        )
+    })
+    .collect()
 }
 
 fn tamper_off(p: &ProtectionFacts, _: &RuleContext) -> Vec<Finding> {
@@ -447,6 +478,64 @@ fn updates_old(p: &ProtectionFacts, ctx: &RuleContext) -> Vec<Finding> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use crate::snapshot::SystemSnapshot;
+    use time::macros::datetime;
+
+    fn row(id: &str, resource: &str, when: time::OffsetDateTime) -> Detection {
+        Detection {
+            threat_id: id.to_owned(),
+            threat_name: Some("Trojan:Win32/Example".to_owned()),
+            initial_detection_time: Some(when),
+            last_status_change_time: Some(when),
+            action_success: Some(false),
+            is_active: Some(true),
+            did_threat_execute: Some(true),
+            resources: vec![resource.to_owned()],
+            ..Detection::default()
+        }
+    }
+
+    #[test]
+    fn repeated_rows_for_one_threat_give_one_finding_with_all_resources() {
+        let now = datetime!(2026-11-09 09:00 UTC);
+        let snap = SystemSnapshot {
+            protection: Some(ProtectionFacts {
+                detections: Some(vec![
+                    row("7", r"file:_C:\a.exe", datetime!(2026-11-08 09:00 UTC)),
+                    row("7", r"file:_C:\b.exe", datetime!(2026-11-07 09:00 UTC)),
+                    row("7", r"file:_C:\a.exe", datetime!(2026-11-06 09:00 UTC)),
+                    row("9", r"file:_C:\c.exe", datetime!(2026-11-05 09:00 UTC)),
+                ]),
+                ..ProtectionFacts::default()
+            }),
+            ..SystemSnapshot::default()
+        };
+        let findings: Vec<Finding> = crate::rules::evaluate_all(&snap, &RuleContext::at(now))
+            .into_iter()
+            .filter(|f| f.rule_id == "protection.detection_active")
+            .collect();
+        assert_eq!(findings.len(), 2, "one finding per threat");
+        let ids: std::collections::HashSet<String> = findings.iter().map(Finding::id).collect();
+        assert_eq!(ids.len(), 2, "finding ids are unique");
+        let seven = findings
+            .iter()
+            .find(|f| f.subject == Subject::Setting("defender.threat.7".to_owned()))
+            .expect("threat 7");
+        let resources: Vec<String> = seven
+            .evidence
+            .iter()
+            .filter_map(|e| match e {
+                crate::model::Evidence::Text { label_key, value }
+                    if label_key == "evidence.resource" =>
+                {
+                    Some(value.clone())
+                }
+                _ => None,
+            })
+            .collect();
+        assert_eq!(resources, [r"file:_C:\a.exe", r"file:_C:\b.exe"]);
+    }
 
     #[test]
     fn product_state_known_values() {

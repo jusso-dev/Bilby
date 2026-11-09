@@ -391,5 +391,11 @@ fn updates() -> windows::core::Result<UpdateStatus> {
             status.last_success = Some(when);
         }
     }
+    // Only the newest entries were read. With no success among them, an
+    // older one may still exist, so report the age as unknown (an empty
+    // history) rather than let the rule read it as "never updated".
+    if status.last_success.is_none() && total > UPDATE_HISTORY_LIMIT {
+        status.history_count = 0;
+    }
     Ok(status)
 }
