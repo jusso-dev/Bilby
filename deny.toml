@@ -1,0 +1,66 @@
+# cargo-deny policy. See docs/supply-chain.md for the reasoning.
+# Schema: cargo-deny 0.18 or newer (checked with 0.20.2).
+
+[graph]
+all-features = true
+
+[advisories]
+version = 2
+yanked = "deny"
+# Every ignore needs: advisory id, reason, and a review date.
+# Keep this list in step with .cargo/audit.toml.
+ignore = [
+  # proc-macro-error is unmaintained. Reaches us only through gtk/glib-macros,
+  # Tauri's Linux webview stack. Bilby ships no Linux app and it's a build-time
+  # proc macro. Review 09-05-2027 or when Tauri moves off gtk 0.18.
+  { id = "RUSTSEC-2024-0370", reason = "Linux-only gtk proc macro via tauri; no Linux app shipped" },
+  # RUSTSEC-2024-0429 (glib unsound) is only in .cargo/audit.toml: cargo-deny
+  # doesn't report unsound advisories by default.
+]
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Zlib",
+  "CC0-1.0",
+]
+# MPL-2.0 is allowed only per crate, with a reason. MPL is file-level copyleft:
+# we use these unmodified, so there's nothing extra to publish.
+exceptions = [
+  # Pulled in by Tauri itself (tauri-utils -> dom_query, used at build time to
+  # inject scripts and CSP into HTML). Servo project crates.
+  { crate = "cssparser", allow = ["MPL-2.0"] },
+  { crate = "cssparser-macros", allow = ["MPL-2.0"] },
+  { crate = "dtoa-short", allow = ["MPL-2.0"] },
+  { crate = "selectors", allow = ["MPL-2.0"] },
+  # Pulled in by Tauri and wry through dirs -> dirs-sys.
+  { crate = "option-ext", allow = ["MPL-2.0"] },
+]
+
+[bans]
+# Tauri's tree has duplicate versions we can't avoid. Warn, don't fail.
+multiple-versions = "warn"
+wildcards = "deny"
+# Workspace crates depend on each other by path with no version. That's fine
+# because every crate here is publish = false; cargo-deny only allows it for
+# unpublished crates.
+allow-wildcard-paths = true
+deny = [
+  { crate = "openssl", reason = "Use rustls" },
+  { crate = "openssl-sys", reason = "Use rustls" },
+  { crate = "native-tls", reason = "Use rustls" },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
