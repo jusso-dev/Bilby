@@ -494,55 +494,101 @@ fn core_duplicate(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
 /// matched as whole words inside that code, so `iexplore` isn't `iex`.
 pub fn encoded_powershell(command_line: &str) -> bool {
     let lower = command_line.to_lowercase();
-    let tokens: Vec<&str> = lower.split_whitespace().collect();
-    let flag_of = |t: &str| -> Option<String> {
-        let f = t.trim_start_matches(['-', '/', '\u{2013}', '\u{2014}']);
-        (f.len() < t.len() && !f.is_empty()).then(|| f.to_owned())
-    };
+    let tokens = split_args(&lower);
     // Skip the program itself, then read flags until -File or -Command.
-    let mut encoded = false;
     let mut hidden = false;
     let mut code = String::new();
     let mut i = 1;
     while i < tokens.len() {
-        let Some(flag) = flag_of(tokens[i]) else {
+        let Some(flag) = flag_name(&tokens[i]) else {
             // A bare word where a flag was expected: PowerShell treats the
             // rest as a command.
             code = tokens[i..].join(" ");
             break;
         };
-        if flag == "ec" || ("encodedcommand".starts_with(&flag) && !flag.starts_with("ex")) {
-            encoded = true;
+        if flag == "ec" || ("encodedcommand".starts_with(flag) && !flag.starts_with("ex")) {
+            return true;
+        }
+        if flag.len() >= 2 && "file".starts_with(flag) {
             break;
         }
-        if flag.len() >= 2 && "file".starts_with(&flag) {
-            break;
-        }
-        if "command".starts_with(&flag) {
+        if "command".starts_with(flag) {
             code = tokens[i + 1..].join(" ");
             break;
         }
-        if "windowstyle".starts_with(&flag) {
+        if "windowstyle".starts_with(flag) {
             hidden |= tokens.get(i + 1).is_some_and(|v| v.starts_with("hid"));
             i += 2;
             continue;
         }
-        i += 1;
+        // Flags whose next token is their value, not a command.
+        i += if takes_value(flag) { 2 } else { 1 };
     }
-    if encoded {
-        return true;
-    }
-    let words: Vec<&str> = code
+    let mut words = code
         .split(|c: char| !(c.is_ascii_alphanumeric() || c == '-'))
-        .filter(|w| !w.is_empty())
-        .collect();
-    let downloads = words.iter().any(|w| {
-        matches!(
-            *w,
-            "iex" | "invoke-expression" | "downloadstring" | "frombase64string"
-        )
-    });
-    hidden && downloads
+        .filter(|w| !w.is_empty());
+    hidden
+        && words.any(|w| {
+            matches!(
+                w,
+                "iex" | "invoke-expression" | "downloadstring" | "frombase64string"
+            )
+        })
+}
+
+/// The flag name without its `-` or `/`, if `token` is a flag.
+fn flag_name(token: &str) -> Option<&str> {
+    let f = token.trim_start_matches(['-', '/', '\u{2013}', '\u{2014}']);
+    (f.len() < token.len() && !f.is_empty()).then_some(f)
+}
+
+/// PowerShell parameters (besides `-WindowStyle`) that take a value.
+/// Matched by unambiguous prefix, as PowerShell does, plus the `-ep` alias.
+fn takes_value(flag: &str) -> bool {
+    const WITH_VALUE: &[&str] = &[
+        "executionpolicy",
+        "version",
+        "inputformat",
+        "outputformat",
+        "configurationname",
+        "workingdirectory",
+        "psconsolefile",
+        "settingsfile",
+        "custompipename",
+    ];
+    flag == "ep" || (flag.len() >= 2 && WITH_VALUE.iter().any(|name| name.starts_with(flag)))
+}
+
+/// Splits a command line into arguments, keeping `"double quoted"` values
+/// together the way Windows does, so `-WorkingDirectory "C:\Program Files"`
+/// is one flag and one value.
+fn split_args(line: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut current = String::new();
+    let mut quoted = false;
+    let mut any = false;
+    for c in line.chars() {
+        match c {
+            '"' => {
+                quoted = !quoted;
+                any = true;
+            }
+            c if c.is_whitespace() && !quoted => {
+                if any {
+                    out.push(std::mem::take(&mut current));
+                    any = false;
+                }
+            }
+            c => {
+                current.push(c);
+                any = true;
+            }
+        }
+    }
+    if any {
+        out.push(current);
+    }
+    out
 }
 
 fn script_host_encoded(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
@@ -639,6 +685,22 @@ mod tests {
     }
 
     #[test]
+    fn splits_quoted_arguments() {
+        assert_eq!(
+            split_args(r#"powershell -wd "c:\program files\x" -c "get-date; exit""#),
+            [
+                "powershell",
+                "-wd",
+                r"c:\program files\x",
+                "-c",
+                "get-date; exit"
+            ]
+        );
+        assert_eq!(split_args("a  b"), ["a", "b"]);
+        assert_eq!(split_args(r#"a """#), ["a", ""]);
+    }
+
+    #[test]
     fn encoded_flags() {
         for yes in [
             "powershell.exe -NoProfile -EncodedCommand UwB0AGEA",
@@ -649,6 +711,11 @@ mod tests {
             "powershell -w hidden -c \"iex (New-Object Net.WebClient).DownloadString('x')\"",
             "powershell -WindowStyle Hidden -Command IEX $x",
             "powershell -NoP -W Hidden -C \"[Convert]::FromBase64String($s)\"",
+            // Value-taking flags before -EncodedCommand (the common form).
+            "powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand UwB0AGEA",
+            "powershell -ep bypass -enc UwB0AGEA",
+            "powershell -Version 5.1 -NonInteractive -e UwB0AGEA",
+            r#"powershell -WorkingDirectory "C:\Program Files\x" -ec UwB0AGEA"#,
         ] {
             assert!(encoded_powershell(yes), "{yes}");
         }
@@ -666,6 +733,9 @@ mod tests {
             "powershell -WindowStyle Hidden -Command iexpress /n x.sed",
             // iex in the script's own arguments isn't PowerShell running it.
             "powershell -w hidden -File update.ps1 iex",
+            // -ex takes its value; nothing after it is encoded.
+            "powershell -ex bypass -noprofile -file x.ps1 -enc y",
+            r#"powershell -WorkingDirectory "C:\Program Files\Vendor" -File run.ps1"#,
         ] {
             assert!(!encoded_powershell(no), "{no}");
         }
