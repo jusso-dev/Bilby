@@ -494,7 +494,7 @@ fn core_duplicate(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
 /// matched as whole words inside that code, so `iexplore` isn't `iex`.
 pub fn encoded_powershell(command_line: &str) -> bool {
     let lower = command_line.to_lowercase();
-    let tokens = split_args(&lower);
+    let tokens = crate::cmdline::split_args(&lower);
     // Skip the program itself, then read flags until -File or -Command.
     let mut hidden = false;
     let mut code = String::new();
@@ -557,38 +557,6 @@ fn takes_value(flag: &str) -> bool {
         "custompipename",
     ];
     flag == "ep" || (flag.len() >= 2 && WITH_VALUE.iter().any(|name| name.starts_with(flag)))
-}
-
-/// Splits a command line into arguments, keeping `"double quoted"` values
-/// together the way Windows does, so `-WorkingDirectory "C:\Program Files"`
-/// is one flag and one value.
-fn split_args(line: &str) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut current = String::new();
-    let mut quoted = false;
-    let mut any = false;
-    for c in line.chars() {
-        match c {
-            '"' => {
-                quoted = !quoted;
-                any = true;
-            }
-            c if c.is_whitespace() && !quoted => {
-                if any {
-                    out.push(std::mem::take(&mut current));
-                    any = false;
-                }
-            }
-            c => {
-                current.push(c);
-                any = true;
-            }
-        }
-    }
-    if any {
-        out.push(current);
-    }
-    out
 }
 
 fn script_host_encoded(procs: &[ProcessFact], _: &RuleContext) -> Vec<Finding> {
@@ -687,7 +655,9 @@ mod tests {
     #[test]
     fn splits_quoted_arguments() {
         assert_eq!(
-            split_args(r#"powershell -wd "c:\program files\x" -c "get-date; exit""#),
+            crate::cmdline::split_args(
+                r#"powershell -wd "c:\program files\x" -c "get-date; exit""#
+            ),
             [
                 "powershell",
                 "-wd",
@@ -696,8 +666,8 @@ mod tests {
                 "get-date; exit"
             ]
         );
-        assert_eq!(split_args("a  b"), ["a", "b"]);
-        assert_eq!(split_args(r#"a """#), ["a", ""]);
+        assert_eq!(crate::cmdline::split_args("a  b"), ["a", "b"]);
+        assert_eq!(crate::cmdline::split_args(r#"a """#), ["a", ""]);
     }
 
     #[test]

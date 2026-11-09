@@ -35,6 +35,11 @@ fn from_buffer(call: impl Fn(Option<&mut [u16]>) -> u32) -> Option<String> {
     Some(String::from_utf16_lossy(&buf[..written]))
 }
 
+/// The path of a known folder (`FOLDERID_*`) for the current user.
+pub fn known_folder_path(id: &GUID) -> Option<String> {
+    known_folder(id)
+}
+
 fn known_folder(id: &GUID) -> Option<String> {
     // SAFETY: `id` points to a valid GUID for the call's duration. No token
     // is passed, so it's the current user's folder.

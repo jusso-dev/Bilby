@@ -152,7 +152,7 @@ fn image_path(process: HANDLE) -> Option<String> {
 const FILETIME_EPOCH_DIFF: i64 = 11_644_473_600;
 
 /// FILETIME (100 ns ticks since 1601) to UTC.
-fn from_filetime(ft: FILETIME) -> Option<OffsetDateTime> {
+pub(crate) fn from_filetime(ft: FILETIME) -> Option<OffsetDateTime> {
     let ticks = (u64::from(ft.dwHighDateTime) << 32) | u64::from(ft.dwLowDateTime);
     if ticks == 0 {
         return None;

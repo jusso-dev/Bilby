@@ -72,6 +72,9 @@ last_update = "Last successful update"
 related = "Also seen"
 parent = "Started by"
 command_line = "Command line"
+publisher = "Made by"
+startup_state = "Startup state"
+command = "Command"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -117,17 +120,53 @@ what = "PowerShell is running a command that has been scrambled or hidden so it 
 why = "Normal programs rarely hide their commands like this. Harmful programs often do."
 todo = "Ask someone you trust to look at this computer."
 
-[persist.run_key_unsigned]
-title = "A program starts by itself from an unusual folder."
-what = "{name} is set to start when you sign in. It's in {location} and has no digital signature (a seal that shows who made it)."
+[persist.run.unsigned_user_writable]
+title = "A program without a digital signature starts by itself."
+what = "{name} is set to start when you sign in. It runs from a folder anyone's programs can write to, and it has no digital signature (a seal that shows who made it)."
 why = "Most programs that start by themselves are installed properly and signed. This one isn't."
 todo = "Check whether you recognise it. If you don't, Bilby can stop it starting by itself, and you can undo that later."
 
-[persist.encoded_script]
+[persist.run.script_host]
 title = "A hidden script starts when you sign in."
-what = "A startup entry called {name} runs a PowerShell command that has been scrambled so it can't be read easily."
-why = "Normal programs rarely hide their startup commands like this."
+what = "A startup entry called {name} runs a script in a way that hides what it does."
+why = "Normal programs rarely start like this. Harmful programs often do."
 todo = "Ask someone you trust to look at it. Bilby can stop it starting by itself, and you can undo that later."
+
+[persist.run.rundll32_user_writable]
+title = "A startup entry loads a file from an unusual folder."
+what = "{name} uses a Windows helper to load a file from a folder anyone's programs can write to."
+why = "This is a common way for harmful programs to hide behind a part of Windows."
+todo = "Ask someone you trust to look at it. Bilby can stop it starting by itself, and you can undo that later."
+
+[persist.run.missing_target]
+title = "A startup entry points to a program that's gone."
+what = "{name} is set to start, but the program it points to isn't there any more."
+why = "This is usually left over from a program that was uninstalled. It's harmless."
+todo = "Leave it. Nothing runs."
+
+[persist.winlogon.shell]
+title = "Windows is set to start a different desktop program."
+what = "The setting that starts the Windows desktop has been changed to {value}."
+why = "Normally it's just explorer.exe. A change here runs another program every time anyone signs in."
+todo = "Ask someone you trust to look at this computer."
+
+[persist.winlogon.userinit]
+title = "An extra program runs every time anyone signs in."
+what = "The Windows sign-in setting has been changed to {value}."
+why = "Normally it only runs Windows' own sign-in program. Anything added here runs for every user."
+todo = "Ask someone you trust to look at this computer."
+
+[persist.ifeo.debugger]
+title = "A program is set to run in place of {image}."
+what = "Windows is set to run another program whenever {image} starts or closes."
+why = "Developers and tools like Process Explorer use this on purpose. It can also be used to take over a program."
+todo = "If you didn't set this up, ask someone you trust to look."
+
+[persist.appinit]
+title = "Windows is set to load an extra file into most programs."
+what = "A setting called AppInit makes many programs load an extra file when they start."
+why = "Modern programs rarely need this, and it's been used to hide harmful code."
+todo = "Ask someone you trust to look at this computer."
 
 [tamper.proxy_set]
 title = "Your web traffic goes through another computer."

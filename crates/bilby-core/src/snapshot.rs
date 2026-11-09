@@ -286,9 +286,119 @@ pub struct ProcessFact {
     pub file: Option<FileFacts>,
 }
 
-/// Startup items. Filled in by the startup items issues.
+/// Things set to start by themselves. Each source is optional because
+/// each is read on its own.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct PersistenceFacts {}
+pub struct PersistenceFacts {
+    /// Run keys, startup folders and policy Run entries.
+    #[serde(default)]
+    pub items: Vec<StartupItem>,
+    /// Winlogon `Shell` and `Userinit` values.
+    #[serde(default)]
+    pub winlogon: Option<WinlogonValues>,
+    /// Image File Execution Options debuggers and silent-exit monitors.
+    #[serde(default)]
+    pub ifeo: Vec<IfeoEntry>,
+    /// `AppInit_DLLs` settings, 64-bit and 32-bit views.
+    #[serde(default)]
+    pub appinit: Vec<AppInit>,
+}
+
+/// Where a startup item came from.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum StartupSource {
+    /// A `Run` key.
+    Run,
+    /// A `RunOnce` key.
+    RunOnce,
+    /// `RunOnceEx`.
+    RunOnceEx,
+    /// `Policies\Explorer\Run`.
+    PolicyRun,
+    /// A startup folder shortcut or file.
+    StartupFolder,
+}
+
+/// One program set to start by itself.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StartupItem {
+    /// Where it came from.
+    pub source: StartupSource,
+    /// Registry key or folder path.
+    pub location: String,
+    /// Value name or file name.
+    pub name: String,
+    /// The command as stored (for shortcuts, target plus arguments).
+    pub command: String,
+    /// The file the command runs, after looking through hosts.
+    #[serde(default)]
+    pub target: Option<FileFacts>,
+    /// Arguments after the target.
+    #[serde(default)]
+    pub args: Option<String>,
+    /// The host the command runs through, for example `powershell`.
+    #[serde(default)]
+    pub host: Option<String>,
+    /// Arguments given to the host itself.
+    #[serde(default)]
+    pub host_args: Option<String>,
+    /// From `StartupApproved`: false if the user turned it off in Task
+    /// Manager or Settings.
+    pub enabled: bool,
+    /// When the key was last written.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub last_write: Option<time::OffsetDateTime>,
+}
+
+/// Winlogon values that choose the shell and the sign-in program.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct WinlogonValues {
+    /// `HKLM` `Shell`.
+    #[serde(default)]
+    pub shell_machine: Option<String>,
+    /// `HKCU` `Shell`, which overrides it for one user.
+    #[serde(default)]
+    pub shell_user: Option<String>,
+    /// `HKLM` `Userinit`.
+    #[serde(default)]
+    pub userinit: Option<String>,
+}
+
+/// An Image File Execution Options entry that runs something else.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct IfeoEntry {
+    /// The program it attaches to, for example `taskmgr.exe`.
+    pub image: String,
+    /// `Debugger` (runs instead) or `MonitorProcess` (runs on exit).
+    pub kind: IfeoKind,
+    /// The command it runs.
+    pub command: String,
+    /// The file that command runs.
+    #[serde(default)]
+    pub target: Option<FileFacts>,
+}
+
+/// Which IFEO mechanism.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum IfeoKind {
+    /// `Image File Execution Options\<image>\Debugger`.
+    Debugger,
+    /// `SilentProcessExit\<image>\MonitorProcess`.
+    MonitorProcess,
+}
+
+/// `AppInit_DLLs` for one registry view.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AppInit {
+    /// The key it came from.
+    pub location: String,
+    /// `LoadAppInit_DLLs`.
+    pub load: Option<u32>,
+    /// `AppInit_DLLs`.
+    pub dlls: Option<String>,
+}
 
 /// Network connections. Filled in by the network issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]

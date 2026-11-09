@@ -18,11 +18,11 @@
       "subject": { "file": "c:\\users\\<user>\\downloads\\svchost.exe" }
     },
     {
-      "rule_id": "persist.run_key.encoded_powershell",
+      "rule_id": "persist.run.script_host",
       "family": "persistence",
       "severity": "high",
       "confidence": "medium",
-      "title_key": "persist.encoded_script",
+      "title_key": "persist.run.script_host",
       "vars": { "name": "WindowsHelper" },
       "evidence": [
         { "registry_value": { "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "name": "WindowsHelper", "data": "powershell.exe -NoProfile -EncodedCommand UwB0AGEAcgB0AC0AUwBsAGUAZQBwACAAMQA=" } }
