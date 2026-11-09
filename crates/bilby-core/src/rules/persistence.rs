@@ -127,7 +127,15 @@ pub fn rules() -> Vec<Box<dyn Rule>> {
 fn run_unsigned(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
     p.items
         .iter()
-        .filter(|i| i.host.is_none() || i.host.as_deref() == Some("cmd"))
+        // Hosts that just run the target as a file: their target is what
+        // matters. rundll32 and script hosts have their own rules, so a
+        // file isn't flagged twice; mshta and regsvr32 targets are URLs.
+        .filter(|i| {
+            matches!(
+                i.host.as_deref(),
+                None | Some("cmd" | "powershell" | "explorer" | "msiexec")
+            )
+        })
         .filter_map(|item| {
             let t = item.target.as_ref().filter(|t| t.exists)?;
             if !(unsigned(t) && writable_not_installed(t)) {
