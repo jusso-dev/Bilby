@@ -49,6 +49,10 @@ exceptions = [
 # Tauri's tree has duplicate versions we can't avoid. Warn, don't fail.
 multiple-versions = "warn"
 wildcards = "deny"
+# Workspace crates depend on each other by path with no version. That's fine
+# because every crate here is publish = false; cargo-deny only allows it for
+# unpublished crates.
+allow-wildcard-paths = true
 deny = [
   { crate = "openssl", reason = "Use rustls" },
   { crate = "openssl-sys", reason = "Use rustls" },
