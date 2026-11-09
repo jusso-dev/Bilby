@@ -95,9 +95,14 @@ fn tampered_signed_file_is_invalid() {
     };
     let copy = temp_copy(&signed, "bilby-tampered.exe");
     let mut bytes = std::fs::read(&copy).expect("read copy");
-    // Flip a byte in the middle of the file, inside the signed content.
-    let mid = bytes.len() / 2;
-    bytes[mid] ^= 0xFF;
+    // Flip a byte inside the first section's code, which the signature's
+    // digest covers. Section raw data starts at the PE header's
+    // SizeOfHeaders (usually 0x400), so 0x400 + 0x100 sits in code without
+    // breaking the headers. Breaking the headers instead makes Windows treat
+    // the file as an unknown format, which reads as unsigned, not tampered.
+    let offset = 0x500;
+    assert!(bytes.len() > offset, "file too small");
+    bytes[offset] ^= 0xFF;
     std::fs::write(&copy, bytes).expect("write copy");
     let status = verify(&copy.to_string_lossy());
     println!("tampered copy of {}: {status:?}", signed.display());

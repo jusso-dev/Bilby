@@ -252,12 +252,43 @@ fn has_eku(cert: *const CERT_CONTEXT, oid: &str) -> bool {
 /// A catalog admin context, released on drop.
 struct CatAdmin(isize);
 
+impl CatAdmin {
+    fn acquire(sha256: bool) -> Option<Self> {
+        let mut raw = 0isize;
+        let acquired = if sha256 {
+            // SAFETY: `raw` receives the context. Default subsystem and policy.
+            unsafe {
+                CryptCATAdminAcquireContext2(
+                    &raw mut raw,
+                    None,
+                    BCRYPT_SHA256_ALGORITHM,
+                    None,
+                    None,
+                )
+            }
+        } else {
+            // SAFETY: as above, legacy SHA-1 context.
+            unsafe { CryptCATAdminAcquireContext(&raw mut raw, None, None) }
+        };
+        acquired.ok().map(|()| Self(raw))
+    }
+}
+
 impl Drop for CatAdmin {
     fn drop(&mut self) {
         // SAFETY: the context came from CryptCATAdminAcquireContext(2) and
         // is released exactly once.
         let _ = unsafe { CryptCATAdminReleaseContext(self.0, 0) };
     }
+}
+
+thread_local! {
+    // Acquiring a catalog admin context goes through the Cryptographic
+    // Services service and is the slowest part of a lookup, so each thread
+    // keeps one per hash algorithm for its lifetime. Released when the
+    // thread ends.
+    static SHA256_ADMIN: Option<CatAdmin> = CatAdmin::acquire(true);
+    static SHA1_ADMIN: Option<CatAdmin> = CatAdmin::acquire(false);
 }
 
 /// A catalog info context, released on drop.
@@ -276,28 +307,27 @@ impl Drop for CatInfo<'_> {
 
 fn verify_catalog(path: &str, file: &OwnedHandle) -> SignatureStatus {
     // SHA-256 catalogs first, then SHA-1 for older ones.
-    for sha256 in [true, false] {
-        if let Some(status) = verify_catalog_with(path, file, sha256) {
-            return status;
-        }
-    }
-    SignatureStatus::Unsigned
+    let found = SHA256_ADMIN
+        .with(|admin| {
+            admin
+                .as_ref()
+                .and_then(|a| verify_catalog_with(path, file, a))
+        })
+        .or_else(|| {
+            SHA1_ADMIN.with(|admin| {
+                admin
+                    .as_ref()
+                    .and_then(|a| verify_catalog_with(path, file, a))
+            })
+        });
+    found.unwrap_or(SignatureStatus::Unsigned)
 }
 
-fn verify_catalog_with(path: &str, file: &OwnedHandle, sha256: bool) -> Option<SignatureStatus> {
-    let mut raw = 0isize;
-    let acquired = if sha256 {
-        // SAFETY: `raw` receives the context. Default subsystem and policy.
-        unsafe {
-            CryptCATAdminAcquireContext2(&raw mut raw, None, BCRYPT_SHA256_ALGORITHM, None, None)
-        }
-    } else {
-        // SAFETY: as above, legacy SHA-1 context.
-        unsafe { CryptCATAdminAcquireContext(&raw mut raw, None, None) }
-    };
-    acquired.ok()?;
-    let admin = CatAdmin(raw);
-
+fn verify_catalog_with(
+    path: &str,
+    file: &OwnedHandle,
+    admin: &CatAdmin,
+) -> Option<SignatureStatus> {
     let mut size = 0u32;
     // SAFETY: valid admin context and file handle. First call gets the size.
     let _ = unsafe {
@@ -325,7 +355,7 @@ fn verify_catalog_with(path: &str, file: &OwnedHandle, sha256: bool) -> Option<S
         return None;
     }
     let info = CatInfo {
-        admin: &admin,
+        admin,
         info,
     };
     let mut catalog = CATALOG_INFO {
