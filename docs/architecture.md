@@ -1,0 +1,223 @@
+# Bilby architecture
+
+This is the target design. Issues reference sections here by heading. If an issue and this file disagree, fix this file in the same PR.
+
+## Goals
+
+1. A person with no technical knowledge can press one button and get a calm, correct answer about whether their computer shows signs of infection.
+2. Low false alarms. Every finding carries a confidence level, and the overall result only turns red on high-confidence evidence.
+3. Read-only by default. Fixes are opt-in, explained, confirmed and reversible.
+4. No telemetry and no network traffic unless the user turns on online checks.
+5. Small, auditable supply chain: Rust, no npm, few crates.
+
+## Non-goals
+
+- Replacing antivirus. Bilby doesn't remove malware itself. Where a file needs dealing with, it hands it to Microsoft Defender or quarantines it reversibly.
+- Real-time protection. Bilby runs when you ask it to.
+- Kernel drivers, memory scanning of other processes, or anything that needs a Microsoft-attested driver.
+- Fleet management. Bilby is for one computer and the person sitting at it.
+
+## Platforms
+
+- Windows 10 22H2 and Windows 11, x64 and Arm64. First.
+- macOS 13 and later. Later milestone, see "macOS" below.
+- Linux is out of scope, though `bilby-core` builds and tests on Linux so CI can run the engine there.
+
+## Repository layout
+
+```
+Cargo.toml                  workspace, shared lints, release profile
+rust-toolchain.toml         pinned toolchain (exact version, not "stable")
+deny.toml                   cargo-deny policy
+crates/
+  bilby-core/               platform-neutral: data model, rules, scoring, copy, fixtures
+    src/model.rs            Finding, Severity, Confidence, Evidence, NextStep, ScanReport
+    src/snapshot.rs         SystemSnapshot: the raw facts collectors return
+    src/rules/              one module per signal family, pure functions snapshot -> findings
+    src/score.rs            findings -> traffic light
+    src/copy/en-AU.toml     every user-facing string
+    src/copy.rs             loader and lint for the copy file
+    tests/fixtures/         JSON snapshots used by unit tests
+  bilby-collect-windows/    #[cfg(windows)] collectors that fill a SystemSnapshot
+    src/sig.rs              Authenticode verification (embedded and catalog)
+    src/paths.rs            path classification
+    src/defender.rs         protection status and detections
+    src/processes.rs
+    src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
+    src/network.rs
+    src/browser.rs
+    src/tamper.rs           hosts, proxy, root certificates
+    src/drivers.rs
+  bilby-collect-macos/      later
+  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal)
+  bilby-report/             HTML report (Askama) and PDF export
+  bilby-fix/                reversible fix actions and the undo journal
+app/
+  src-tauri/                Tauri v2 binary crate "bilby"
+    tauri.conf.json
+    capabilities/default.json
+    src/main.rs
+    src/commands.rs         the only IPC surface
+    templates/              Askama templates for screens and fragments
+  ui/                       static frontend: index.html, app.css, app.js, fonts, icons
+docs/
+  architecture.md
+  adr/
+  research/system-informer.md
+  copy-guide.md
+  test-plan.md
+  signals.md                every rule: id, what it means, severity, confidence, false positive notes
+```
+
+## Data flow
+
+```
+[Check my computer]
+      |
+      v
+commands::start_scan  --spawns-->  Orchestrator (tokio, one task per collector, timeouts)
+                                          |
+                                          v
+                         Collectors (Windows APIs, read-only) -> SystemSnapshot
+                                          |
+                                          v
+                         bilby-core rules (pure) -> Vec<Finding>
+                                          |
+                                          v
+                         score::overall(&findings) -> Light { Healthy | WorthALook | NeedsAttention }
+                                          |
+                                          v
+                         ScanReport (kept in memory, optional save to disk)
+                                          |
+                                          v
+                         Askama templates -> HTML fragments -> UI
+```
+
+The split between collectors and rules matters. Collectors only gather facts and never decide what's bad. Rules are pure functions over a snapshot, so every rule can be unit tested on Linux or macOS with JSON fixtures, without a Windows machine.
+
+## Data model (bilby-core)
+
+```rust
+pub enum Severity { Info, Low, Medium, High }
+pub enum Confidence { Low, Medium, High }
+
+pub struct Finding {
+    pub rule_id: &'static str,          // e.g. "proc.masquerade.system_name"
+    pub family: SignalFamily,           // Protection, Processes, Persistence, Network, Browser, Tamper, Drivers, Reputation
+    pub severity: Severity,
+    pub confidence: Confidence,
+    pub title_key: &'static str,        // copy key, e.g. "proc.masquerade.title"
+    pub vars: BTreeMap<String, String>, // values substituted into copy, all escaped on render
+    pub evidence: Vec<Evidence>,        // technical facts for the helper view
+    pub next_step: NextStepKind,        // what the UI offers: Learn, OpenSetting, AskDefender, Fix(FixId), TalkToHelper
+    pub subject: Subject,               // the thing the finding is about (file path, reg key, task name...), used for suppressions
+}
+
+pub struct ScanReport {
+    pub started_at, pub finished_at,
+    pub light: Light,
+    pub findings: Vec<Finding>,
+    pub checked: Vec<CheckStatus>,      // every check with Ran | Skipped(reason) | NeedsAdmin | Failed(reason)
+    pub machine: MachineSummary,        // OS version, edition, arch; hostname and user only if the user opts in on export
+    pub bilby_version: &'static str,
+}
+```
+
+## Scoring
+
+Overall light, worked out in `score.rs`:
+
+- **Needs attention** if any finding is `High` severity with `Medium` or `High` confidence.
+- **Worth a look** if any finding is `Medium` severity with `Medium` or `High` confidence, or any `High` severity with `Low` confidence, or there are 3 or more `Low` severity findings with at least `Medium` confidence.
+- **Looks healthy** otherwise.
+- Suppressed findings (the user said "I know this one") never count, but stay visible under "Things you've told Bilby to ignore".
+- If a whole check family failed or was skipped, the result can still be "Looks healthy" but the screen must say what wasn't checked.
+
+Examples of what earns each level are in `docs/signals.md`. A finding should only be `High` confidence when a clean machine essentially never produces it (for example Defender reporting an active threat, or a file named `lsass.exe` running from the Downloads folder).
+
+## Signal families (Windows)
+
+Each family is one collector module and one rules module. Details and rule tables are in the matching issue and in `docs/signals.md`.
+
+| Family | Collector source | Typical rules |
+|---|---|---|
+| Protection | WMI `root\Microsoft\Windows\Defender` (`MSFT_MpComputerStatus`, `MSFT_MpThreatDetection`), `root\SecurityCenter2` `AntiVirusProduct`, firewall policy, UAC registry | AV off, real-time off, signatures stale, recent detection not resolved, firewall off |
+| Processes | Toolhelp snapshot, `QueryFullProcessImageNameW`, Authenticode | Windows name outside System32, look-alike names, unsigned from Temp or Downloads, odd parents for core processes |
+| Persistence | Registry Run keys and friends, startup folders, Service Control Manager, Task Scheduler COM, WMI `root\subscription` | Startup item pointing at an unsigned file in a user-writable folder, script hosts with encoded commands, WMI consumers |
+| Network | `GetExtendedTcpTable`, `GetExtendedUdpTable` | Unsigned program in a user-writable folder with outbound connections or a listening port |
+| Browser | Chromium `Preferences` and `Secure Preferences`, Firefox `extensions.json`, browser policy registry keys | Sideloaded extension with wide permissions, force-installed extension on an unmanaged PC |
+| Tamper | hosts file, WinINet and WinHTTP proxy, PAC URL, `ROOT` certificate stores | Popular domains redirected, unexpected proxy, non-Microsoft root certificate added recently |
+| Drivers | `EnumDeviceDrivers`, kernel driver services, boot options, Device Guard WMI | Test signing on, integrity checks off, unsigned or recently added drivers, memory integrity off (info) |
+| Reputation (opt-in) | Defender on-demand file scan, CIRCL hashlookup, VirusTotal with the user's own key | Hash known bad, hash known good (reduces other findings' confidence) |
+
+## Privileges
+
+- Bilby runs as the signed-in user (`asInvoker`). Most checks work without admin.
+- Checks that need admin (other users' processes, some service details, `MSFT_MpThreatDetection` on some builds, driver boot options) report `NeedsAdmin` rather than failing silently.
+- "Check more deeply" relaunches Bilby elevated through a normal UAC prompt, after the user presses a clearly labelled button. There's no background service and no persistent elevated component.
+
+## Frontend and IPC
+
+See ADR 0002. In short:
+
+- `app/ui/index.html` is the only page. It loads `app.css` and `app.js` from the app bundle. No CDN, no remote content.
+- Screens and fragments are rendered in Rust with Askama (auto-escaping on) and returned as HTML strings from Tauri commands. `app.js` swaps them into the page and wires buttons to commands. Target size for `app.js` is under 300 lines.
+- `withGlobalTauri: true` exposes `window.__TAURI__.core.invoke`, so there's no `@tauri-apps/api` npm package.
+- Strict CSP: `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`. No inline scripts or styles.
+- The Tauri capability file grants only `core:default` and the app's own commands. No shell, fs, http or opener plugins. Network calls for opt-in reputation are made from Rust, never from the webview.
+
+## Online checks (opt-in)
+
+Off by default. When on:
+
+- Only SHA-256 hashes leave the machine, never files, file names or paths.
+- Each lookup service is a separate switch with a plain-English description of who receives the hash.
+- A VirusTotal key is the user's own and is stored in Windows Credential Manager, never in a config file.
+- The scan screen says "Online checks: off" or names the services in use.
+- Local first: "Ask Defender to scan this file" uses `MpCmdRun.exe -Scan -ScanType 3 -File <path>` and needs no network.
+
+## Fixes
+
+See ADR 0003 and the Safe fixes milestone. Every fix:
+
+1. Is offered only on a finding that supports it.
+2. Shows a confirmation with what will change, in plain words, and how to undo it.
+3. Writes a journal entry to `%LOCALAPPDATA%\Bilby\journal.jsonl` before acting, with enough data to undo.
+4. Prefers the mechanism Windows itself uses (for example the `StartupApproved` registry values Task Manager uses to disable startup apps) so undo also works from Windows settings.
+5. Never deletes. Files are handed to Defender or moved to Bilby's quarantine folder with a restore record.
+
+## Reports
+
+- HTML: one self-contained file, inline CSS, no JavaScript, no remote resources. Opens in any browser.
+- PDF: generated from the same HTML. See the Report export milestone for the method.
+- Hostname, user name and full paths under the user profile are replaced with placeholders unless the user ticks "Include my computer and user name".
+
+## Local data
+
+`%LOCALAPPDATA%\Bilby\`:
+
+- `settings.json`: online check switches, theme, text size.
+- `suppressions.json`: rule id plus subject for each "I know this one".
+- `journal.jsonl`: fix journal.
+- `quarantine\`: quarantined files and their restore records.
+- No scan history is kept unless the user saves a report.
+
+## Supply chain
+
+- `rust-toolchain.toml` pins an exact version (1.99.1 at the time of writing; bump deliberately).
+- `Cargo.lock` is committed. CI and release builds use `--locked`.
+- `cargo-deny` checks advisories, licences (allowlist: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Zlib, MPL-2.0 by exception only), bans duplicate major versions where practical, and allows only crates.io as a source.
+- `cargo-audit` runs on every PR and weekly.
+- GitHub Actions are pinned by commit SHA. Workflows run with `permissions: contents: read` unless a job needs more.
+- Dependabot opens weekly PRs for cargo and actions.
+- Crates are added only with a reason in the PR description.
+
+## macOS (later)
+
+Same core and UI. A `bilby-collect-macos` crate covers XProtect and Gatekeeper status, SIP, FileVault, running processes with code signing checks (`SecStaticCodeCheckValidity`), LaunchAgents and LaunchDaemons, login items, configuration profiles, proxy and hosts, and browser extensions. No Endpoint Security entitlement, so no live process events.
+
+## Accessibility and copy
+
+- WCAG 2.2 AA. Base text 18px, scalable to 200% without loss. Contrast 4.5:1 for text, 3:1 for UI parts. Targets at least 24 by 24 CSS pixels, main buttons much larger. Visible focus. Works with Narrator and NVDA. Respects reduced motion and Windows high contrast.
+- Colour is never the only signal. The traffic light always has an icon shape and words.
+- Copy rules are in `docs/copy-guide.md`. Calm, plain Australian English, no blame, no fear.

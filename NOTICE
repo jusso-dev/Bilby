@@ -1,0 +1,16 @@
+Bilby
+Copyright (c) 2026 Justin Middler. Licensed under the MIT licence (see LICENSE).
+
+Third-party code copied into this repository
+--------------------------------------------
+None at present.
+
+If any code is copied or adapted from System Informer
+(https://github.com/winsiderss/systeminformer), list the file here and keep
+the original notice:
+
+    Copyright (c) 2022 Winsider Seminars & Solutions, Inc.
+    Licensed under the MIT licence.
+
+Ideas taken from System Informer (no code copied) are recorded in
+docs/research/system-informer.md.
