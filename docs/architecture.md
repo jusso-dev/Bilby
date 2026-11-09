@@ -35,12 +35,17 @@ crates/
     src/snapshot.rs         SystemSnapshot: the raw facts collectors return
     src/rules/              one module per signal family, pure functions snapshot -> findings
     src/score.rs            findings -> traffic light
+    src/paths.rs            pure path normalisation and PathClass classification
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
     tests/fixtures/         JSON snapshots used by unit tests
   bilby-collect-windows/    #[cfg(windows)] collectors that fill a SystemSnapshot
-    src/sig.rs              Authenticode verification (embedded and catalog)
-    src/paths.rs            path classification
+    src/handle.rs           RAII file handle, read-only opens
+    src/sig.rs              Authenticode verification (embedded, then catalog SHA-256, then SHA-1)
+    src/paths.rs            fills bilby_core::paths::KnownFolders from Windows
+    src/hash.rs             streaming SHA-256, files over 512 MiB skipped
+    src/cache.rs            per-scan FileFacts cache keyed by (path, size, mtime)
+    src/files.rs            file_facts(): everything about one file in one call
     src/defender.rs         protection status and detections
     src/processes.rs
     src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
@@ -140,6 +145,14 @@ Overall light, worked out in `score.rs`:
 - If a whole check family failed or was skipped, the result can still be "Looks healthy" but the screen must say what wasn't checked.
 
 Examples of what earns each level are in `docs/signals.md`. A finding should only be `High` confidence when a clean machine essentially never produces it (for example Defender reporting an active threat, or a file named `lsass.exe` running from the Downloads folder).
+
+## Files, signatures and folders
+
+Most rules depend on three facts about a file, worked out once per scan by `bilby_collect_windows::files::file_facts` and cached by path, size and last-write time:
+
+- **Signature** (`SignatureStatus`): `Signed { publisher, issuer, kind, is_windows_component }`, `Unsigned`, `Invalid` (tampered), `Untrusted` (chain problem) or `Error` (couldn't check). The embedded signature is checked first, then the Windows catalogs, because most Windows files are catalog-signed. `is_windows_component` needs both a Microsoft root and the Windows System Component Verification EKU (`1.3.6.1.4.1.311.10.3.6`), so a third party with an ordinary Microsoft-issued certificate doesn't count. Revocation checks are off and URL retrieval is cache-only, so verifying never touches the network.
+- **Folder class** (`PathClass`) from `bilby_core::paths::classify`: pure string work over a `KnownFolders` the collector fills from Windows, so it's unit tested on any OS. The most specific folder wins (Temp inside `%LOCALAPPDATA%` is Temp).
+- **User-writable**: Temp, Downloads, Desktop, Documents, user app data and user app installs, Public, Recycle Bin, removable drives, and files directly in the `ProgramData` root.
 
 ## Signal families (Windows)
 

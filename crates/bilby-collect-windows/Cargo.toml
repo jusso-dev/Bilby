@@ -20,6 +20,23 @@ must_use_candidate = "allow"
 missing_errors_doc = "allow"
 undocumented_unsafe_blocks = "deny"
 
+[dependencies]
+bilby-core = { path = "../bilby-core" }
+
 [target.'cfg(windows)'.dependencies]
-# Features are added one at a time by the scan engine issues.
-windows = { version = "0.62.2", default-features = false }
+# Features are added one at a time by the scan engine issues. Each one is
+# here because something in src/ needs it.
+windows = { version = "0.62.2", default-features = false, features = [
+  "Win32_Foundation",                    # HANDLE, HRESULT, CloseHandle
+  "Win32_Security_WinTrust",             # WinVerifyTrust (sig.rs)
+  "Win32_Security_Cryptography",         # CertGetNameStringW, EKU (sig.rs)
+  "Win32_Security_Cryptography_Catalog", # CryptCATAdmin* (sig.rs)
+  "Win32_Security_Cryptography_Sip",     # needed by the WTHelper* signer lookups (sig.rs)
+  "Win32_Storage_FileSystem",            # CreateFileW, ReadFile, GetDriveTypeW
+  "Win32_System_SystemInformation",      # GetSystemWindowsDirectoryW and friends
+  "Win32_System_WindowsProgramming",     # DRIVE_REMOVABLE, DRIVE_REMOTE
+  "Win32_System_Com",                    # CoTaskMemFree for SHGetKnownFolderPath
+  "Win32_UI_Shell",                      # SHGetKnownFolderPath, FOLDERID_*
+] }
+sha2 = "0.10.9"
+time = { version = "0.3.55", default-features = false, features = ["std"] }
