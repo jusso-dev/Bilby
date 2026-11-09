@@ -1,0 +1,91 @@
+# Every word a person sees in Bilby. Rules: docs/copy-guide.md.
+# Checked by crates/bilby-core/tests/copy_lint.rs.
+# Variables use {name}. Values are inserted raw and escaped by the templates.
+
+[app]
+name = "Bilby"
+
+[home]
+heading = "Bilby"
+intro = "Bilby checks whether anything on your computer looks wrong. It only looks, it doesn't change anything."
+button = "Check my computer"
+
+[scan]
+heading = "Checking your computer"
+online_off = "Online checks: off"
+not_available = "Checking isn't available in this build yet."
+
+[results]
+placeholder = "{count} thing(s) to show. The full results screen comes later."
+
+[light.healthy]
+headline = "Looks healthy"
+sub = "We checked {count} things and nothing needs you."
+
+[light.worth_a_look]
+headline = "Worth a look"
+sub = "{n} thing(s) looked unusual. They're probably fine, but here's what to check."
+
+[light.needs_attention]
+headline = "Needs attention"
+sub = "We found something that looks like a real problem. Here's what to do next."
+
+[confidence]
+high = "We're confident about this."
+medium = "This is likely, but check first."
+low = "This might be nothing."
+
+[location]
+downloads = "your Downloads folder"
+temp = "a temporary folder"
+desktop = "your Desktop"
+documents = "your Documents folder"
+appdata = "a hidden folder in your user profile"
+windows = "Windows' own folder"
+program_files = "the Program Files folder"
+other = "an unusual folder"
+
+[check.skipped]
+online_off = "Online checks are switched off."
+
+[evidence]
+setting = "Setting"
+signature_age = "Virus definitions age"
+
+# Finding copy used by the demo reports. The scan engine issues replace and
+# extend these as each rule lands.
+[proc.masquerade]
+title = "A program is pretending to be part of Windows."
+what = "A file called {name} is running from {location}."
+why = "The real {name} only lives inside Windows' own folder, so this is a common trick."
+todo = "Ask Windows Security to scan it. Bilby can start that for you."
+
+[persist.run_key_unsigned]
+title = "A program starts by itself from an unusual folder."
+what = "{name} is set to start when you sign in. It's in {location} and has no digital signature (a seal that shows who made it)."
+why = "Most programs that start by themselves are installed properly and signed. This one isn't."
+todo = "Check whether you recognise it. If you don't, Bilby can stop it starting by itself, and you can undo that later."
+
+[persist.encoded_script]
+title = "A hidden script starts when you sign in."
+what = "A startup entry called {name} runs a PowerShell command that has been scrambled so it can't be read easily."
+why = "Normal programs rarely hide their startup commands like this."
+todo = "Ask someone you trust to look at it. Bilby can stop it starting by itself, and you can undo that later."
+
+[tamper.proxy_set]
+title = "Your web traffic goes through another computer."
+what = "Windows is set to send web traffic through {proxy}."
+why = "Some workplaces and security tools do this on purpose. Unwanted programs sometimes do it to watch what you browse."
+todo = "If you didn't set this up, Bilby can switch it off, and you can undo that later."
+
+[protection.signatures_stale]
+title = "Windows Security's virus definitions are out of date."
+what = "The last update was {days} days ago."
+why = "Old definitions can miss newer threats."
+todo = "Open Windows Security and check for updates."
+
+[drivers.memory_integrity_off]
+title = "Memory integrity is switched off."
+what = "This Windows Security feature blocks some harmful drivers. It's off on this computer."
+why = "Many computers ship with it off, so this is just for your information."
+todo = "Leave it, or open Windows Security to switch it on if your helper agrees."

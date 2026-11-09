@@ -33,7 +33,7 @@ Bilby's readers might be your nan, a busy parent or someone who has just been to
 
 ## Banned words in UI copy
 
-Checked by a test (see the copy issue): seamless, robust, cutting-edge, leverage, unlock, harness, empower, elevate, transform, journey, critical, urgent, infected (in headlines), hacker, compromised (main screens), the em dash character.
+Checked by `crates/bilby-core/tests/copy_lint.rs` (the `copy-lint` CI job), which also checks that this list matches its own: seamless, robust, cutting-edge, leverage, unlock, harness, empower, elevate, transform, journey, critical, urgent, infected (in headlines), hacker, compromised (main screens), the em dash character.
 
 ## Example finding
 
@@ -41,3 +41,16 @@ Checked by a test (see the copy issue): seamless, robust, cutting-edge, leverage
 > A file called svchost.exe is running from your Downloads folder. The real one only lives inside Windows' own folder, so this is a common trick.
 > **What to do:** Ask Windows Security to scan it. Bilby can start that for you.
 > We're confident about this.
+
+## Where copy lives
+
+Every user-facing string is in `crates/bilby-core/src/copy/en-AU.toml`. Code uses `copy::t("key")` or `copy::tf("key", &vars)`, and templates use `{{ "key"|t }}`. Each finding rule has `title`, `what`, `why` and `todo` under its own table. Placeholders look like `{name}`.
+
+The lint also rejects:
+
+- em dashes, and en dashes between words (en dashes are only for number ranges like 0–30)
+- exclamation marks and emojis
+- titles over 160 characters and other strings over 240
+- US spellings: color, organize, license, center, behavior, favorite, recognize
+- placeholders that aren't lower-case identifiers
+- keys used in code that aren't in the catalogue, and keys in the catalogue that nothing uses (unless listed in `RESERVED` in the lint, for screens still to come)

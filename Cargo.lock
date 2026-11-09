@@ -179,10 +179,12 @@ dependencies = [
 name = "bilby-core"
 version = "0.1.0"
 dependencies = [
+ "regex",
  "serde",
  "serde_json",
  "sha2",
  "time",
+ "toml 1.2.1+spec-1.1.0",
 ]
 
 [[package]]
