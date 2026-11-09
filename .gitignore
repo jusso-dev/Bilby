@@ -1,0 +1,6 @@
+/target/
+# Tauri regenerates these schemas on every build.
+/app/src-tauri/gen/
+.DS_Store
+Thumbs.db
+*.swp

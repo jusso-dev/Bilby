@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The main window. Core IPC only, plus Bilby's own commands. No shell, fs, http or opener access.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

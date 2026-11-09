@@ -14,7 +14,7 @@ Bilby is named after the bilby, a small Australian marsupial with big ears that 
 
 ## Status
 
-Early. Nothing is built yet. The plan lives in the [issues](https://github.com/jusso-dev/Bilby/issues) and [milestones](https://github.com/jusso-dev/Bilby/milestones). Windows comes first. macOS is a later milestone.
+Early. The app shell builds and opens a window, and nothing checks your computer yet. The plan lives in the [issues](https://github.com/jusso-dev/Bilby/issues) and [milestones](https://github.com/jusso-dev/Bilby/milestones). Windows comes first. macOS is a later milestone.
 
 ## What Bilby checks (Windows)
 
@@ -48,7 +48,19 @@ Read [docs/architecture.md](docs/architecture.md) for the design and [docs/resea
 
 ## Building
 
-Not yet. The scaffold issue sets this up. You'll need the Rust toolchain pinned in `rust-toolchain.toml` and the Tauri CLI installed with `cargo install tauri-cli --locked`.
+You'll need the Rust toolchain pinned in `rust-toolchain.toml` (rustup reads it for you) and the Tauri CLI:
+
+```
+cargo install tauri-cli --locked --version ^2.12
+cd app/src-tauri && cargo tauri dev     # opens the Bilby window
+cargo test --workspace --locked         # from the repository root
+```
+
+To check the Windows build from a Mac or Linux machine, Tauri needs a resource compiler. Put LLVM's `llvm-rc` on your `PATH` (on a Mac, `brew install llvm` and add `$(brew --prefix llvm)/bin`), then run:
+
+```
+cargo check --workspace --locked --target x86_64-pc-windows-msvc
+```
 
 ## Testing without real malware
 
