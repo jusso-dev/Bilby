@@ -90,3 +90,148 @@ pub struct DriverFacts {}
 /// Online lookup results. Filled in by the online checks issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ReputationFacts {}
+
+/// How a file's digital signature checked out.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SignatureStatus {
+    /// Validly signed and trusted.
+    Signed {
+        /// The signer's display name, for example `Microsoft Windows`.
+        publisher: String,
+        /// The signing certificate's issuer.
+        issuer: String,
+        /// Where the signature was found.
+        kind: SigKind,
+        /// Signed as part of Windows itself.
+        is_windows_component: bool,
+    },
+    /// No signature at all, embedded or in a catalog.
+    Unsigned,
+    /// A signature is present but doesn't match the file (tampered, bad digest).
+    Invalid {
+        /// Technical reason, for the helper view.
+        reason: String,
+    },
+    /// Signed, but the chain isn't trusted (untrusted root, expired, distrusted).
+    Untrusted {
+        /// Technical reason, for the helper view.
+        reason: String,
+    },
+    /// Couldn't check (access denied, file gone, not supported on this OS).
+    Error {
+        /// Technical reason, for the helper view.
+        reason: String,
+    },
+}
+
+impl SignatureStatus {
+    /// True for a valid, trusted signature.
+    pub fn is_signed(&self) -> bool {
+        matches!(self, Self::Signed { .. })
+    }
+
+    /// The publisher, if validly signed.
+    pub fn publisher(&self) -> Option<&str> {
+        match self {
+            Self::Signed { publisher, .. } => Some(publisher),
+            _ => None,
+        }
+    }
+}
+
+/// Where a valid signature was found.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SigKind {
+    /// Inside the file itself.
+    Embedded,
+    /// In a Windows catalog file that lists the file's hash.
+    Catalog,
+}
+
+/// What kind of folder a path is in. See `crate::paths::classify`.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum PathClass {
+    /// `%SystemRoot%\System32`, `SysWOW64`, `WinSxS` and drivers.
+    WindowsSystem,
+    /// The rest of `%SystemRoot%`.
+    Windows,
+    /// Both Program Files folders.
+    ProgramFiles,
+    /// `%ProgramFiles%\WindowsApps` (Store apps).
+    WindowsApps,
+    /// `%ProgramData%`.
+    ProgramData,
+    /// `%LOCALAPPDATA%\Programs` and known per-user app installs.
+    UserAppPrograms,
+    /// The rest of `%APPDATA%` and `%LOCALAPPDATA%`.
+    UserAppData,
+    /// `%TEMP%` and `%SystemRoot%\Temp`.
+    Temp,
+    /// The user's Downloads folder.
+    Downloads,
+    /// The user's Desktop.
+    Desktop,
+    /// The user's Documents folder.
+    Documents,
+    /// `C:\Users\Public`.
+    Public,
+    /// Any drive's `$Recycle.Bin`.
+    RecycleBin,
+    /// A removable drive (USB stick, SD card).
+    Removable,
+    /// A network share or mapped network drive.
+    Network,
+    /// Anywhere else.
+    Other,
+}
+
+impl PathClass {
+    /// Folders where an ordinary user (or a program running as them) can
+    /// write, so a file there could have been dropped without an installer.
+    /// `ProgramData` counts only for files directly in its root; see
+    /// `crate::paths::Classified::user_writable`.
+    pub fn user_writable(self) -> bool {
+        matches!(
+            self,
+            Self::Temp
+                | Self::Downloads
+                | Self::Desktop
+                | Self::Documents
+                | Self::UserAppData
+                | Self::UserAppPrograms
+                | Self::Public
+                | Self::RecycleBin
+                | Self::Removable
+        )
+    }
+}
+
+/// Facts about one file on disk.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct FileFacts {
+    /// The path as Windows reported it.
+    pub path: String,
+    /// Whether the file existed when checked.
+    pub exists: bool,
+    /// Size in bytes.
+    #[serde(default)]
+    pub size: Option<u64>,
+    /// Creation time (UTC).
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub created: Option<time::OffsetDateTime>,
+    /// Last-write time (UTC).
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub modified: Option<time::OffsetDateTime>,
+    /// Lower-case hex SHA-256. `None` if unread or over the size limit.
+    #[serde(default)]
+    pub sha256: Option<String>,
+    /// Digital signature.
+    pub signature: SignatureStatus,
+    /// Folder class.
+    pub class: PathClass,
+    /// Whether an ordinary user can write where this file lives.
+    pub user_writable: bool,
+}

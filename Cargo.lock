@@ -157,6 +157,9 @@ dependencies = [
 name = "bilby-collect-windows"
 version = "0.1.0"
 dependencies = [
+ "bilby-core",
+ "sha2",
+ "time",
  "windows",
 ]
 

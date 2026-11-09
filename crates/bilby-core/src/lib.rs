@@ -7,6 +7,7 @@
 pub mod copy;
 pub mod demo;
 pub mod model;
+pub mod paths;
 pub mod rules;
 pub mod score;
 pub mod snapshot;
