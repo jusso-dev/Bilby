@@ -118,13 +118,19 @@ pub fn collect(
             continue;
         };
         let binary_path = config.binary_path.unwrap_or_default();
-        let exists = |p: &str| std::path::Path::new(p).is_file();
+        // As for startup items: never open files on a network drive.
+        let exists = |p: &str| !super::is_network(p, folders) && std::path::Path::new(p).is_file();
+        let facts_for = |path: &str| {
+            if super::is_network(path, folders) {
+                crate::files::not_checked(path, folders, "on a network drive, not checked")
+            } else {
+                file_facts(path, folders, cache)
+            }
+        };
         let r = resolve(&binary_path, folders, &exists);
         let service_dll = if kind == ServiceKind::SharedProcess {
-            service_dll(&name).map(|p| {
-                let target = resolve(&format!("\"{p}\""), folders, &exists).target;
-                file_facts(&target, folders, cache)
-            })
+            service_dll(&name)
+                .map(|p| facts_for(&resolve(&format!("\"{p}\""), folders, &exists).target))
         } else {
             None
         };
@@ -133,7 +139,7 @@ pub fn collect(
             kind,
             start: config.start,
             running,
-            binary: (!r.target.is_empty()).then(|| file_facts(&r.target, folders, cache)),
+            binary: (!r.target.is_empty()).then(|| facts_for(&r.target)),
             host: r.via.map(|h| super::host_name(h).to_owned()),
             host_args: (!r.host_args.is_empty()).then_some(r.host_args),
             service_dll,
