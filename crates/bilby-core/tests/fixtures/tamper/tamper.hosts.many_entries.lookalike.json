@@ -1,0 +1,1138 @@
+{
+  "note": "150 entries: under the threshold.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "tamper": {
+      "hosts": {
+        "path": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+        "default_path": true,
+        "entries": [
+          {
+            "line": 22,
+            "ip": "127.0.0.1",
+            "names": [
+              "localhost"
+            ]
+          },
+          {
+            "line": 23,
+            "ip": "::1",
+            "names": [
+              "localhost"
+            ]
+          },
+          {
+            "line": 100,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads0.example.test"
+            ]
+          },
+          {
+            "line": 101,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads1.example.test"
+            ]
+          },
+          {
+            "line": 102,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads2.example.test"
+            ]
+          },
+          {
+            "line": 103,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads3.example.test"
+            ]
+          },
+          {
+            "line": 104,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads4.example.test"
+            ]
+          },
+          {
+            "line": 105,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads5.example.test"
+            ]
+          },
+          {
+            "line": 106,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads6.example.test"
+            ]
+          },
+          {
+            "line": 107,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads7.example.test"
+            ]
+          },
+          {
+            "line": 108,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads8.example.test"
+            ]
+          },
+          {
+            "line": 109,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads9.example.test"
+            ]
+          },
+          {
+            "line": 110,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads10.example.test"
+            ]
+          },
+          {
+            "line": 111,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads11.example.test"
+            ]
+          },
+          {
+            "line": 112,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads12.example.test"
+            ]
+          },
+          {
+            "line": 113,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads13.example.test"
+            ]
+          },
+          {
+            "line": 114,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads14.example.test"
+            ]
+          },
+          {
+            "line": 115,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads15.example.test"
+            ]
+          },
+          {
+            "line": 116,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads16.example.test"
+            ]
+          },
+          {
+            "line": 117,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads17.example.test"
+            ]
+          },
+          {
+            "line": 118,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads18.example.test"
+            ]
+          },
+          {
+            "line": 119,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads19.example.test"
+            ]
+          },
+          {
+            "line": 120,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads20.example.test"
+            ]
+          },
+          {
+            "line": 121,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads21.example.test"
+            ]
+          },
+          {
+            "line": 122,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads22.example.test"
+            ]
+          },
+          {
+            "line": 123,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads23.example.test"
+            ]
+          },
+          {
+            "line": 124,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads24.example.test"
+            ]
+          },
+          {
+            "line": 125,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads25.example.test"
+            ]
+          },
+          {
+            "line": 126,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads26.example.test"
+            ]
+          },
+          {
+            "line": 127,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads27.example.test"
+            ]
+          },
+          {
+            "line": 128,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads28.example.test"
+            ]
+          },
+          {
+            "line": 129,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads29.example.test"
+            ]
+          },
+          {
+            "line": 130,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads30.example.test"
+            ]
+          },
+          {
+            "line": 131,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads31.example.test"
+            ]
+          },
+          {
+            "line": 132,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads32.example.test"
+            ]
+          },
+          {
+            "line": 133,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads33.example.test"
+            ]
+          },
+          {
+            "line": 134,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads34.example.test"
+            ]
+          },
+          {
+            "line": 135,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads35.example.test"
+            ]
+          },
+          {
+            "line": 136,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads36.example.test"
+            ]
+          },
+          {
+            "line": 137,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads37.example.test"
+            ]
+          },
+          {
+            "line": 138,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads38.example.test"
+            ]
+          },
+          {
+            "line": 139,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads39.example.test"
+            ]
+          },
+          {
+            "line": 140,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads40.example.test"
+            ]
+          },
+          {
+            "line": 141,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads41.example.test"
+            ]
+          },
+          {
+            "line": 142,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads42.example.test"
+            ]
+          },
+          {
+            "line": 143,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads43.example.test"
+            ]
+          },
+          {
+            "line": 144,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads44.example.test"
+            ]
+          },
+          {
+            "line": 145,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads45.example.test"
+            ]
+          },
+          {
+            "line": 146,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads46.example.test"
+            ]
+          },
+          {
+            "line": 147,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads47.example.test"
+            ]
+          },
+          {
+            "line": 148,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads48.example.test"
+            ]
+          },
+          {
+            "line": 149,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads49.example.test"
+            ]
+          },
+          {
+            "line": 150,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads50.example.test"
+            ]
+          },
+          {
+            "line": 151,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads51.example.test"
+            ]
+          },
+          {
+            "line": 152,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads52.example.test"
+            ]
+          },
+          {
+            "line": 153,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads53.example.test"
+            ]
+          },
+          {
+            "line": 154,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads54.example.test"
+            ]
+          },
+          {
+            "line": 155,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads55.example.test"
+            ]
+          },
+          {
+            "line": 156,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads56.example.test"
+            ]
+          },
+          {
+            "line": 157,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads57.example.test"
+            ]
+          },
+          {
+            "line": 158,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads58.example.test"
+            ]
+          },
+          {
+            "line": 159,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads59.example.test"
+            ]
+          },
+          {
+            "line": 160,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads60.example.test"
+            ]
+          },
+          {
+            "line": 161,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads61.example.test"
+            ]
+          },
+          {
+            "line": 162,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads62.example.test"
+            ]
+          },
+          {
+            "line": 163,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads63.example.test"
+            ]
+          },
+          {
+            "line": 164,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads64.example.test"
+            ]
+          },
+          {
+            "line": 165,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads65.example.test"
+            ]
+          },
+          {
+            "line": 166,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads66.example.test"
+            ]
+          },
+          {
+            "line": 167,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads67.example.test"
+            ]
+          },
+          {
+            "line": 168,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads68.example.test"
+            ]
+          },
+          {
+            "line": 169,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads69.example.test"
+            ]
+          },
+          {
+            "line": 170,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads70.example.test"
+            ]
+          },
+          {
+            "line": 171,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads71.example.test"
+            ]
+          },
+          {
+            "line": 172,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads72.example.test"
+            ]
+          },
+          {
+            "line": 173,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads73.example.test"
+            ]
+          },
+          {
+            "line": 174,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads74.example.test"
+            ]
+          },
+          {
+            "line": 175,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads75.example.test"
+            ]
+          },
+          {
+            "line": 176,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads76.example.test"
+            ]
+          },
+          {
+            "line": 177,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads77.example.test"
+            ]
+          },
+          {
+            "line": 178,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads78.example.test"
+            ]
+          },
+          {
+            "line": 179,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads79.example.test"
+            ]
+          },
+          {
+            "line": 180,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads80.example.test"
+            ]
+          },
+          {
+            "line": 181,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads81.example.test"
+            ]
+          },
+          {
+            "line": 182,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads82.example.test"
+            ]
+          },
+          {
+            "line": 183,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads83.example.test"
+            ]
+          },
+          {
+            "line": 184,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads84.example.test"
+            ]
+          },
+          {
+            "line": 185,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads85.example.test"
+            ]
+          },
+          {
+            "line": 186,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads86.example.test"
+            ]
+          },
+          {
+            "line": 187,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads87.example.test"
+            ]
+          },
+          {
+            "line": 188,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads88.example.test"
+            ]
+          },
+          {
+            "line": 189,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads89.example.test"
+            ]
+          },
+          {
+            "line": 190,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads90.example.test"
+            ]
+          },
+          {
+            "line": 191,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads91.example.test"
+            ]
+          },
+          {
+            "line": 192,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads92.example.test"
+            ]
+          },
+          {
+            "line": 193,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads93.example.test"
+            ]
+          },
+          {
+            "line": 194,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads94.example.test"
+            ]
+          },
+          {
+            "line": 195,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads95.example.test"
+            ]
+          },
+          {
+            "line": 196,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads96.example.test"
+            ]
+          },
+          {
+            "line": 197,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads97.example.test"
+            ]
+          },
+          {
+            "line": 198,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads98.example.test"
+            ]
+          },
+          {
+            "line": 199,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads99.example.test"
+            ]
+          },
+          {
+            "line": 200,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads100.example.test"
+            ]
+          },
+          {
+            "line": 201,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads101.example.test"
+            ]
+          },
+          {
+            "line": 202,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads102.example.test"
+            ]
+          },
+          {
+            "line": 203,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads103.example.test"
+            ]
+          },
+          {
+            "line": 204,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads104.example.test"
+            ]
+          },
+          {
+            "line": 205,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads105.example.test"
+            ]
+          },
+          {
+            "line": 206,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads106.example.test"
+            ]
+          },
+          {
+            "line": 207,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads107.example.test"
+            ]
+          },
+          {
+            "line": 208,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads108.example.test"
+            ]
+          },
+          {
+            "line": 209,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads109.example.test"
+            ]
+          },
+          {
+            "line": 210,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads110.example.test"
+            ]
+          },
+          {
+            "line": 211,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads111.example.test"
+            ]
+          },
+          {
+            "line": 212,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads112.example.test"
+            ]
+          },
+          {
+            "line": 213,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads113.example.test"
+            ]
+          },
+          {
+            "line": 214,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads114.example.test"
+            ]
+          },
+          {
+            "line": 215,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads115.example.test"
+            ]
+          },
+          {
+            "line": 216,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads116.example.test"
+            ]
+          },
+          {
+            "line": 217,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads117.example.test"
+            ]
+          },
+          {
+            "line": 218,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads118.example.test"
+            ]
+          },
+          {
+            "line": 219,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads119.example.test"
+            ]
+          },
+          {
+            "line": 220,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads120.example.test"
+            ]
+          },
+          {
+            "line": 221,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads121.example.test"
+            ]
+          },
+          {
+            "line": 222,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads122.example.test"
+            ]
+          },
+          {
+            "line": 223,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads123.example.test"
+            ]
+          },
+          {
+            "line": 224,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads124.example.test"
+            ]
+          },
+          {
+            "line": 225,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads125.example.test"
+            ]
+          },
+          {
+            "line": 226,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads126.example.test"
+            ]
+          },
+          {
+            "line": 227,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads127.example.test"
+            ]
+          },
+          {
+            "line": 228,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads128.example.test"
+            ]
+          },
+          {
+            "line": 229,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads129.example.test"
+            ]
+          },
+          {
+            "line": 230,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads130.example.test"
+            ]
+          },
+          {
+            "line": 231,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads131.example.test"
+            ]
+          },
+          {
+            "line": 232,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads132.example.test"
+            ]
+          },
+          {
+            "line": 233,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads133.example.test"
+            ]
+          },
+          {
+            "line": 234,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads134.example.test"
+            ]
+          },
+          {
+            "line": 235,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads135.example.test"
+            ]
+          },
+          {
+            "line": 236,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads136.example.test"
+            ]
+          },
+          {
+            "line": 237,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads137.example.test"
+            ]
+          },
+          {
+            "line": 238,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads138.example.test"
+            ]
+          },
+          {
+            "line": 239,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads139.example.test"
+            ]
+          },
+          {
+            "line": 240,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads140.example.test"
+            ]
+          },
+          {
+            "line": 241,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads141.example.test"
+            ]
+          },
+          {
+            "line": 242,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads142.example.test"
+            ]
+          },
+          {
+            "line": 243,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads143.example.test"
+            ]
+          },
+          {
+            "line": 244,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads144.example.test"
+            ]
+          },
+          {
+            "line": 245,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads145.example.test"
+            ]
+          },
+          {
+            "line": 246,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads146.example.test"
+            ]
+          },
+          {
+            "line": 247,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads147.example.test"
+            ]
+          },
+          {
+            "line": 248,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads148.example.test"
+            ]
+          },
+          {
+            "line": 249,
+            "ip": "0.0.0.0",
+            "names": [
+              "ads149.example.test"
+            ]
+          }
+        ]
+      },
+      "proxy": {
+        "enabled": false,
+        "server": null,
+        "bypass": null,
+        "pac_url": null,
+        "listener": null
+      },
+      "winhttp_proxy": null,
+      "roots": [
+        {
+          "store": "machine",
+          "sha1": "cabd2a79a1076a31f21d253635cb039d4329a5e8",
+          "subject_cn": "ISRG Root X1",
+          "subject_o": null,
+          "issuer": "ISRG Root X1",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true
+        },
+        {
+          "store": "machine",
+          "sha1": "d4de20d05e66fc53fe1a50882c78db2852cae474",
+          "subject_cn": "Baltimore CyberTrust Root",
+          "subject_o": null,
+          "issuer": "Baltimore CyberTrust Root",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true
+        },
+        {
+          "store": "user",
+          "sha1": "cdd4eeae6000ac7f40c3802c171e30148030c072",
+          "subject_cn": "Microsoft Root Certificate Authority",
+          "subject_o": null,
+          "issuer": "Microsoft Root Certificate Authority",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true
+        }
+      ],
+      "microsoft_list_read": true,
+      "dns_servers": [
+        "192.168.1.1"
+      ],
+      "management": {
+        "managed": false,
+        "reasons": []
+      }
+    }
+  },
+  "expect": [],
+  "absent": [
+    "tamper.hosts.watch_domain",
+    "tamper.hosts.path_moved",
+    "tamper.hosts.many_entries",
+    "tamper.proxy.unexpected",
+    "tamper.proxy.pac_http",
+    "tamper.winhttp_proxy",
+    "tamper.root.known_bad",
+    "tamper.root.unknown",
+    "tamper.root.dev_tool"
+  ]
+}

@@ -732,9 +732,104 @@ pub struct Management {
     pub reasons: Vec<String>,
 }
 
-/// Hosts, proxy and certificates. Filled in by the tampering issue.
+/// Hosts file, proxy settings, root certificates and DNS servers.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct TamperFacts {}
+pub struct TamperFacts {
+    /// The hosts file.
+    #[serde(default)]
+    pub hosts: Option<HostsFacts>,
+    /// Per-user (WinINet) proxy.
+    #[serde(default)]
+    pub proxy: Option<ProxyFacts>,
+    /// Machine-wide (WinHTTP) proxy server, if one is set.
+    #[serde(default)]
+    pub winhttp_proxy: Option<String>,
+    /// Root certificates in the user and machine stores.
+    #[serde(default)]
+    pub roots: Vec<RootCert>,
+    /// Whether Microsoft's trusted root list could be read; if not, "not in
+    /// Microsoft's list" findings are less sure.
+    #[serde(default)]
+    pub microsoft_list_read: bool,
+    /// DNS servers per adapter. Shown to the helper, never a finding.
+    #[serde(default)]
+    pub dns_servers: Vec<String>,
+    /// Whether an organisation manages this computer (from #13's check).
+    #[serde(default)]
+    pub management: Management,
+}
+
+/// The hosts file and where Windows reads it from.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct HostsFacts {
+    /// Full path of the file Windows uses.
+    pub path: String,
+    /// Whether `DataBasePath` is Windows' default folder.
+    pub default_path: bool,
+    /// Every mapping in the file.
+    #[serde(default)]
+    pub entries: Vec<crate::hosts::HostsEntry>,
+}
+
+/// WinINet proxy settings for the current user.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ProxyFacts {
+    /// `ProxyEnable`.
+    pub enabled: bool,
+    /// `ProxyServer`.
+    #[serde(default)]
+    pub server: Option<String>,
+    /// `ProxyOverride`.
+    #[serde(default)]
+    pub bypass: Option<String>,
+    /// `AutoConfigURL` (a PAC file).
+    #[serde(default)]
+    pub pac_url: Option<String>,
+    /// The program listening on the proxy port, when the proxy is on this
+    /// computer.
+    #[serde(default)]
+    pub listener: Option<ProcessFact>,
+}
+
+/// Which certificate store a root was found in.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum RootStore {
+    /// The current user's `Root` store.
+    User,
+    /// The machine's `Root` store.
+    Machine,
+    /// Pushed by group policy.
+    GroupPolicy,
+    /// The machine's enterprise store.
+    Enterprise,
+}
+
+/// One trusted root certificate.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RootCert {
+    /// Where it was found.
+    pub store: RootStore,
+    /// SHA-1 thumbprint, lower-case hex.
+    pub sha1: String,
+    /// Subject common name.
+    #[serde(default)]
+    pub subject_cn: Option<String>,
+    /// Subject organisation.
+    #[serde(default)]
+    pub subject_o: Option<String>,
+    /// Issuer, as Windows displays it.
+    #[serde(default)]
+    pub issuer: Option<String>,
+    /// Start of validity, used as a stand-in for when it was added.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub not_before: Option<time::OffsetDateTime>,
+    /// End of validity.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub not_after: Option<time::OffsetDateTime>,
+    /// In Microsoft's trusted root program list.
+    pub in_microsoft_list: bool,
+}
 
 /// Drivers and boot settings. Filled in by the drivers issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]

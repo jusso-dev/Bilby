@@ -1,0 +1,71 @@
+# Domains that should never be redirected by the hosts file.
+# Used by tamper.hosts.watch_domain. Each name also covers its subdomains.
+# Lines starting "## " start a group; the group sets how sure the finding is.
+
+## banking
+# Redirecting a bank's site is how fake login pages steal banking details.
+# Australia's big four and other common banks.
+commbank.com.au
+netbank.com.au
+anz.com
+anz.com.au
+westpac.com.au
+nab.com.au
+stgeorge.com.au
+bankofmelbourne.com.au
+banksa.com.au
+ing.com.au
+macquarie.com.au
+bendigobank.com.au
+suncorp.com.au
+ubank.com.au
+
+## government
+# myGov, the ATO and Services Australia hold tax, Centrelink and Medicare
+# details, and are common targets for fake sites.
+my.gov.au
+ato.gov.au
+servicesaustralia.gov.au
+centrelink.gov.au
+medicare.gov.au
+
+## payments
+# Payment and account sites: a redirect here is used to steal cards or
+# take over accounts.
+paypal.com
+afterpay.com
+apple.com
+icloud.com
+
+## email
+# Email and sign-in: whoever controls your email can reset every other
+# password.
+google.com
+gmail.com
+outlook.com
+live.com
+microsoft.com
+microsoftonline.com
+office.com
+yahoo.com
+
+## updates and security
+# Windows Update and security software. Blocking these stops protection
+# updating, which harmful programs do on purpose. Some privacy tools also
+# block a few of them, so a block to 0.0.0.0 here is less sure.
+windowsupdate.com
+update.microsoft.com
+wdcp.microsoft.com
+wd.microsoft.com
+smartscreen.microsoft.com
+norton.com
+mcafee.com
+avast.com
+avg.com
+kaspersky.com
+eset.com
+bitdefender.com
+malwarebytes.com
+trendmicro.com
+sophos.com
+webroot.com

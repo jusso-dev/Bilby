@@ -1,0 +1,31 @@
+# Root certificates known to be dangerous: their private keys were made
+# public, so anyone can use them to fake any website. Used by
+# tamper.root.known_bad.
+#
+# Every thumbprint here must come from a primary source (the vendor, or
+# Microsoft, CISA or CERT advisories), cited next to it. If a thumbprint
+# can't be verified, the entry is left out.
+#
+# Superfish (Lenovo, 2015) is left out: neither CISA alert TA15-051A nor
+# CERT VU#529496 gives a thumbprint, only the name "Superfish, Inc.", and no
+# primary source with one was found (checked 10-11-2026). Bilby matches it by
+# subject instead; see `known_bad_subjects`.
+
+[[root]]
+name = "eDellRoot (eDellCert)"
+sha1 = "98a04e4163357790c4a79e6d713ff0af51fe6927"
+source = "Microsoft Security Advisory 3119884 (30-11-2015), certificate 'eDellCert', https://learn.microsoft.com/en-us/security-updates/securityadvisories/2015/3119884"
+vendor = "Dell Foundation Services, 2015"
+
+[[root]]
+name = "DSDTestProvider"
+sha1 = "02c2d931062d7b1dc2a5c7f5f0685064081fb221"
+source = "Microsoft Security Advisory 3119884 (30-11-2015), https://learn.microsoft.com/en-us/security-updates/securityadvisories/2015/3119884; CERT VU#925497"
+vendor = "Dell System Detect, 2015"
+
+# Subjects that identify a known-bad root when no verified thumbprint exists.
+# Matched against the certificate's subject common name, exactly.
+[[subject]]
+name = "Superfish, Inc."
+source = "CISA alert TA15-051A (20-02-2015): the root 'is issued to \"Superfish, Inc.\"', https://www.cisa.gov/news-events/alerts/2015/02/20/lenovo-superfish-adware-vulnerable-https-spoofing"
+vendor = "Lenovo with Superfish VisualDiscovery, 2015"

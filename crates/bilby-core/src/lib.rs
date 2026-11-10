@@ -9,6 +9,7 @@ pub mod cim;
 pub mod cmdline;
 pub mod copy;
 pub mod demo;
+pub mod hosts;
 pub mod model;
 pub mod net;
 pub mod paths;
