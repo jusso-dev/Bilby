@@ -569,7 +569,9 @@ fn hosted_badly(host: Option<&str>, host_args: Option<&str>, target: Option<&Fil
         Some("powershell") => {
             writable || encoded_powershell(&format!("powershell {}", host_args.unwrap_or_default()))
         }
-        Some("cmd" | "rundll32" | "script_host") => writable,
+        // cmd /c isn't listed: what it runs is checked by the user-writable
+        // rules, so the same file isn't flagged twice.
+        Some("rundll32" | "script_host") => writable,
         Some("mshta" | "regsvr32") => writable || target.is_some_and(|t| is_url(&t.path)),
         _ => false,
     }
