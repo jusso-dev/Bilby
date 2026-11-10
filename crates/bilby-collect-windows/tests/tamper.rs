@@ -34,6 +34,7 @@ fn tamper_collector_runs() {
     println!("proxy {:?}", t.proxy);
     println!("winhttp {:?}", t.winhttp_proxy);
     println!("dns servers {:?}", t.dns_servers);
+    println!("computer name {:?}", t.computer_name);
     println!(
         "roots {} microsoft list read {}",
         t.roots.len(),
@@ -49,8 +50,8 @@ fn tamper_collector_runs() {
         .collect();
     for r in &outside {
         println!(
-            "  outside list: {:?} {} {:?} {:?}",
-            r.store, r.sha1, r.subject_cn, r.subject_o
+            "  outside list: {:?} {} {:?} {:?} serial {:?} ca {:?} issuer {:?} from {:?}",
+            r.store, r.sha1, r.subject_cn, r.subject_o, r.serial, r.is_ca, r.issuer, r.not_before
         );
     }
 

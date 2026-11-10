@@ -17,15 +17,17 @@ use windows::Win32::Networking::WinHttp::{
     WINHTTP_PROXY_INFO, WinHttpGetDefaultProxyConfiguration,
 };
 use windows::Win32::Security::Cryptography::{
-    CERT_CONTEXT, CERT_NAME_ATTR_TYPE, CERT_NAME_ISSUER_FLAG, CERT_NAME_SIMPLE_DISPLAY_TYPE,
-    CERT_OPEN_STORE_FLAGS, CERT_QUERY_ENCODING_TYPE, CERT_SHA1_HASH_PROP_ID,
-    CERT_SHA256_HASH_PROP_ID, CERT_STORE_OPEN_EXISTING_FLAG, CERT_STORE_PROV_SYSTEM_W,
-    CERT_STORE_READONLY_FLAG, CERT_SYSTEM_STORE_CURRENT_USER, CERT_SYSTEM_STORE_LOCAL_MACHINE,
+    CERT_BASIC_CONSTRAINTS2_INFO, CERT_CONTEXT, CERT_INFO, CERT_NAME_ATTR_TYPE,
+    CERT_NAME_ISSUER_FLAG, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_OPEN_STORE_FLAGS,
+    CERT_QUERY_ENCODING_TYPE, CERT_SHA1_HASH_PROP_ID, CERT_SHA256_HASH_PROP_ID,
+    CERT_STORE_OPEN_EXISTING_FLAG, CERT_STORE_PROV_SYSTEM_W, CERT_STORE_READONLY_FLAG,
+    CERT_SYSTEM_STORE_CURRENT_USER, CERT_SYSTEM_STORE_LOCAL_MACHINE,
     CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE_ID, CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY_ID,
-    CERT_SYSTEM_STORE_LOCATION_SHIFT, CertCloseStore, CertCreateCTLContext,
-    CertEnumCertificatesInStore, CertFreeCTLContext, CertGetCertificateContextProperty,
-    CertGetNameStringW, CertOpenStore, HCERTSTORE, PKCS_7_ASN_ENCODING, X509_ASN_ENCODING,
-    szOID_COMMON_NAME, szOID_ORGANIZATION_NAME,
+    CERT_SYSTEM_STORE_LOCATION_SHIFT, CRYPT_INTEGER_BLOB, CertCloseStore, CertCreateCTLContext,
+    CertEnumCertificatesInStore, CertFindExtension, CertFreeCTLContext,
+    CertGetCertificateContextProperty, CertGetNameStringW, CertOpenStore, CryptDecodeObject,
+    HCERTSTORE, PKCS_7_ASN_ENCODING, X509_ASN_ENCODING, X509_BASIC_CONSTRAINTS2,
+    szOID_BASIC_CONSTRAINTS2, szOID_COMMON_NAME, szOID_ORGANIZATION_NAME,
 };
 use windows::Win32::System::Registry::{
     HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, KEY_WOW64_64KEY, REG_SAM_FLAGS,
@@ -83,6 +85,7 @@ pub fn collect(
             roots,
             microsoft_list_read,
             dns_servers: dns_servers(),
+            computer_name: std::env::var("COMPUTERNAME").ok(),
             management,
         },
         checks,
@@ -300,6 +303,49 @@ fn thumbprint<const N: usize>(cert: *const CERT_CONTEXT, prop: u32) -> Option<St
     Some(hex(&hash[..(size as usize).min(N)]))
 }
 
+/// Serial number as hex, most significant byte first (Windows stores it
+/// least significant first).
+fn serial(blob: &CRYPT_INTEGER_BLOB) -> String {
+    if blob.pbData.is_null() {
+        return String::new();
+    }
+    // SAFETY: the blob points at cbData bytes inside the certificate.
+    let raw = unsafe { std::slice::from_raw_parts(blob.pbData, blob.cbData as usize) };
+    let be: Vec<u8> = raw.iter().rev().copied().collect();
+    hex(&be)
+}
+
+/// The basic constraints CA flag, if the certificate has the extension.
+fn is_ca(info: &CERT_INFO) -> Option<bool> {
+    if info.rgExtension.is_null() {
+        return None;
+    }
+    // SAFETY: rgExtension holds cExtension entries.
+    let exts = unsafe { std::slice::from_raw_parts(info.rgExtension, info.cExtension as usize) };
+    // SAFETY: searching the slice above for the extension's OID.
+    let ext = unsafe { CertFindExtension(szOID_BASIC_CONSTRAINTS2, exts).as_ref() }?;
+    if ext.Value.pbData.is_null() {
+        return None;
+    }
+    // SAFETY: the extension's encoded value.
+    let bytes = unsafe { std::slice::from_raw_parts(ext.Value.pbData, ext.Value.cbData as usize) };
+    let mut decoded = CERT_BASIC_CONSTRAINTS2_INFO::default();
+    let mut size = u32::try_from(size_of::<CERT_BASIC_CONSTRAINTS2_INFO>()).ok()?;
+    // SAFETY: decodes into a struct of exactly the size given.
+    unsafe {
+        CryptDecodeObject(
+            X509_ASN_ENCODING,
+            X509_BASIC_CONSTRAINTS2,
+            bytes,
+            0,
+            Some((&raw mut decoded).cast()),
+            &raw mut size,
+        )
+    }
+    .ok()?;
+    Some(decoded.fCA.as_bool())
+}
+
 fn roots(microsoft: &HashSet<String>) -> Vec<RootCert> {
     let stores = [
         (CERT_SYSTEM_STORE_CURRENT_USER, RootStore::User),
@@ -341,6 +387,8 @@ fn roots(microsoft: &HashSet<String>) -> Vec<RootCert> {
                 not_before: info.and_then(|i| crate::processes::from_filetime(i.NotBefore)),
                 not_after: info.and_then(|i| crate::processes::from_filetime(i.NotAfter)),
                 sha256: thumbprint::<32>(cert, CERT_SHA256_HASH_PROP_ID),
+                serial: info.map(|i| serial(&i.SerialNumber)),
+                is_ca: info.and_then(is_ca),
                 sha1: sha,
             });
         }

@@ -754,6 +754,10 @@ pub struct TamperFacts {
     /// DNS servers per adapter. Shown to the helper, never a finding.
     #[serde(default)]
     pub dns_servers: Vec<String>,
+    /// This computer's name, to recognise certificates Windows made for
+    /// itself (Remote Desktop, `WinRM`).
+    #[serde(default)]
+    pub computer_name: Option<String>,
     /// Whether an organisation manages this computer (from #13's check).
     #[serde(default)]
     pub management: Management,
@@ -822,6 +826,14 @@ pub struct RootCert {
     /// SHA-256 of the certificate, lower-case hex.
     #[serde(default)]
     pub sha256: Option<String>,
+    /// Serial number, lower-case hex, most significant byte first.
+    #[serde(default)]
+    pub serial: Option<String>,
+    /// The basic constraints extension's CA flag. `Some(false)` means the
+    /// certificate can't vouch for any other site, only itself. `None` when
+    /// the extension is missing (old roots often lack it).
+    #[serde(default)]
+    pub is_ca: Option<bool>,
     /// Subject common name.
     #[serde(default)]
     pub subject_cn: Option<String>,
