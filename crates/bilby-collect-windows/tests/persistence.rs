@@ -100,4 +100,53 @@ fn persistence_collector_runs() {
         p.winlogon.as_ref().is_some_and(|w| w.userinit.is_some()),
         "Userinit readable"
     );
+
+    // Services and tasks (#10).
+    let drivers = p
+        .services
+        .iter()
+        .filter(|s| s.kind == bilby_core::snapshot::ServiceKind::Driver)
+        .count();
+    let with_dll = p
+        .services
+        .iter()
+        .filter(|s| s.service_dll.is_some())
+        .count();
+    let task_actions: usize = p.tasks.iter().map(|t| t.actions.len()).sum();
+    println!(
+        "services: {} ({drivers} drivers, {with_dll} with a ServiceDll), tasks: {} with {task_actions} actions",
+        p.services.len(),
+        p.tasks.len()
+    );
+    assert!(p.services.len() >= 100, "at least 100 services");
+    assert!(p.tasks.len() >= 50, "at least 50 tasks");
+    assert!(start.elapsed().as_secs() < 20, "issue #10 limit is 20 s");
+
+    // WMI subscriptions (#11). Runner test steps run as admin, so
+    // root\subscription is readable, and a clean image has nothing to flag.
+    println!("wmi subscriptions: {}", p.wmi.len());
+    for w in &p.wmi {
+        println!(
+            "  wmi {} {} {:?} bound to {} filter(s)",
+            w.namespace,
+            w.name,
+            w.consumer,
+            w.filters.len()
+        );
+    }
+    let wmi_status = collected
+        .checks
+        .iter()
+        .find(|c| c.id == "persistence.wmi")
+        .map(|c| &c.status);
+    assert_eq!(
+        wmi_status,
+        Some(&CheckStatus::Ran),
+        "admin runner can read WMI"
+    );
+    let wmi_findings = findings
+        .iter()
+        .filter(|f| f.rule_id.starts_with("persist.wmi."))
+        .count();
+    assert_eq!(wmi_findings, 0, "clean runner should have no WMI findings");
 }
