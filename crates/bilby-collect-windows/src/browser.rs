@@ -392,6 +392,11 @@ fn shortcuts(folders: &KnownFolders) -> Vec<BrowserShortcut> {
     }
     let mut out = Vec::new();
     for (root, recursive) in roots {
+        // Folder redirection can put the Desktop or Start Menu on a share.
+        // Never touch the network during a scan.
+        if crate::persistence::is_network(&root.to_string_lossy(), folders) {
+            continue;
+        }
         let mut files = Vec::new();
         lnk_files(&root, recursive, 0, &mut files);
         for lnk in files {

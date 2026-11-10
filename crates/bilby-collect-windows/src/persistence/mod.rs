@@ -182,7 +182,7 @@ pub(crate) fn fill_target(item: &mut StartupItem, folders: &KnownFolders) {
 }
 
 /// UNC paths and mapped network drives.
-pub(crate) fn is_network(path: &str, folders: &KnownFolders) -> bool {
+pub fn is_network(path: &str, folders: &KnownFolders) -> bool {
     bilby_core::paths::classify(path, folders).class == bilby_core::snapshot::PathClass::Network
 }
 

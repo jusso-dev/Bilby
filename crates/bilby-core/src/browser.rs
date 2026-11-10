@@ -291,17 +291,25 @@ pub fn forcelist_entry(value: &str) -> (String, Option<String>) {
     }
 }
 
-/// Is this the Chrome Web Store's or Edge Add-ons' own update service?
+/// Is this the browser's own store? Chromium update services must match
+/// exactly. Firefox `install_url`s are download links, so any `https` URL
+/// on `addons.mozilla.org` itself (not a look-alike host) counts.
 pub fn official_update_url(url: Option<&str>) -> bool {
     // No URL in a forcelist entry means the browser's own store.
     let Some(url) = url else { return true };
-    let lower = url.to_ascii_lowercase();
-    [
+    let lower = url.trim().to_ascii_lowercase();
+    if [
         "https://clients2.google.com/service/update2/crx",
         "https://edge.microsoft.com/extensionwebstorebase/v1/crx",
     ]
     .iter()
     .any(|u| lower == *u)
+    {
+        return true;
+    }
+    lower
+        .strip_prefix("https://addons.mozilla.org")
+        .is_some_and(|rest| rest.is_empty() || rest.starts_with('/'))
 }
 
 /// What's suspicious in a browser shortcut's arguments, if anything.
