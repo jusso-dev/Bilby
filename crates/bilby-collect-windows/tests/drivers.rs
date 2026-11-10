@@ -53,7 +53,15 @@ fn drivers_collector_runs() {
         ci & CI_ENABLED != 0,
         "code integrity enforced on the runner"
     );
-    assert!(ci & CI_TESTSIGN == 0, "test signing off on the runner");
+    // GitHub's windows-latest image boots with TESTSIGNING (seen in
+    // SystemStartOptions and flag 0x02), so test signing isn't assumed off:
+    // the rule must report exactly what the flags say.
+    let test_signing = ci & CI_TESTSIGN != 0
+        || d.boot.start_options.as_deref().is_some_and(|s| {
+            s.split_whitespace()
+                .any(|w| w.eq_ignore_ascii_case("TESTSIGNING"))
+        });
+    println!("test signing on the runner: {test_signing}");
 
     let persistence = persistence::collect(&folders, &cache).facts;
     let snap = SystemSnapshot {
@@ -71,8 +79,16 @@ fn drivers_collector_runs() {
             f.rule_id, f.severity, f.confidence, f.subject
         );
     }
+    assert_eq!(
+        findings.iter().any(|f| f.rule_id == "drivers.test_signing"),
+        test_signing,
+        "drivers.test_signing matches the code integrity flags"
+    );
+    // Apart from the runner's own test-signing setting, a clean image has
+    // no driver finding sure enough to change the light.
     let counted: Vec<_> = findings
         .iter()
+        .filter(|f| f.rule_id != "drivers.test_signing")
         .filter(|f| f.severity > Severity::Info && f.confidence >= MIN_CONFIDENCE_TO_COUNT)
         .map(|f| (&f.rule_id, &f.subject))
         .collect();

@@ -108,11 +108,22 @@ fn loaded_paths(folders: &KnownFolders) -> Vec<String> {
         }
         let raw = String::from_utf16_lossy(&buf[..n.min(buf.len())]);
         let path = win32_path(&raw, folders);
+        if is_crash_dump_copy(&path) {
+            continue;
+        }
         if !out.contains(&path) {
             out.push(path);
         }
     }
     out
+}
+
+/// Crash dump drivers (`dump_diskdump.sys`, `dump_storvsc.sys`, ...) are
+/// in-memory copies of the storage drivers, renamed with a `dump_` prefix.
+/// They're loaded but have no file of their own, so they can't be checked.
+pub fn is_crash_dump_copy(path: &str) -> bool {
+    let name = path.rsplit(['\\', '/']).next().unwrap_or(path);
+    name.len() > 5 && name[..5].eq_ignore_ascii_case("dump_")
 }
 
 /// `\SystemRoot\System32\...`, `\??\C:\...` and `\Windows\...` to a
@@ -211,6 +222,20 @@ fn as_u32(v: &Variant) -> Option<u32> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn crash_dump_copies_are_recognised() {
+        assert!(is_crash_dump_copy(
+            r"C:\Windows\System32\Drivers\dump_diskdump.sys"
+        ));
+        assert!(is_crash_dump_copy(
+            r"C:\Windows\System32\drivers\DUMP_storvsc.sys"
+        ));
+        assert!(!is_crash_dump_copy(
+            r"C:\Windows\System32\drivers\dumpfve.sys"
+        ));
+        assert!(!is_crash_dump_copy(r"C:\Windows\System32\drivers\disk.sys"));
+    }
 
     #[test]
     fn driver_paths_become_win32_paths() {
