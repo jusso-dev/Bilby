@@ -336,10 +336,21 @@ fn management() -> Management {
     )
     .is_some_and(|k| {
         k.subkeys().iter().any(|sub| {
-            k.sub(sub, KEY_WOW64_64KEY)
-                .and_then(|s| s.value("ProviderID"))
-                .and_then(|d| d.text().map(|t| !t.trim().is_empty()))
-                .unwrap_or(false)
+            let Some(s) = k.sub(sub, KEY_WOW64_64KEY) else {
+                return false;
+            };
+            let text = |n: &str| s.value(n).and_then(|d| d.text().map(str::to_owned));
+            let state = match s.value("EnrollmentState") {
+                Some(Data::Dword(v)) => Some(v),
+                _ => None,
+            };
+            // Windows keeps its own enrolment records on unmanaged PCs
+            // too; only a real organisation's enrolment counts.
+            bilby_core::browser::real_mdm_enrollment(&bilby_core::browser::Enrollment {
+                provider_id: text("ProviderID"),
+                discovery_url: text("DiscoveryServiceFullURL"),
+                state,
+            })
         })
     });
     if enrolled {

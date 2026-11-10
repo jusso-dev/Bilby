@@ -322,3 +322,41 @@ pub fn shortcut_flags(arguments: &str) -> Vec<&'static str> {
     }
     out
 }
+
+/// One subkey of `HKLM\SOFTWARE\Microsoft\Enrollments`.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Enrollment {
+    /// `ProviderID`.
+    pub provider_id: Option<String>,
+    /// `DiscoveryServiceFullURL`: where the device enrolled.
+    pub discovery_url: Option<String>,
+    /// `EnrollmentState`.
+    pub state: Option<u32>,
+}
+
+/// Windows' own enrolment records, present on unmanaged PCs too. Seen on a
+/// windows-2025 runner (10-11-2026) that wasn't enrolled in any MDM.
+const BUILT_IN_PROVIDERS: &[&str] = &["Deploy Authority", "Cloud Authority", "Local Authority"];
+
+/// Is this a real enrolment in an organisation's device management?
+///
+/// It needs a provider that isn't one of Windows' built-in ones, a
+/// discovery URL (the server the device enrolled with), and, if a state is
+/// recorded, state 1 (enrolled). Requiring the URL errs towards "not
+/// managed". A work PC that's also Entra or domain joined is still caught
+/// by those checks. This is based on what the runner showed, not on a
+/// documented contract: Microsoft doesn't document these registry values.
+pub fn real_mdm_enrollment(e: &Enrollment) -> bool {
+    let provider = e.provider_id.as_deref().map(str::trim).unwrap_or_default();
+    let url = e
+        .discovery_url
+        .as_deref()
+        .map(str::trim)
+        .unwrap_or_default();
+    !provider.is_empty()
+        && !BUILT_IN_PROVIDERS
+            .iter()
+            .any(|b| b.eq_ignore_ascii_case(provider))
+        && !url.is_empty()
+        && e.state.is_none_or(|s| s == 1)
+}

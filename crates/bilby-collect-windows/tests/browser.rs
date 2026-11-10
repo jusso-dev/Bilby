@@ -49,6 +49,14 @@ fn browser_collector_runs() {
         println!("  shortcut {} {} [{}]", s.browser, s.path, s.arguments);
     }
     print_enrollments();
+    // GitHub's runners aren't enrolled in an organisation's MDM: their
+    // Enrollments key only holds Windows' built-in providers (Deploy,
+    // Cloud and Local Authority). Those must not count as managed.
+    assert!(
+        !b.management.reasons.iter().any(|r| r == "mdm enrolled"),
+        "built-in enrolment records must not count as MDM: {:?}",
+        b.management
+    );
 
     assert_eq!(
         collected.status,
@@ -91,10 +99,11 @@ fn print_enrollments() {
                 .map(|d| format!("{d:?}"))
         };
         println!(
-            "  enrollment {sub}: ProviderID {:?} EnrollmentType {:?} EnrollmentState {:?}",
+            "  enrollment {sub}: ProviderID {:?} EnrollmentType {:?} EnrollmentState {:?} DiscoveryServiceFullURL set: {}",
             get("ProviderID"),
             get("EnrollmentType"),
-            get("EnrollmentState")
+            get("EnrollmentState"),
+            get("DiscoveryServiceFullURL").is_some()
         );
     }
 }

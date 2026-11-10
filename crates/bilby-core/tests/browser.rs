@@ -1,5 +1,6 @@
 //! Browser profile parsing from fixture JSON. Runs on any OS.
 
+use bilby_core::browser::{Enrollment, real_mdm_enrollment};
 use bilby_core::browser::{
     broad_access, chromium_extension, chromium_profiles, chromium_settings, firefox_extensions,
     firefox_profiles, forcelist_entry, highest_version, manifest_permissions, official_update_url,
@@ -210,4 +211,43 @@ fn shortcut_arguments() {
     );
     assert_eq!(shortcut_flags("--profile-directory=\"Profile 1\"").len(), 0);
     assert_eq!(shortcut_flags("").len(), 0);
+}
+
+#[test]
+fn mdm_enrollment_needs_a_real_provider_and_server() {
+    let e = |provider: Option<&str>, url: Option<&str>, state: Option<u32>| Enrollment {
+        provider_id: provider.map(str::to_owned),
+        discovery_url: url.map(str::to_owned),
+        state,
+    };
+    // What a windows-2025 runner with no MDM has: built-in providers only.
+    for built_in in ["Deploy Authority", "Cloud Authority", "Local Authority"] {
+        assert!(
+            !real_mdm_enrollment(&e(Some(built_in), None, Some(1))),
+            "{built_in}"
+        );
+    }
+    assert!(!real_mdm_enrollment(&e(None, None, Some(1))));
+    // A provider but no server it enrolled with: not counted.
+    assert!(!real_mdm_enrollment(&e(
+        Some("MS DM Server"),
+        None,
+        Some(1)
+    )));
+    // A real enrolment: provider and discovery URL, enrolled.
+    let intune = e(
+        Some("MS DM Server"),
+        Some("https://enrollment.manage.microsoft.com/enrollmentserver/discovery.svc"),
+        Some(1),
+    );
+    assert!(real_mdm_enrollment(&intune));
+    // No state recorded still counts; any other state doesn't.
+    assert!(real_mdm_enrollment(&Enrollment {
+        state: None,
+        ..intune.clone()
+    }));
+    assert!(!real_mdm_enrollment(&Enrollment {
+        state: Some(0),
+        ..intune
+    }));
 }
