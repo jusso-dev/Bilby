@@ -80,6 +80,19 @@ pub(super) fn items() -> (Vec<StartupItem>, CheckStatus) {
 /// The shortcut's target and arguments as one quoted command line.
 /// `None` when the shortcut points at something that isn't a file.
 fn shortcut_command(lnk_path: &str) -> windows::core::Result<Option<String>> {
+    Ok(shortcut_target(lnk_path)?.map(|(target, args)| {
+        if args.is_empty() {
+            format!("\"{target}\"")
+        } else {
+            format!("\"{target}\" {args}")
+        }
+    }))
+}
+
+/// A shortcut's target path and arguments, read without resolving it
+/// (`Resolve` can rewrite the shortcut). `None` when it points at
+/// something that isn't a file, like a Store app.
+pub(crate) fn shortcut_target(lnk_path: &str) -> windows::core::Result<Option<(String, String)>> {
     // SAFETY: COM is initialised by the caller (init_com). ShellLink is an
     // in-process class.
     let shell_link: IShellLinkW =
@@ -110,9 +123,5 @@ fn shortcut_command(lnk_path: &str) -> windows::core::Result<Option<String>> {
     if target.trim().is_empty() {
         return Ok(None);
     }
-    Ok(Some(if args.is_empty() {
-        format!("\"{target}\"")
-    } else {
-        format!("\"{target}\" {args}")
-    }))
+    Ok(Some((target, args)))
 }

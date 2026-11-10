@@ -84,6 +84,14 @@ wmi_script = "Script"
 wmi_class = "Consumer type"
 boosted_by = "Raised by"
 more_connections = "More connections not shown"
+extension_id = "Extension ID"
+browser_profile = "Browser and profile"
+install_location = "Installed from"
+permission = "Can access"
+policy = "Set by policy"
+update_url = "Updates from"
+management = "Managed because"
+shortcut = "Shortcut"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -266,6 +274,42 @@ title = "An unsigned program is talking to a lot of internet addresses."
 what = "{name} has connections to {count} different internet addresses, and it has no digital signature."
 why = "Ordinary programs usually talk to a handful of addresses. This might be nothing, but it's worth a check."
 todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+
+[browser.sideloaded_wide]
+title = "A browser extension was added outside the store and can see every website."
+what = "{name} in {browser} wasn't installed from the browser's store, and it can read and change every website you visit."
+why = "Extensions added this way skip the store's checks. Some read passwords or change what you see on websites."
+todo = "If you don't recognise it, remove it from the browser's extensions page."
+
+[browser.forced_unmanaged]
+title = "A browser extension has been forced on, and you can't remove it."
+what = "A setting forces {name} on in {browser}. On a computer that isn't managed by an organisation, this is unusual."
+why = "Unwanted software sometimes uses this setting so its extension can't be removed."
+todo = "Ask someone you trust to look at this computer."
+
+[browser.forced_managed]
+title = "Your organisation installed this browser extension."
+what = "Your organisation installed {name} in {browser} on this computer."
+why = "Work and school computers often have extensions set by IT."
+todo = "Leave it. Ask your IT team if you have questions."
+
+[browser.shortcut_load_extension]
+title = "A browser shortcut has been changed to load an extension."
+what = "A shortcut that opens {browser} has been changed so it secretly loads an extension each time."
+why = "This is a known trick to get an extension around the browser's own controls."
+todo = "Ask someone you trust to look at this computer."
+
+[browser.firefox_unsigned]
+title = "A Firefox add-on hasn't been checked by Mozilla."
+what = "{name} in Firefox isn't signed by Mozilla."
+why = "Firefox normally only runs add-ons that Mozilla has checked."
+todo = "If you don't recognise it, remove it from Firefox's add-ons page."
+
+[browser.store_wide]
+title = "A store extension can see every website."
+what = "{name} in {browser} came from the browser's store and can read and change every website you visit."
+why = "Many useful extensions need this, like ad blockers and password managers. It's for your helper's information."
+todo = "Leave it if you use it."
 
 [tamper.proxy_set]
 title = "Your web traffic goes through another computer."

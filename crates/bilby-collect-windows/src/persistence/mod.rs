@@ -15,6 +15,7 @@ use bilby_core::snapshot::{PersistenceFacts, StartupItem, StartupSource};
 use crate::cache::FileCache;
 
 pub use run_keys::{appinit, ifeo, winlogon};
+pub(crate) use startup_folders::shortcut_target;
 
 /// What the startup collectors found, and how each part went.
 pub struct Collected {

@@ -159,6 +159,7 @@ version = "0.1.0"
 dependencies = [
  "bilby-core",
  "serde",
+ "serde_json",
  "sha2",
  "time",
  "windows",

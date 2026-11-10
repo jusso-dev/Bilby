@@ -4,6 +4,7 @@
 //! [`snapshot::SystemSnapshot`], the [`rules`] turn it into findings, and
 //! [`score::overall`] turns findings into a traffic light.
 
+pub mod browser;
 pub mod cim;
 pub mod cmdline;
 pub mod copy;

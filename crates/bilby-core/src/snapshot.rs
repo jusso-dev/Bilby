@@ -624,9 +624,113 @@ pub struct ConnectionFact {
     pub pid: u32,
 }
 
-/// Browser extensions. Filled in by the browser issue.
+/// Browser extensions, extension policies and browser shortcuts.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct BrowserFacts {}
+pub struct BrowserFacts {
+    /// Every extension in every profile that could be read.
+    #[serde(default)]
+    pub extensions: Vec<ExtensionFact>,
+    /// Extensions forced on by policy.
+    #[serde(default)]
+    pub policies: Vec<BrowserPolicy>,
+    /// Shortcuts that start a browser, with their arguments.
+    #[serde(default)]
+    pub shortcuts: Vec<BrowserShortcut>,
+    /// Whether an organisation manages this computer.
+    #[serde(default)]
+    pub management: Management,
+}
+
+/// How an extension was installed. Chromium's `ManifestLocation` values
+/// (`extensions/common/mojom/manifest.mojom`), plus Firefox's locations.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ExtensionSource {
+    /// From the browser's store (Chromium 1, Firefox `app-profile` signed).
+    Store,
+    /// Added by another program through prefs or the registry (2, 3, 6).
+    External,
+    /// Loaded from a folder in developer mode (4).
+    Unpacked,
+    /// Part of the browser itself (5, 10, Firefox built-in). Skipped.
+    Component,
+    /// Installed by policy (7, 9).
+    Policy,
+    /// `--load-extension` on the command line (8).
+    CommandLine,
+    /// Firefox `app-profile`: installed by the user.
+    FirefoxProfile,
+    /// Anything else.
+    Other,
+}
+
+/// One extension in one browser profile.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExtensionFact {
+    /// `chrome`, `edge`, `brave`, `vivaldi`, `opera` or `firefox`.
+    pub browser: String,
+    /// Profile folder name.
+    pub profile: String,
+    /// Extension id.
+    pub id: String,
+    /// Display name, with `__MSG_x__` resolved where possible.
+    #[serde(default)]
+    pub name: Option<String>,
+    /// Version.
+    #[serde(default)]
+    pub version: Option<String>,
+    /// How it was installed.
+    pub source: ExtensionSource,
+    /// Raw location as the browser stores it, for the helper view.
+    #[serde(default)]
+    pub raw_location: Option<String>,
+    /// Turned on.
+    pub enabled: bool,
+    /// Every permission, host permission and content script match.
+    #[serde(default)]
+    pub permissions: Vec<String>,
+    /// `update_url` from the manifest.
+    #[serde(default)]
+    pub update_url: Option<String>,
+    /// Firefox `signedState`.
+    #[serde(default)]
+    pub signed_state: Option<i64>,
+}
+
+/// One force-installed extension from policy.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct BrowserPolicy {
+    /// Browser the policy is for.
+    pub browser: String,
+    /// Where it came from, for example a registry key.
+    pub location: String,
+    /// Extension id.
+    pub id: String,
+    /// Update URL from the forcelist entry.
+    #[serde(default)]
+    pub update_url: Option<String>,
+}
+
+/// A shortcut that starts a browser.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct BrowserShortcut {
+    /// The `.lnk` file.
+    pub path: String,
+    /// Browser it starts.
+    pub browser: String,
+    /// Arguments on the shortcut.
+    pub arguments: String,
+}
+
+/// Whether an organisation manages this computer, and how Bilby knows.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Management {
+    /// Managed by an organisation.
+    pub managed: bool,
+    /// Why: `entra joined`, `domain joined`, `mdm enrolled`. Empty if not.
+    #[serde(default)]
+    pub reasons: Vec<String>,
+}
 
 /// Hosts, proxy and certificates. Filled in by the tampering issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]

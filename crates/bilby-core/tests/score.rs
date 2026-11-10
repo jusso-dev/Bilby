@@ -178,3 +178,16 @@ fn outbound_boost_adds_no_card_and_raises_confidence() {
     assert_eq!(conf(&a), Some(C::High));
     assert_eq!(conf(&b), Some(C::Medium));
 }
+
+/// Store extensions with broad access are Info and never move the light,
+/// however many there are.
+#[test]
+fn store_wide_never_moves_the_light() {
+    let f = |n: usize| {
+        let mut f = finding(n, S::Info, C::High);
+        f.rule_id = "browser.store_wide".into();
+        f
+    };
+    let findings: Vec<Finding> = (0..20).map(f).collect();
+    assert_eq!(overall(&findings, &HashSet::new()), Light::Healthy);
+}

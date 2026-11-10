@@ -39,6 +39,7 @@ crates/
     src/cim.rs              WMI datetime and OLE date parsing
     src/cmdline.rs          command line to target resolution (CreateProcess rules, hosts)
     src/net.rs              address classes and Windows table byte order
+    src/browser.rs          lenient parsing of Preferences, manifests, profiles.ini, extensions.json
     src/data/               windows_core_processes.toml (where each core Windows program belongs)
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
@@ -54,7 +55,7 @@ crates/
     src/processes.rs        Toolhelp snapshot, PROCESS_QUERY_LIMITED_INFORMATION only, WMI command lines
     src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
     src/network.rs          GetExtendedTcpTable/UdpTable, IPv4 and IPv6, owning pids, no lookups
-    src/browser.rs
+    src/browser.rs          Chromium and Firefox profiles, extension policies, join state, browser shortcuts
     src/tamper.rs           hosts, proxy, root certificates
     src/drivers.rs
   bilby-collect-macos/      later
