@@ -183,7 +183,11 @@ macro_rules! rule {
 }
 
 rule!(HostsWatch, "tamper.hosts.watch_domain", hosts_watch);
-rule!(HostsBlocked, "tamper.hosts.blocked_subdomain", hosts_blocked);
+rule!(
+    HostsBlocked,
+    "tamper.hosts.blocked_subdomain",
+    hosts_blocked
+);
 rule!(HostsMoved, "tamper.hosts.path_moved", hosts_moved);
 rule!(HostsMany, "tamper.hosts.many_entries", hosts_many);
 rule!(ProxyUnexpected, "tamper.proxy.unexpected", proxy_unexpected);

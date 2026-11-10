@@ -1,6 +1,15 @@
 <section class="home" aria-labelledby="home-heading"{% if autostart %} data-autostart{% endif %}>
-  <h1 id="home-heading">{{ "home.heading"|t }}</h1>
-  <button type="button" class="big-button" data-action="start-scan">{{ "home.button"|t }}</button>
-  <p id="scan-status" role="status">{% if let Some(m) = message %}{{ m }}{% endif %}</p>
-  <button type="button" data-action="cancel-scan" hidden>{{ "scan.cancel"|t }}</button>
+  <div class="hero">
+    {% include "_scene.html" %}
+    <p class="visually-hidden">{{ "home.mascot"|t }}</p>
+  </div>
+  <h1 id="home-heading" tabindex="-1">{{ "home.heading"|t }}</h1>
+  <p class="lead">{{ "home.intro"|t }}</p>
+  <button type="button" class="big-button" data-action="start-scan" data-autofocus>{{ "home.button"|t }}</button>
+  <p class="quiet promise"><svg class="lock" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10 V7 a4 4 0 0 1 8 0 V10"/></svg>{{ "home.private"|t }}</p>
+  <p id="scan-status" class="message" role="status">{% if let Some(m) = message %}{{ m }}{% endif %}</p>
+  {% if let Some(l) = last %}
+  <p class="last">{{ l }} <button type="button" class="link-button" data-action="see-results">{{ "home.see_results"|t }}</button></p>
+  {% endif %}
+  {% if not_admin %}<p class="quiet">{{ "home.admin_note"|t }}</p>{% endif %}
 </section>

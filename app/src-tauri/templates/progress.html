@@ -1,0 +1,22 @@
+<section class="progress-screen" aria-labelledby="progress-heading">
+  <div class="hero is-scanning">
+    {% include "_scene.html" %}
+  </div>
+  <h1 id="progress-heading" tabindex="-1">{{ "scan.heading"|t }}</h1>
+  <p class="lead">{{ "scan.intro"|t }}</p>
+  <progress id="scan-bar" max="{{ steps.len() }}" value="0" aria-label="{{ "scan.progress"|t }}"></progress>
+  <p id="scan-now" class="now" aria-hidden="true">&nbsp;</p>
+  <ol class="steps">
+    {% for s in steps %}
+    <li class="step" data-step="{{ s.id }}" data-state="waiting">
+      <span class="step-dot" aria-hidden="true"></span>
+      <span class="step-name">{{ s.name }}</span>
+      <span class="step-state">{{ "scan.state.waiting"|t }}</span>
+      <span class="step-slow" hidden>{{ "scan.slow"|t }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+  <p id="scan-live" class="visually-hidden" aria-live="polite"></p>
+  <template id="step-words"><span data-state="waiting">{{ "scan.state.waiting"|t }}</span><span data-state="running">{{ "scan.state.running"|t }}</span><span data-state="done">{{ "scan.state.done"|t }}</span><span data-state="needs-admin">{{ "scan.state.needs_admin"|t }}</span><span data-state="failed">{{ "scan.state.failed"|t }}</span><span data-state="skipped">{{ "scan.state.skipped"|t }}</span><span data-state="announce">{{ "scan.step_done"|t }}</span></template>
+  <button type="button" class="secondary" data-action="cancel-scan" data-autofocus>{{ "scan.cancel"|t }}</button>
+</section>

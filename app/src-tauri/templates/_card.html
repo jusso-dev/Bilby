@@ -1,0 +1,37 @@
+<article class="card" data-sev="{{ card.sev }}" data-family="{{ card.family_id }}" data-finding="{{ card.id }}">
+  <header class="card-head">
+    <span class="chip chip-{{ card.sev }}">{{ card.sev_word }}</span>
+    <span class="card-family">{{ card.family }}</span>
+  </header>
+  <h3 class="card-title">{{ card.title }}</h3>
+  {% if let Some(c) = card.changed %}<p class="changed">{{ c }}</p>{% endif %}
+  {% if !card.what.is_empty() %}<p><strong>{{ "results.what_found"|t }}.</strong> {{ card.what }}</p>{% endif %}
+  {% if !card.why.is_empty() %}<p><strong>{{ "results.why_matters"|t }}.</strong> {{ card.why }}</p>{% endif %}
+  {% if !card.todo.is_empty() %}<p><strong>{{ "results.what_to_do"|t }}.</strong> {{ card.todo }}</p>{% endif %}
+  <p class="confidence"><span class="dots dots-{{ card.conf_level }}" aria-hidden="true"><i></i><i></i><i></i></span>{{ card.confidence }}</p>
+  <div class="card-actions">
+    {% if let Some(a) = card.action %}
+    <button type="button" class="primary small" data-action="{{ a.kind }}" data-id="{{ card.id }}">{{ a.label }}</button>
+    {% endif %}
+    {% if ignorable %}
+    <button type="button" class="tertiary" data-action="ignore-ask" data-id="{{ card.id }}">{{ "results.know_this"|t }}</button>
+    {% else %}
+    <button type="button" class="tertiary" data-action="unignore" data-id="{{ card.id }}">{{ "results.unignore"|t }}</button>
+    {% endif %}
+  </div>
+  <div class="confirm" hidden>
+    <p>{{ "results.know_confirm"|t }}</p>
+    <button type="button" class="secondary small" data-action="ignore-yes" data-id="{{ card.id }}">{{ "results.know_yes"|t }}</button>
+    <button type="button" class="tertiary" data-action="ignore-no">{{ "results.know_no"|t }}</button>
+  </div>
+  <div class="talk-help" hidden><p>{{ "results.talk_help"|t }}</p></div>
+  <p class="card-message" role="status"></p>
+  <details class="detail">
+    <summary>{{ "results.more_detail"|t }}</summary>
+    <dl class="facts">
+      <dt>{{ "helper.rule"|t }}</dt><dd><code>{{ card.rule_id }}</code></dd>
+      {% for row in card.evidence %}<dt>{{ row.label }}</dt><dd>{{ row.value }}</dd>{% endfor %}
+    </dl>
+    <button type="button" class="link-button" data-action="open-rules">{{ "helper.details_link"|t }}</button>
+  </details>
+</article>
