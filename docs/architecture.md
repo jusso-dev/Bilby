@@ -178,7 +178,7 @@ Ids and copy keys are `String` rather than `&'static str` so reports and fixture
 
 ### Logging
 
-`tracing` with one file layer at `%LOCALAPPDATA%\Bilby\logsilby.log`, info level (debug with `BILBY_LOG=debug`), rotated at 5 MB with one old file kept as `bilby.log.1`. Every line passes through the scrubber. Bilby logs steps, check statuses and timings; never file hashes, settings values or keys.
+`tracing` with one file layer at `%LOCALAPPDATA%\Bilby\logs\bilby.log`, info level (debug with `BILBY_LOG=debug`), rotated at 5 MB with one old file kept as `bilby.log.1`. Every line passes through the scrubber. Bilby logs steps, check statuses and timings; never file hashes, settings values or keys.
 
 ## Scoring
 
@@ -276,7 +276,7 @@ See ADR 0003 and the Safe fixes milestone. Every fix:
 - `settings.json`: online check switches, theme, text size.
 - `suppressions.json`: rule id plus subject for each "I know this one".
 - `journal.jsonl`: fix journal.
-- `logsilby.log`: scrubbed log, 5 MB at most, plus one older file.
+- `logs\bilby.log`: scrubbed log, 5 MB at most, plus one older file.
 - `quarantine\`: quarantined files and their restore records.
 - No scan history is kept unless the user saves a report.
 

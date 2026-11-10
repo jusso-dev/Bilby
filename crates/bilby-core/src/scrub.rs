@@ -53,7 +53,15 @@ impl Scrubber {
             .iter()
             .map(|s| s.trim().trim_end_matches(['\\', '/']))
             .filter(|s| s.len() > 3)
-            .flat_map(|s| [folded(s), folded(&s.replace('\\', "/"))])
+            // As written, with forward slashes, and with doubled
+            // backslashes as `Debug` formatting writes them in log lines.
+            .flat_map(|s| {
+                [
+                    folded(s),
+                    folded(&s.replace('\\', "/")),
+                    folded(&s.replace('\\', r"\\")),
+                ]
+            })
             .collect();
         p.sort_by_key(|v| std::cmp::Reverse(v.len()));
         p.dedup();
@@ -192,6 +200,10 @@ mod tests {
             r"%USERPROFILE%\AppData\Local\Temp"
         );
         assert_eq!(s.text("C:/Users/runneradmin/x"), "%USERPROFILE%/x");
+        assert_eq!(
+            s.text(r#"Failed("C:\\Users\\runneradmin\\x")"#),
+            r#"Failed("%USERPROFILE%\\x")"#
+        );
         assert_eq!(s.text(r#""C:\Users\runneradmin""#), r#""%USERPROFILE%""#);
         // A longer name that starts the same is a different profile, but
         // its user-name part still isn't this user.

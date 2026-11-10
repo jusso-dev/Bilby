@@ -354,6 +354,22 @@ fn spawn(c: Arc<dyn Collector>, ctx: CollectCtx, tx: Sender<Done>) {
     }
 }
 
+/// Why connections weren't checked when the process list is missing.
+pub const NO_PROCESSES: &str =
+    "running programs couldn't be read, so connections couldn't be matched to them";
+/// Why the proxy check is incomplete without processes or connections.
+pub const NO_PROXY_OWNER: &str =
+    "proxy settings were read, but the program behind a local proxy couldn't be identified";
+
+/// Marks a check that ran without one of its inputs as failed, with why.
+fn incomplete(checks: &mut [Check], id: &str, why: &str) {
+    for c in checks.iter_mut().filter(|c| c.id == id) {
+        if c.status == CheckStatus::Ran {
+            c.status = CheckStatus::Failed(why.to_owned());
+        }
+    }
+}
+
 /// The state shown for a finished step.
 fn step_state(checks: &[Check]) -> StepState {
     let any = |f: fn(&CheckStatus) -> bool| checks.iter().any(|c| f(&c.status));
@@ -440,6 +456,10 @@ fn run_collectors(
     let mut checks = Vec::new();
     let mut timings = Vec::new();
     let mut cancelled = false;
+    // Whether the inputs network and tamper depend on actually arrived,
+    // not just whether their collectors finished.
+    let mut have_processes = false;
+    let mut have_connections = false;
 
     loop {
         // Start everything whose inputs are in.
@@ -532,16 +552,18 @@ fn run_collectors(
             step: id.to_owned(),
             millis: millis(began.elapsed()),
         });
-        let part = match result {
+        let mut part = match result {
             Ok(out) => {
                 match out.section {
                     Section::Protection(f) => snapshot.protection = Some(f),
                     Section::Processes(list) => {
+                        have_processes = true;
                         ctx.processes = Arc::new(list.clone());
                         snapshot.processes = Some(list);
                     }
                     Section::Persistence(f) => snapshot.persistence = Some(f),
                     Section::Network(f) => {
+                        have_connections = f.is_some();
                         ctx.connections = Arc::new(
                             f.as_ref()
                                 .map(|n| n.connections.clone())
@@ -562,6 +584,20 @@ fn run_collectors(
             }
             Err(e) => vec![check(id, family, e.into())],
         };
+        // Network keeps only rows owned by known programs, and tamper ties a
+        // local proxy to the program listening on it. Without those inputs
+        // the checks are incomplete, so say so rather than report Ran. The
+        // rest of tamper (hosts, roots) stands on its own.
+        let lost_processes = present.contains("processes") && !have_processes;
+        let lost_connections = present.contains("network") && !have_connections;
+        if id == "network" && lost_processes {
+            snapshot.network = None;
+            ctx.connections = Arc::new(Vec::new());
+            incomplete(&mut part, "network.connections", NO_PROCESSES);
+        }
+        if id == "tamper" && (lost_processes || lost_connections) {
+            incomplete(&mut part, "tamper.proxy", NO_PROXY_OWNER);
+        }
         progress(Progress {
             step: id,
             state: step_state(&part),
@@ -665,6 +701,54 @@ mod tests {
     collector!(Denied, "denied", Persistence, |_ctx| Err(
         CollectError::NeedsAdmin
     ));
+    collector!(BrokenProcesses, "processes", Processes, |_ctx| Err(
+        CollectError::Failed("snapshot failed".to_owned())
+    ));
+    collector!(FakeNetwork, "network", Network, |_ctx| Ok(Output {
+        section: Section::Network(Some(NetworkFacts::default())),
+        checks: vec![check(
+            "network.connections",
+            SignalFamily::Network,
+            CheckStatus::Ran
+        )],
+    }));
+    collector!(FakeTamper, "tamper", Tamper, |_ctx| Ok(Output {
+        section: Section::Tamper(TamperFacts::default()),
+        checks: vec![
+            check("tamper.hosts", SignalFamily::Tamper, CheckStatus::Ran),
+            check("tamper.proxy", SignalFamily::Tamper, CheckStatus::Ran),
+        ],
+    }));
+
+    #[test]
+    fn checks_that_lost_an_input_say_so() {
+        let c = run_collectors(
+            vec![
+                Arc::new(BrokenProcesses),
+                Arc::new(FakeNetwork),
+                Arc::new(FakeTamper),
+            ],
+            &opts(5, 10),
+            &|_| {},
+        );
+        let status = |id: &str| {
+            c.checks
+                .iter()
+                .find(|ch| ch.id == id)
+                .map(|ch| ch.status.clone())
+        };
+        assert_eq!(
+            status("network.connections"),
+            Some(CheckStatus::Failed(NO_PROCESSES.to_owned()))
+        );
+        assert_eq!(c.snapshot.network, None);
+        assert_eq!(
+            status("tamper.proxy"),
+            Some(CheckStatus::Failed(NO_PROXY_OWNER.to_owned()))
+        );
+        // The parts of tamper that don't need other collectors still stand.
+        assert_eq!(status("tamper.hosts"), Some(CheckStatus::Ran));
+    }
 
     fn opts(collector: u64, scan: u64) -> CollectOptions {
         CollectOptions {
