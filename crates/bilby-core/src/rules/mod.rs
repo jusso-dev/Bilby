@@ -2,6 +2,7 @@
 //! family. Every rule needs a row in `docs/signals.md` and fixtures for
 //! "fires" and "look-alike".
 
+pub mod network;
 pub mod persistence;
 pub mod processes;
 pub mod protection;
@@ -112,15 +113,24 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
     rules.extend(protection::rules());
     rules.extend(processes::rules());
     rules.extend(persistence::rules());
+    rules.extend(network::rules());
     rules
 }
 
-/// Runs every rule over a snapshot.
+/// Ids of rules that only change other findings and never make their own
+/// card. They still need a `docs/signals.md` row and copy for the helper
+/// view.
+pub const BOOST_RULES: &[&str] = &[network::OUTBOUND_FROM_SUSPICIOUS];
+
+/// Runs every rule over a snapshot, then the boost passes that adjust
+/// findings other rules made.
 pub fn evaluate_all(snap: &SystemSnapshot, ctx: &RuleContext) -> Vec<Finding> {
-    all_rules()
+    let mut findings: Vec<Finding> = all_rules()
         .iter()
         .flat_map(|rule| rule.evaluate(snap, ctx))
-        .collect()
+        .collect();
+    network::boost_outbound(snap, &mut findings);
+    findings
 }
 
 /// Builder for findings, so rules read as what they decide rather than

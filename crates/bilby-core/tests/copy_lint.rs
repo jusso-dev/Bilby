@@ -279,9 +279,14 @@ fn referenced_keys() -> BTreeSet<String> {
 
     let mut keys = BTreeSet::new();
     // Every rule's id is the copy prefix for its title, what, why and todo.
-    for rule in bilby_core::rules::all_rules() {
+    let ids = bilby_core::rules::all_rules()
+        .iter()
+        .map(|r| r.id())
+        .chain(bilby_core::rules::BOOST_RULES.iter().copied())
+        .collect::<Vec<_>>();
+    for id in ids {
         for part in ["title", "what", "why", "todo"] {
-            keys.insert(format!("{}.{part}", rule.id()));
+            keys.insert(format!("{id}.{part}"));
         }
     }
     for path in paths {

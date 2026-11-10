@@ -9,6 +9,7 @@ pub mod cmdline;
 pub mod copy;
 pub mod demo;
 pub mod model;
+pub mod net;
 pub mod paths;
 pub mod rules;
 pub mod score;
