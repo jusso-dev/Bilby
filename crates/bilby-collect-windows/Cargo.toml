@@ -62,3 +62,6 @@ serde_json = "1.0.154"
 
 [dev-dependencies]
 time = { version = "0.3.55", default-features = false, features = ["std", "macros"] }
+
+[target.'cfg(windows)'.dev-dependencies]
+windows = { version = "0.62.2", default-features = false, features = ["Win32_System_Registry"] }

@@ -48,6 +48,7 @@ fn browser_collector_runs() {
     for s in &b.shortcuts {
         println!("  shortcut {} {} [{}]", s.browser, s.path, s.arguments);
     }
+    print_enrollments();
 
     assert_eq!(
         collected.status,
@@ -66,6 +67,34 @@ fn browser_collector_runs() {
         println!(
             "  finding {} {:?}/{:?} {:?}",
             f.rule_id, f.severity, f.confidence, f.subject
+        );
+    }
+}
+
+/// What made the runner count as managed, for checking the MDM test.
+fn print_enrollments() {
+    use bilby_collect_windows::registry::Key;
+    use windows::Win32::System::Registry::{HKEY_LOCAL_MACHINE, KEY_WOW64_64KEY};
+    let Some(k) = Key::open(
+        HKEY_LOCAL_MACHINE,
+        r"SOFTWARE\Microsoft\Enrollments",
+        KEY_WOW64_64KEY,
+    ) else {
+        println!("  no Enrollments key");
+        return;
+    };
+    for sub in k.subkeys() {
+        let s = k.sub(&sub, KEY_WOW64_64KEY);
+        let get = |n: &str| {
+            s.as_ref()
+                .and_then(|s| s.value(n))
+                .map(|d| format!("{d:?}"))
+        };
+        println!(
+            "  enrollment {sub}: ProviderID {:?} EnrollmentType {:?} EnrollmentState {:?}",
+            get("ProviderID"),
+            get("EnrollmentType"),
+            get("EnrollmentState")
         );
     }
 }
