@@ -77,6 +77,12 @@ fn resolve_depth(
     if depth > 4 {
         return plain();
     }
+    // Only look through a host that's Windows' own copy. A `cmd.exe` in
+    // AppData isn't cmd: it's an unknown program, and it's what runs, so
+    // it must be the target the rules check.
+    if !in_windows_folder(&program, env) {
+        return plain();
+    }
     let found = match name {
         "rundll32" => Some(rundll32(rest, env)),
         "cmd" => cmd_inner(rest).map(|inner| {
@@ -395,6 +401,32 @@ fn strip_outer_quotes(s: &str) -> &str {
         return &s[1..s.len() - 1];
     }
     s
+}
+
+/// Is `path` directly in `System32`, `SysWOW64` or the Windows folder itself
+/// (where `explorer.exe` lives), or in their `WindowsPowerShell` folders?
+fn in_windows_folder(path: &str, env: &KnownFolders) -> bool {
+    let n = crate::paths::normalise(path, env);
+    let Some((dir, _)) = n.rsplit_once('\\') else {
+        return false;
+    };
+    let root = crate::paths::normalise(&env.system_root, env);
+    let mut trusted = vec![root.clone(), crate::paths::normalise(&env.system32, env)];
+    if let Some(wow) = &env.syswow64 {
+        trusted.push(crate::paths::normalise(wow, env));
+    }
+    let powershell: Vec<String> = trusted
+        .iter()
+        .skip(1)
+        .map(|d| format!(r"{d}\windowspowershell\v1.0"))
+        .collect();
+    trusted.extend(powershell);
+    // PowerShell 7 installs under Program Files.
+    trusted.push(format!(
+        r"{}\powershell\7",
+        crate::paths::normalise(&env.program_files, env)
+    ));
+    trusted.iter().any(|t| *t == dir)
 }
 
 fn file_name(path: &str) -> &str {

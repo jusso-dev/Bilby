@@ -340,6 +340,39 @@ fn resolution_table() {
 }
 
 #[test]
+fn hosts_outside_windows_folders_are_the_target() {
+    let env = env();
+    for (cmd, target) in [
+        (
+            r"C:\Users\Alex\AppData\Roaming\cmd.exe /c C:\Windows\System32\notepad.exe",
+            r"C:\Users\Alex\AppData\Roaming\cmd.exe",
+        ),
+        (
+            r"C:\Users\Public\rundll32.exe C:\Windows\System32\shell32.dll,Control_RunDLL",
+            r"C:\Users\Public\rundll32.exe",
+        ),
+        (
+            r#""C:\Users\Alex\Windows\System32\powershell.exe" -File C:\x.ps1"#,
+            r"C:\Users\Alex\Windows\System32\powershell.exe",
+        ),
+    ] {
+        let r = resolve(cmd, &env, &exists);
+        assert_eq!(r.target, target, "{cmd}");
+        assert_eq!(r.via, None, "{cmd}");
+    }
+    // Windows' own copies are looked through, including PowerShell's folder.
+    let r = resolve(
+        r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File C:\s\a.ps1",
+        &env,
+        &exists,
+    );
+    assert_eq!(
+        (r.target.as_str(), r.via),
+        (r"C:\s\a.ps1", Some(Host::PowerShell))
+    );
+}
+
+#[test]
 fn powershell_host_args_are_kept() {
     let r = resolve(
         "powershell.exe -NoProfile -EncodedCommand UwB0AGEA",

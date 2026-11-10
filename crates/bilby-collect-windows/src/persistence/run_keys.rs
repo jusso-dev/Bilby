@@ -226,7 +226,7 @@ pub fn winlogon() -> WinlogonValues {
 /// IFEO `Debugger` values and `SilentProcessExit` `MonitorProcess` values.
 pub fn ifeo(folders: &KnownFolders, cache: &FileCache) -> Vec<IfeoEntry> {
     let mut out = Vec::new();
-    let exists = |p: &str| std::path::Path::new(p).is_file();
+    let exists = |p: &str| !super::is_network(p, folders) && std::path::Path::new(p).is_file();
     for (sub, kind, value) in [
         (
             "Image File Execution Options",
@@ -253,10 +253,15 @@ pub fn ifeo(folders: &KnownFolders, cache: &FileCache) -> Vec<IfeoEntry> {
                 continue;
             };
             let target = resolve(&command, folders, &exists).target;
+            let facts = if super::is_network(&target, folders) {
+                crate::files::not_checked(&target, folders, "on a network drive, not checked")
+            } else {
+                file_facts(&target, folders, cache)
+            };
             out.push(IfeoEntry {
                 image,
                 kind,
-                target: Some(file_facts(&target, folders, cache)),
+                target: Some(facts),
                 command,
             });
         }

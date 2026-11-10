@@ -67,12 +67,23 @@ fn host_name(h: Host) -> &'static str {
 
 /// Works out what the command runs and gathers facts about that file.
 pub(crate) fn fill_target(item: &mut StartupItem, folders: &KnownFolders, cache: &FileCache) {
-    let exists = |p: &str| std::path::Path::new(p).is_file();
+    // Never touch the network during a scan: a slow or offline share would
+    // stall it, and checking a remote file means contacting that server.
+    let exists = |p: &str| !is_network(p, folders) && std::path::Path::new(p).is_file();
     let r = resolve(&item.command, folders, &exists);
     item.args = (!r.args.is_empty()).then_some(r.args);
     item.host = r.via.map(|h| host_name(h).to_owned());
     item.host_args = (!r.host_args.is_empty()).then_some(r.host_args);
-    item.target = Some(file_facts(&r.target, folders, cache));
+    item.target = Some(if is_network(&r.target, folders) {
+        crate::files::not_checked(&r.target, folders, "on a network drive, not checked")
+    } else {
+        file_facts(&r.target, folders, cache)
+    });
+}
+
+/// UNC paths and mapped network drives.
+pub(crate) fn is_network(path: &str, folders: &KnownFolders) -> bool {
+    bilby_core::paths::classify(path, folders).class == bilby_core::snapshot::PathClass::Network
 }
 
 /// A startup item from a registry value, before its target is filled in.

@@ -127,13 +127,15 @@ pub fn rules() -> Vec<Box<dyn Rule>> {
 fn run_unsigned(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
     p.items
         .iter()
-        // Hosts that just run the target as a file: their target is what
+        // Hosts that run the target as a local file: their target is what
         // matters. rundll32 and script hosts have their own rules, so a
-        // file isn't flagged twice; mshta and regsvr32 targets are URLs.
+        // file isn't flagged twice. mshta and regsvr32 URL targets don't
+        // exist as files, so the exists check below skips them (they're
+        // run_script_host's).
         .filter(|i| {
             matches!(
                 i.host.as_deref(),
-                None | Some("cmd" | "powershell" | "explorer" | "msiexec")
+                None | Some("cmd" | "powershell" | "explorer" | "msiexec" | "mshta" | "regsvr32")
             )
         })
         .filter_map(|item| {
@@ -264,9 +266,16 @@ fn winlogon_finding(id: &str, name: &str, key: &str, value: &str) -> Finding {
 fn is_default_shell(value: &str) -> bool {
     let v = norm(value.trim().trim_matches('"'));
     v == "explorer.exe"
-        || v.strip_suffix(r"\explorer.exe").is_some_and(|dir| {
-            dir.ends_with(r"\windows") || dir == "%systemroot%" || dir == "%windir%"
-        })
+        || v.strip_suffix(r"\explorer.exe")
+            .is_some_and(|dir| is_drive_windows(dir) || dir == "%systemroot%" || dir == "%windir%")
+}
+
+/// `x:\windows` exactly: the Windows folder at the root of a drive, not any
+/// folder that happens to be called Windows (`C:\Users\Alex\Windows`).
+fn is_drive_windows(dir: &str) -> bool {
+    dir.len() == r"c:\windows".len()
+        && dir.as_bytes()[0].is_ascii_alphabetic()
+        && dir[1..] == *r":\windows"
 }
 
 fn winlogon_shell(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
@@ -305,7 +314,8 @@ fn is_default_userinit(value: &str) -> bool {
     }
     let n = norm(v.trim_matches('"'));
     n == "userinit.exe"
-        || n.ends_with(r"\windows\system32\userinit.exe")
+        || n.strip_suffix(r"\system32\userinit.exe")
+            .is_some_and(is_drive_windows)
         || n == r"%systemroot%\system32\userinit.exe"
 }
 
@@ -334,8 +344,10 @@ const KNOWN_DEBUGGERS: &[&str] = &[
 ];
 
 fn known_debugger(e: &IfeoEntry) -> bool {
+    // Process Explorer and the Visual Studio debugger are Microsoft's, so a
+    // signature from anyone else under one of these names is a disguise.
     e.target.as_ref().is_some_and(|t| {
-        t.signature.is_signed()
+        t.signature.publisher() == Some("Microsoft Corporation")
             && KNOWN_DEBUGGERS
                 .iter()
                 .any(|k| norm(&t.path).ends_with(&format!(r"\{k}")))
@@ -413,6 +425,9 @@ mod tests {
             r"C:\Users\Alex\explorer.exe",
             "cmd.exe",
             r"C:\Windows\System32\explorer.exe\..\..\evil.exe",
+            // Any folder called Windows isn't the Windows folder.
+            r"C:\Users\Alex\Windows\explorer.exe",
+            r"D:\Stuff\Windows\explorer.exe",
         ] {
             assert!(!is_default_shell(bad), "{bad}");
         }
@@ -432,6 +447,7 @@ mod tests {
             r"C:\Windows\system32\userinit.exe,C:\Users\Public\x.exe,",
             r"C:\Users\Alex\userinit.exe,",
             r"C:\Windows\system32\userinit.exe, C:\x.exe",
+            r"C:\Users\Public\Windows\System32\userinit.exe,",
         ] {
             assert!(!is_default_userinit(bad), "{bad}");
         }

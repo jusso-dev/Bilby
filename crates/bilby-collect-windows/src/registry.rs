@@ -2,7 +2,7 @@
 //! and closed on drop. Nothing here can write.
 
 use time::OffsetDateTime;
-use windows::Win32::Foundation::{ERROR_NO_MORE_ITEMS, ERROR_SUCCESS, FILETIME};
+use windows::Win32::Foundation::{ERROR_SUCCESS, FILETIME};
 use windows::Win32::System::Registry::{
     HKEY, KEY_READ, REG_DWORD, REG_EXPAND_SZ, REG_MULTI_SZ, REG_SAM_FLAGS, REG_SZ, REG_VALUE_TYPE,
     RegCloseKey, RegEnumKeyExW, RegEnumValueW, RegOpenKeyExW, RegQueryInfoKeyW, RegQueryValueExW,
@@ -106,11 +106,11 @@ impl Key {
                     Some(&raw mut size),
                 )
             };
-            if rc == ERROR_NO_MORE_ITEMS {
-                break;
-            }
+            // Stop on anything but success. ERROR_NO_MORE_ITEMS is the
+            // normal end; any other error (key deleted mid-scan, bad
+            // handle) would repeat for every index.
             if rc != ERROR_SUCCESS {
-                continue;
+                break;
             }
             let value_name = String::from_utf16_lossy(&name[..name_len as usize]);
             if let Some(data) = self.value(&value_name) {
@@ -179,12 +179,11 @@ impl Key {
                     None,
                 )
             };
-            if rc == ERROR_NO_MORE_ITEMS {
+            // As in values(): stop on anything but success.
+            if rc != ERROR_SUCCESS {
                 break;
             }
-            if rc == ERROR_SUCCESS {
-                out.push(String::from_utf16_lossy(&name[..len as usize]));
-            }
+            out.push(String::from_utf16_lossy(&name[..len as usize]));
         }
         out
     }

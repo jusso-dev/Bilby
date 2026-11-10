@@ -39,7 +39,11 @@ pub(super) fn items() -> (Vec<StartupItem>, CheckStatus) {
             let full = path.to_string_lossy().into_owned();
             let command = if name.to_ascii_lowercase().ends_with(".lnk") {
                 match shortcut_command(&full) {
-                    Ok(c) => c,
+                    // Shortcuts to Store apps and shell items have no file
+                    // path. Nothing to check, and calling them "missing"
+                    // would be a false alarm.
+                    Ok(None) => continue,
+                    Ok(Some(c)) => c,
                     Err(e) => {
                         failed.push(format!("{name}: {}", e.message()));
                         continue;
@@ -74,7 +78,8 @@ pub(super) fn items() -> (Vec<StartupItem>, CheckStatus) {
 }
 
 /// The shortcut's target and arguments as one quoted command line.
-fn shortcut_command(lnk_path: &str) -> windows::core::Result<String> {
+/// `None` when the shortcut points at something that isn't a file.
+fn shortcut_command(lnk_path: &str) -> windows::core::Result<Option<String>> {
     // SAFETY: COM is initialised by the caller (init_com). ShellLink is an
     // in-process class.
     let shell_link: IShellLinkW =
@@ -102,9 +107,12 @@ fn shortcut_command(lnk_path: &str) -> windows::core::Result<String> {
         String::from_utf16_lossy(&b[..end])
     };
     let (target, args) = (text(&target), text(&args));
-    Ok(if args.is_empty() {
+    if target.trim().is_empty() {
+        return Ok(None);
+    }
+    Ok(Some(if args.is_empty() {
         format!("\"{target}\"")
     } else {
         format!("\"{target}\" {args}")
-    })
+    }))
 }

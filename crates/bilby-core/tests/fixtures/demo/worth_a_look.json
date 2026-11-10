@@ -14,7 +14,7 @@
         { "registry_value": { "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", "name": "Updater", "data": "C:\\Users\\<user>\\AppData\\Local\\Temp\\updater.exe" } },
         { "signature": { "status": "unsigned", "publisher": null } }
       ],
-      "next_step": { "fix": "disable_run_key" },
+      "next_step": { "fix": "disable_startup_item" },
       "subject": { "registry_value": "hkcu\\software\\microsoft\\windows\\currentversion\\run\\updater" }
     },
     {
