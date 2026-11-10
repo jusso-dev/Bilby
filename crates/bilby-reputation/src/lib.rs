@@ -52,8 +52,19 @@ impl RateLimiter {
 
     /// Waits until another call is allowed, then records it.
     pub fn wait(&mut self, now: impl Fn() -> Instant, sleep: impl Fn(Duration)) {
+        self.wait_until(now, sleep, None);
+    }
+
+    /// Like [`wait`](Self::wait), but gives up (returns false, records
+    /// nothing) rather than sleep past `deadline`.
+    pub fn wait_until(
+        &mut self,
+        now: impl Fn() -> Instant,
+        sleep: impl Fn(Duration),
+        deadline: Option<Instant>,
+    ) -> bool {
         if self.per_minute == 0 {
-            return;
+            return true;
         }
         loop {
             let t = now();
@@ -61,10 +72,14 @@ impl RateLimiter {
                 .retain(|s| t.saturating_duration_since(*s) < Duration::from_secs(60));
             if self.sent.len() < self.per_minute as usize {
                 self.sent.push(t);
-                return;
+                return true;
             }
             let oldest = self.sent[0];
-            sleep(Duration::from_secs(60).saturating_sub(t.saturating_duration_since(oldest)));
+            let pause = Duration::from_secs(60).saturating_sub(t.saturating_duration_since(oldest));
+            if deadline.is_some_and(|d| t + pause >= d) {
+                return false;
+            }
+            sleep(pause);
         }
     }
 }
@@ -78,8 +93,9 @@ pub struct Limits {
     pub vt_max: usize,
     /// VirusTotal requests a minute.
     pub vt_per_minute: u32,
-    /// Longest the whole online step may take. Lookups not done by then
-    /// are skipped, so a slow or blocked network can't stall a scan.
+    /// Longest the whole online step may take. No request starts after it,
+    /// and no rate-limit wait runs past it. A request already sent can
+    /// still take up to its own 10 second timeout.
     pub deadline: Duration,
     /// Network failures in a row before a service is given up for this
     /// scan.
@@ -133,8 +149,8 @@ pub fn check(
     if !settings.any() {
         return None;
     }
-    let started = Instant::now();
-    let in_time = || started.elapsed() < limits.deadline;
+    let deadline = Instant::now() + limits.deadline;
+    let in_time = || Instant::now() < deadline;
     let mut facts = ReputationFacts::default();
     let mut summary = Summary::default();
     let hashes: Vec<String> = hashes
@@ -190,7 +206,7 @@ pub fn check(
                 cache,
                 limits,
                 sleep,
-                &in_time,
+                deadline,
                 &mut facts,
                 &mut summary,
             ),
@@ -207,7 +223,7 @@ fn vt_lookups(
     cache: &Cache,
     limits: Limits,
     sleep: &dyn Fn(Duration),
-    in_time: &dyn Fn() -> bool,
+    deadline: Instant,
     facts: &mut ReputationFacts,
     summary: &mut Summary,
 ) {
@@ -217,15 +233,23 @@ fn vt_lookups(
         let result = if let Some(r) = cached {
             r
         } else {
-            if !in_time() || failures >= limits.max_failures_in_a_row {
-                summary
-                    .errors
-                    .push("VirusTotal: stopped early (slow or unreachable)".to_owned());
+            let stop = |summary: &mut Summary| {
+                summary.errors.push(
+                    "VirusTotal: stopped early (slow, unreachable or out of time)".to_owned(),
+                );
+            };
+            if Instant::now() >= deadline || failures >= limits.max_failures_in_a_row {
+                stop(summary);
                 break;
             }
-            if let Ok(mut l) = cache.vt_limiter.lock() {
+            let allowed = cache.vt_limiter.lock().is_ok_and(|mut l| {
                 l.get_or_insert_with(|| RateLimiter::new(limits.vt_per_minute))
-                    .wait(Instant::now, sleep);
+                    .wait_until(Instant::now, sleep, Some(deadline))
+            });
+            // Check again after any wait: never start a request late.
+            if !allowed || Instant::now() >= deadline {
+                stop(summary);
+                break;
             }
             summary.vt_sent += 1;
             match virustotal::lookup(http, key.expose(), h) {

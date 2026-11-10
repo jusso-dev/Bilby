@@ -386,3 +386,62 @@ fn a_bad_reply_doesnt_stop_virustotal_but_a_bad_key_does() {
     .unwrap();
     assert_eq!(summary.vt_sent, 1, "403 stops VirusTotal for the scan");
 }
+
+#[test]
+fn deadline_during_virustotal_pacing_sends_nothing_late() {
+    // Every hash is answered; the fifth would need a 60 second wait for the
+    // rate limit, which runs past a 30 second deadline.
+    let many: Vec<String> = (0..8).map(|i| format!("{i:064x}")).collect();
+    let mut http = Recorded::default();
+    for h in &many {
+        http = http.with(
+            bilby_reputation::virustotal::url(h),
+            404,
+            "vt_not_found.json",
+        );
+    }
+    let key = ApiKey::new("user-key").unwrap();
+    let limits = Limits {
+        deadline: Duration::from_secs(30),
+        ..Limits::default()
+    };
+    let slept = std::cell::Cell::new(Duration::ZERO);
+    let (_, summary) = check(
+        OnlineChecks {
+            circl: false,
+            virustotal: true,
+        },
+        &many,
+        Some(&key),
+        &http,
+        &Cache::default(),
+        limits,
+        &|d| slept.set(slept.get() + d),
+    )
+    .unwrap();
+    assert_eq!(summary.vt_sent, 4, "the first minute's four, then stop");
+    assert_eq!(
+        slept.get(),
+        Duration::ZERO,
+        "never sleeps past the deadline"
+    );
+    assert!(summary.errors.iter().any(|e| e.contains("out of time")));
+}
+
+#[test]
+fn limiter_refuses_to_wait_past_a_deadline() {
+    use std::time::Instant;
+    let t0 = Instant::now();
+    let mut rl = RateLimiter::new(1);
+    assert!(rl.wait_until(|| t0, |_| {}, Some(t0 + Duration::from_secs(5))));
+    assert!(!rl.wait_until(
+        || t0,
+        |_| panic!("must not sleep"),
+        Some(t0 + Duration::from_secs(5))
+    ));
+    assert!(rl.wait_until(
+        || t0 + Duration::from_secs(61),
+        |_| {},
+        Some(t0 + Duration::from_secs(120))
+    ));
+}
