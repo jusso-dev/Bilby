@@ -64,11 +64,27 @@ fn persistence_collector_runs() {
                     command, target, ..
                 } = a
                 {
+                    let meta = target.as_ref().map(|f| {
+                        let dir = std::path::Path::new(&f.path)
+                            .parent()
+                            .map(|d| d.to_path_buf());
+                        (
+                            std::fs::metadata(&f.path)
+                                .map(|m| m.len())
+                                .map_err(|e| e.to_string()),
+                            dir.map(|d| {
+                                std::fs::read_dir(&d)
+                                    .map(|r| r.count())
+                                    .map_err(|e| e.to_string())
+                            }),
+                        )
+                    });
                     println!(
-                        "  task {} | {command} -> {:?} exists {:?}",
+                        "  task {} | {command} -> {:?} exists {:?} metadata {:?}",
                         t.path,
                         target.as_ref().map(|f| &f.path),
-                        target.as_ref().map(|f| f.exists)
+                        target.as_ref().map(|f| f.exists),
+                        meta
                     );
                 }
             }
