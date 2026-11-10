@@ -277,4 +277,20 @@ pub struct ScanReport {
     pub machine: MachineSummary,
     /// The Bilby version that made the report.
     pub bilby_version: String,
+    /// True if Bilby ran as administrator ("Check more deeply").
+    #[serde(default)]
+    pub is_admin: bool,
+    /// How long each collector took, for the helper view.
+    #[serde(default)]
+    pub timings: Vec<Timing>,
+}
+
+/// How long one collector took.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Timing {
+    /// Collector id, for example `processes`.
+    pub step: String,
+    /// Wall-clock time in milliseconds. For a collector that timed out,
+    /// how long Bilby waited before giving up on it.
+    pub millis: u64,
 }

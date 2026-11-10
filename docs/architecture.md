@@ -36,6 +36,8 @@ crates/
     src/rules/              one module per signal family, pure functions snapshot -> findings
     src/settings.rs         OnlineChecks { circl, virustotal }, both off by default, booleans only
     src/score.rs            findings -> traffic light
+    src/engine.rs           snapshot -> report: rules, boosts, grouping, order, light
+    src/scrub.rs            removes user name, computer name, profile path and SIDs
     src/paths.rs            pure path normalisation and PathClass classification
     src/cim.rs              WMI datetime and OLE date parsing
     src/cmdline.rs          command line to target resolution (CreateProcess rules, hosts)
@@ -60,6 +62,8 @@ crates/
     src/network.rs          GetExtendedTcpTable/UdpTable, IPv4 and IPv6, owning pids, no lookups
     src/browser.rs          Chromium and Firefox profiles, extension policies, join state, browser shortcuts
     src/tamper.rs           hosts (DataBasePath), WinINet and WinHTTP proxy, read-only root stores, Microsoft's root list (EncodedCtl)
+    src/scan.rs             the orchestrator: Collector trait, threads, timeouts, cancel, progress, machine summary, scrubber
+    src/elevation.rs        own-token elevation check and the "Check more deeply" UAC relaunch
     src/drivers.rs          EnumDeviceDrivers paths, code integrity (NtQuerySystemInformation), DeviceGuard WMI, blocklist and Secure Boot values
   bilby-collect-macos/      later
   bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal); see docs/privacy.md
@@ -74,7 +78,9 @@ app/
     tauri.conf.json
     capabilities/default.json
     src/main.rs
-    src/commands.rs         the only IPC surface
+    src/commands.rs         the only IPC surface: render_home, start_scan, cancel_scan, scan_state, relaunch_elevated
+    src/scan.rs             one scan at a time, cancel switch, progress events
+    src/logging.rs          rotating, scrubbed log file
     templates/              Askama templates for screens and fragments
   ui/                       static frontend: index.html, app.css, app.js, fonts, icons
 docs/
@@ -92,13 +98,13 @@ docs/
 [Check my computer]
       |
       v
-commands::start_scan  --spawns-->  Orchestrator (tokio, one task per collector, timeouts)
+commands::start_scan  --spawn_blocking-->  scan::collect (one thread per collector, timeouts)
                                           |
                                           v
                          Collectors (Windows APIs, read-only) -> SystemSnapshot
                                           |
                                           v
-                         bilby-core rules (pure) -> Vec<Finding>
+                         engine::evaluate: rules, boosts, grouping, order (pure) -> Vec<Finding>
                                           |
                                           v
                          score::overall(&findings) -> Light { Healthy | WorthALook | NeedsAttention }
@@ -137,6 +143,8 @@ pub struct ScanReport {
     pub checked: Vec<Check>,            // every check: id, family, status Ran | Skipped(reason) | NeedsAdmin | Failed(reason)
     pub machine: MachineSummary,        // OS version, edition, arch; hostname and user only if the user opts in on export
     pub bilby_version: String,
+    pub is_admin: bool,                 // ran elevated ("Check more deeply")
+    pub timings: Vec<Timing>,           // per collector, in milliseconds, for the helper view
 }
 ```
 
@@ -145,6 +153,32 @@ Ids and copy keys are `String` rather than `&'static str` so reports and fixture
 ### Demo mode
 
 `bilby --demo <healthy|worth|attention>` (in development: `cargo tauri dev -- -- --demo attention`) makes the scan command send progress events for about three seconds and then return a fixed report from `crates/bilby-core/tests/fixtures/demo/`. The light is recomputed from the fixture's findings, so a fixture can't show a light it doesn't earn.
+
+## Scan orchestration
+
+`bilby_collect_windows::scan::collect(opts, progress)` runs every collector and returns a `Collection` (snapshot, checks, timings, `is_admin`, machine summary). `bilby_core::engine::evaluate(snapshot, ctx, meta)` turns that into a `ScanReport`. The app calls the first inside `tauri::async_runtime::spawn_blocking` so the window never waits on it.
+
+- **Collectors.** Each implements `Collector { id, family, run(&CollectCtx) -> Result<Output, CollectError> }`. `CollectError::{NeedsAdmin, Skipped, Failed}` maps to `CheckStatus`. Step ids are `protection`, `processes`, `persistence`, `network`, `browser`, `tamper` and `drivers`.
+- **Threads, not tasks.** Each collector runs on its own `std::thread` with COM initialised for that thread (MTA). A thread can be walked away from, which a hung COM or WMI call needs: the scan stops waiting and the thread's late result is dropped.
+- **Order.** Processes starts at once, alongside everything that doesn't need it. Network starts when processes is in (it keeps only rows owned by known pids). Tamper starts when processes, network and browser are in (it ties a local proxy to its listening program, and needs the device's management state).
+- **Timeouts.** 30 seconds per collector, from when it starts, and 120 seconds for the whole scan. A collector over its limit becomes `Failed("took too long")`.
+- **Cancel.** An `Arc<AtomicBool>`. The orchestrator checks it every 100 ms and returns at once. File checks (`files::file_facts`, which covers the signature and hash loops in processes, startup items and drivers) stop opening files once a scan is cancelled or has stopped waiting, so abandoned collectors finish quickly.
+- **Progress.** `scan-progress` events `{ step, state: running | done | skipped | needs-admin | failed, done, total, label }`. The label is the copy `scan.step.<id>`, worked out in Rust.
+- **Grouping.** `engine::group` folds findings about the same file into one: the program, the startup item that runs it (matched by its path evidence) and its connections. The most serious finding leads (severity, then confidence) and keeps its own severity, confidence and id, so grouping never makes the light worse. The rest add an `evidence.also_found` line naming their rule, then any evidence the lead doesn't have. Findings are then sorted by severity, then confidence.
+- **Admin.** `is_admin` comes from `GetTokenInformation(TokenElevation)` on Bilby's own token. When it's false the results screen offers "Check more deeply" (see Privileges).
+- **Timings.** Per collector, in the report and at debug level in the log. Target: a full scan under 60 seconds on a typical laptop and under 90 on a CI runner (release build). The CI `build-app` job prints the release `--dump-snapshot` timings.
+
+### Snapshot dump
+
+`bilby.exe --dump-snapshot <file>` runs every collector, scrubs the result with `bilby_core::scrub` and writes pretty JSON, without opening a window. It also writes `<file>.checks.json` with timings and check statuses. It's how fixtures and the clean baseline are made (docs/test-plan.md). CI runs it on `windows-latest` and fails if the runner's user or computer name appears in either file.
+
+### Scrubbing
+
+`bilby_core::scrub::Scrubber` replaces, in any case: the profile folder (long and 8.3 short form) with `%USERPROFILE%`; machine and account SIDs (`S-1-5-21-...`, Entra `S-1-12-1-...`) with `<sid>`; and the user name and computer name, as whole words, with `<user>` and `<computer>`. Well-known SIDs such as `S-1-5-18` are the same everywhere and stay. Dumps, logs and (later) saved reports use it.
+
+### Logging
+
+`tracing` with one file layer at `%LOCALAPPDATA%\Bilby\logsilby.log`, info level (debug with `BILBY_LOG=debug`), rotated at 5 MB with one old file kept as `bilby.log.1`. Every line passes through the scrubber. Bilby logs steps, check statuses and timings; never file hashes, settings values or keys.
 
 ## Scoring
 
@@ -196,8 +230,8 @@ Each family is one collector module and one rules module. Details and rule table
 ## Privileges
 
 - Bilby runs as the signed-in user (`asInvoker`). Most checks work without admin.
-- Checks that need admin (other users' processes, some service details, `MSFT_MpThreatDetection` on some builds, driver boot options) report `NeedsAdmin` rather than failing silently.
-- "Check more deeply" relaunches Bilby elevated through a normal UAC prompt, after the user presses a clearly labelled button. There's no background service and no persistent elevated component.
+- Checks that need admin (other users' processes, some service details, `MSFT_MpThreatDetection` on some builds, driver boot options, and the loaded driver list on Windows 11 24H2 and later, where `EnumDeviceDrivers` returns all-NULL addresses without SeDebugPrivilege) report `NeedsAdmin` rather than failing silently.
+- "Check more deeply" relaunches Bilby elevated through a normal UAC prompt, after the user presses a clearly labelled button. It's `ShellExecuteExW` with the `runas` verb on Bilby's own exe and `--deep-check`. If the user says no, the current window stays and shows a calm line. If yes, the current window closes and the elevated one starts a scan straight away. There's no background service and no persistent elevated component.
 
 ## Frontend and IPC
 
@@ -242,6 +276,7 @@ See ADR 0003 and the Safe fixes milestone. Every fix:
 - `settings.json`: online check switches, theme, text size.
 - `suppressions.json`: rule id plus subject for each "I know this one".
 - `journal.jsonl`: fix journal.
+- `logsilby.log`: scrubbed log, 5 MB at most, plus one older file.
 - `quarantine\`: quarantined files and their restore records.
 - No scan history is kept unless the user saves a report.
 

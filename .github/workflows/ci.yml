@@ -77,6 +77,11 @@ jobs:
       - name: Windows collector output
         if: runner.os == 'Windows'
         run: cargo test -p bilby-collect-windows --locked -- --nocapture --test-threads 1
+      # #17: a collector that hangs for a minute times out and the scan
+      # still finishes, with Failed("took too long") for it.
+      - name: Hung collector times out
+        if: runner.os == 'Windows'
+        run: cargo test -p bilby-collect-windows --locked --features slow-collector-test --test scan -- --nocapture --test-threads 1
       # #16: with every online switch off, a full scan makes no network
       # connections. The guard feature panics if the HTTP client is built.
       - name: No network with online checks off
@@ -115,6 +120,35 @@ jobs:
       - name: Build app
         working-directory: app/src-tauri
         run: cargo tauri build --no-bundle -- --locked
+      # #17: the release exe writes a scrubbed snapshot without opening a
+      # window. bilby.exe is a GUI program, so wait for it explicitly. Fails
+      # if the runner's user or computer name, or an account SID, is in
+      # either file.
+      - name: Dump snapshot
+        shell: pwsh
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP 'snapshot.json'
+          $p = Start-Process -FilePath target/release/bilby.exe -ArgumentList '--dump-snapshot', "`"$out`"" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "bilby.exe --dump-snapshot exited with $($p.ExitCode)" }
+          Get-Content "$out.checks.json"
+          $summary = Get-Content "$out.checks.json" | ConvertFrom-Json
+          if ($summary.took_ms -gt 90000) { Write-Output "::warning::full scan took $($summary.took_ms) ms, over the 90 second target" }
+          foreach ($name in @($env:USERNAME, $env:COMPUTERNAME)) {
+            $hits = Select-String -Path $out, "$out.checks.json" -Pattern $name -SimpleMatch
+            if ($hits) { $hits | Select-Object -First 5 | Out-String | Write-Output; throw "the snapshot contains the runner's user or computer name" }
+          }
+          $sids = Select-String -Path $out, "$out.checks.json" -Pattern 'S-1-5-21-\d|S-1-12-1-\d'
+          if ($sids) { throw "the snapshot contains $(@($sids).Count) account SID(s)" }
+          Copy-Item $out snapshot.json
+          Copy-Item "$out.checks.json" snapshot.json.checks.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: runner-snapshot
+          path: |
+            snapshot.json
+            snapshot.json.checks.json
+          retention-days: 7
+          if-no-files-found: error
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bilby-windows-x64

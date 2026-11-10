@@ -14,6 +14,24 @@ button = "Check my computer"
 heading = "Checking your computer"
 online_off = "Online checks: off"
 not_available = "Checking isn't available in this build yet."
+busy = "A check is already running."
+cancel = "Stop checking"
+cancelled = "Bilby stopped checking. Nothing was changed."
+
+[scan.step]
+protection = "Checking your antivirus"
+processes = "Looking at running programs"
+persistence = "Looking at programs that start by themselves"
+network = "Looking at network connections"
+browser = "Looking at browser extensions"
+tamper = "Checking your internet settings"
+drivers = "Checking drivers and start-up settings"
+
+[deep]
+intro = "Some things can only be checked with administrator permission. Windows will ask you first."
+button = "Check more deeply"
+declined = "That's fine. Bilby will keep checking without administrator permission, so a few things weren't checked."
+failed = "Bilby couldn't ask Windows for administrator permission. The check above still stands."
 
 [results]
 placeholder = "{count} thing(s) to show. The full results screen comes later."
@@ -83,6 +101,7 @@ wmi_engine = "Script language"
 wmi_script = "Script"
 wmi_class = "Consumer type"
 boosted_by = "Raised by"
+also_found = "Also found"
 more_connections = "More connections not shown"
 extension_id = "Extension ID"
 browser_profile = "Browser and profile"

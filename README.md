@@ -16,7 +16,7 @@ Bilby is named after the bilby, a small Australian marsupial with big ears that 
 
 ## Status
 
-Early. The app shell builds and opens a window, and nothing checks your computer yet. The plan lives in the [issues](https://github.com/jusso-dev/Bilby/issues) and [milestones](https://github.com/jusso-dev/Bilby/milestones). Windows comes first. macOS is a later milestone.
+Early. On Windows, **Check my computer** now runs every check and shows the overall result. The full results screen, fixes and reports are still to come. The plan lives in the [issues](https://github.com/jusso-dev/Bilby/issues) and [milestones](https://github.com/jusso-dev/Bilby/milestones). Windows comes first. macOS is a later milestone.
 
 ## What Bilby checks (Windows)
 

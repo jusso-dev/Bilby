@@ -19,7 +19,7 @@ use windows::Win32::System::Diagnostics::ToolHelp::{
 };
 use windows::Win32::System::RemoteDesktop::ProcessIdToSessionId;
 use windows::Win32::System::Threading::{
-    GetProcessTimes, OpenProcess, OpenProcessToken, PROCESS_NAME_WIN32,
+    GetCurrentProcess, GetProcessTimes, OpenProcess, OpenProcessToken, PROCESS_NAME_WIN32,
     PROCESS_QUERY_LIMITED_INFORMATION, QueryFullProcessImageNameW,
 };
 use windows::core::{PCWSTR, PWSTR};
@@ -247,6 +247,19 @@ fn token_user(token: HANDLE) -> Option<String> {
     } else {
         format!(r"{domain}\{name}")
     })
+}
+
+/// True if Bilby itself is running elevated (as administrator), from
+/// `GetTokenInformation(TokenElevation)` on its own token.
+pub fn current_is_elevated() -> bool {
+    let mut token = HANDLE::default();
+    // SAFETY: GetCurrentProcess is a pseudo handle that needs no closing;
+    // TOKEN_QUERY only, and the token handle is closed by the guard.
+    if unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &raw mut token) }.is_err() {
+        return false;
+    }
+    let token = Guard(token);
+    token_elevated(token.0).unwrap_or(false)
 }
 
 fn token_elevated(token: HANDLE) -> Option<bool> {

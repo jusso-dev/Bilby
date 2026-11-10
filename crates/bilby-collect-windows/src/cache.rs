@@ -3,7 +3,8 @@
 //! (docs/research/system-informer.md, idea 2); our own code.
 
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 
 use bilby_core::snapshot::FileFacts;
@@ -17,12 +18,30 @@ pub type CacheKey = (String, u64, Option<SystemTime>);
 #[derive(Debug, Default)]
 pub struct FileCache {
     inner: Mutex<HashMap<CacheKey, FileFacts>>,
+    /// Set when the user cancels the scan. File checks then stop opening
+    /// files, so abandoned collectors finish quickly.
+    cancel: Option<Arc<AtomicBool>>,
 }
 
 impl FileCache {
     /// An empty cache.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// An empty cache that stops checking files once `cancel` is set.
+    pub fn with_cancel(cancel: Arc<AtomicBool>) -> Self {
+        Self {
+            cancel: Some(cancel),
+            ..Self::default()
+        }
+    }
+
+    /// True once the scan this cache belongs to was cancelled.
+    pub fn cancelled(&self) -> bool {
+        self.cancel
+            .as_ref()
+            .is_some_and(|c| c.load(Ordering::Relaxed))
     }
 
     /// The cached facts for `key`, or works them out with `make` and stores

@@ -37,8 +37,23 @@ fn drivers_collector_runs() {
         d.loaded.len()
     );
 
+    // Without SeDebugPrivilege, Windows 11 24H2 and later hide driver
+    // addresses (EnumDeviceDrivers on Microsoft Learn). The runner has it;
+    // an ordinary account doesn't, and must get NeedsAdmin, not Ran.
+    let hidden = collected
+        .checks
+        .iter()
+        .any(|(name, status)| *name == "drivers.loaded" && *status == CheckStatus::NeedsAdmin);
     for (name, status) in &collected.checks {
+        if hidden && *name == "drivers.loaded" {
+            continue;
+        }
         assert_eq!(*status, CheckStatus::Ran, "{name} didn't run");
+    }
+    if hidden {
+        println!("driver list hidden without admin: NeedsAdmin");
+        assert_eq!(d.loaded.len(), 0);
+        return;
     }
     assert!(
         d.loaded.len() >= 100,
