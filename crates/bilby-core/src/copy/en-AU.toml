@@ -225,13 +225,13 @@ todo = "Leave it. Nothing runs."
 
 [persist.wmi.command_consumer]
 title = "A hidden Windows feature has been set up to run a program."
-what = "A hidden Windows feature called a WMI subscription ({name}) has been set up to run a program automatically. This is unusual on home computers."
+what = "A hidden Windows feature has been set up to run a program automatically. This is unusual on home computers. It's called a WMI subscription, and this one is named {name}."
 why = "It doesn't show in Task Manager or Settings, so it's a way for a program to come back without being seen."
 todo = "Ask someone you trust to look at this computer."
 
 [persist.wmi.script_consumer]
 title = "A hidden Windows feature has been set up to run a script."
-what = "A hidden Windows feature called a WMI subscription ({name}) has been set up to run a script automatically. This is unusual on home computers."
+what = "A hidden Windows feature has been set up to run a script automatically. This is unusual on home computers. It's called a WMI subscription, and this one is named {name}."
 why = "Scripts run this way don't show in Task Manager or Settings. Harmful programs use this to stay hidden."
 todo = "Ask someone you trust to look at this computer."
 

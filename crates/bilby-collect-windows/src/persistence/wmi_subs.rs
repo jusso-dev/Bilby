@@ -19,36 +19,78 @@ const PASSIVE_CONSUMERS: &[&str] = &[
     "SMTPEventConsumer",
 ];
 
+/// `WBEM_E_INVALID_NAMESPACE` and `WBEM_E_INVALID_CLASS` (values from Microsoft's
+/// WMI error constants page): the namespace or a
+/// class doesn't exist on this edition. That's an expected absence, not a
+/// failure.
+const WBEM_E_INVALID_NAMESPACE: u32 = 0x8004_100E;
+const WBEM_E_INVALID_CLASS: u32 = 0x8004_1010;
+
+fn is_absent(e: &WMIError) -> bool {
+    matches!(e, WMIError::HResultError { hres }
+        if matches!(hres.cast_unsigned(), WBEM_E_INVALID_NAMESPACE | WBEM_E_INVALID_CLASS))
+}
+
+/// How reading went, across every query. Each query is judged on its own,
+/// so one missing class never hides what the other queries found.
+#[derive(Default)]
+struct Outcome {
+    denied: bool,
+    failures: Vec<String>,
+}
+
+impl Outcome {
+    /// Rows from a query, or none. Records access denied and real failures;
+    /// an absent class or namespace is silently empty.
+    fn rows(&mut self, con: &WMIConnection, what: &str, query: &str) -> Vec<Row> {
+        match con.raw_query::<Row>(query) {
+            Ok(rows) => rows,
+            Err(e) if is_access_denied(&e) => {
+                self.denied = true;
+                Vec::new()
+            }
+            Err(e) if is_absent(&e) => Vec::new(),
+            Err(e) => {
+                self.failures.push(format!("{what}: {e}"));
+                Vec::new()
+            }
+        }
+    }
+
+    fn status(self) -> CheckStatus {
+        if self.denied {
+            CheckStatus::NeedsAdmin
+        } else if self.failures.is_empty() {
+            CheckStatus::Ran
+        } else {
+            CheckStatus::Failed(self.failures.join("; "))
+        }
+    }
+}
+
 /// Every subscription consumer in both namespaces, and how reading went.
 pub fn collect() -> (Vec<WmiSubscription>, CheckStatus) {
     init_com();
     let mut out = Vec::new();
-    let mut denied = false;
-    let mut failure = None;
+    let mut outcome = Outcome::default();
     for ns in NAMESPACES {
-        match namespace(ns) {
-            Ok(list) => out.extend(list),
-            Err(e) if is_access_denied(&e) => denied = true,
-            // root\default has no subscription classes on some builds;
-            // an invalid class there isn't a failure of the check.
-            Err(_) if *ns == r"root\default" => {}
-            Err(e) => failure = Some(e.to_string()),
+        match WMIConnection::with_namespace_path(ns) {
+            Ok(con) => out.extend(namespace(&con, ns, &mut outcome)),
+            Err(e) if is_access_denied(&e) => outcome.denied = true,
+            Err(e) if is_absent(&e) => {}
+            Err(e) => outcome.failures.push(format!("{ns}: {e}")),
         }
     }
-    let status = if denied {
-        CheckStatus::NeedsAdmin
-    } else if let Some(f) = failure {
-        CheckStatus::Failed(f)
-    } else {
-        CheckStatus::Ran
-    };
-    (out, status)
+    (out, outcome.status())
 }
 
-fn namespace(ns: &str) -> Result<Vec<WmiSubscription>, WMIError> {
-    let con = WMIConnection::with_namespace_path(ns)?;
-    let filters: HashMap<String, WmiFilter> = con
-        .raw_query::<Row>("SELECT __RELPATH, Name, Query FROM __EventFilter")?
+fn namespace(con: &WMIConnection, ns: &str, outcome: &mut Outcome) -> Vec<WmiSubscription> {
+    let filters: HashMap<String, WmiFilter> = outcome
+        .rows(
+            con,
+            &format!(r"{ns} __EventFilter"),
+            "SELECT __RELPATH, Name, Query FROM __EventFilter",
+        )
         .iter()
         .filter_map(|r| {
             Some((
@@ -62,7 +104,11 @@ fn namespace(ns: &str) -> Result<Vec<WmiSubscription>, WMIError> {
         .collect();
     // Consumer relpath -> filter relpaths bound to it.
     let mut bindings: HashMap<String, Vec<String>> = HashMap::new();
-    for r in con.raw_query::<Row>("SELECT Filter, Consumer FROM __FilterToConsumerBinding")? {
+    for r in outcome.rows(
+        con,
+        &format!(r"{ns} __FilterToConsumerBinding"),
+        "SELECT Filter, Consumer FROM __FilterToConsumerBinding",
+    ) {
         if let (Some(f), Some(c)) = (get_string(&r, "Filter"), get_string(&r, "Consumer")) {
             bindings
                 .entry(normalise_ref(&c))
@@ -85,9 +131,11 @@ fn namespace(ns: &str) -> Result<Vec<WmiSubscription>, WMIError> {
             filters: bound,
         });
     };
-    for r in con.raw_query::<Row>(
+    for r in outcome.rows(
+        con,
+        &format!(r"{ns} CommandLineEventConsumer"),
         "SELECT __RELPATH, Name, CommandLineTemplate, ExecutablePath FROM CommandLineEventConsumer",
-    )? {
+    ) {
         push(
             get_string(&r, "__RELPATH"),
             get_string(&r, "Name"),
@@ -97,9 +145,11 @@ fn namespace(ns: &str) -> Result<Vec<WmiSubscription>, WMIError> {
             },
         );
     }
-    for r in con.raw_query::<Row>(
+    for r in outcome.rows(
+        con,
+        &format!(r"{ns} ActiveScriptEventConsumer"),
         "SELECT __RELPATH, Name, ScriptingEngine, ScriptText, ScriptFileName FROM ActiveScriptEventConsumer",
-    )? {
+    ) {
         push(
             get_string(&r, "__RELPATH"),
             get_string(&r, "Name"),
@@ -111,11 +161,11 @@ fn namespace(ns: &str) -> Result<Vec<WmiSubscription>, WMIError> {
         );
     }
     for class in PASSIVE_CONSUMERS {
-        // A missing class on some editions isn't a failure.
-        let Ok(rows) = con.raw_query::<Row>(format!("SELECT __RELPATH, Name FROM {class}")) else {
-            continue;
-        };
-        for r in rows {
+        for r in outcome.rows(
+            con,
+            &format!(r"{ns} {class}"),
+            &format!("SELECT __RELPATH, Name FROM {class}"),
+        ) {
             push(
                 get_string(&r, "__RELPATH"),
                 get_string(&r, "Name"),
@@ -125,7 +175,7 @@ fn namespace(ns: &str) -> Result<Vec<WmiSubscription>, WMIError> {
             );
         }
     }
-    Ok(out)
+    out
 }
 
 /// Bindings refer to filters and consumers by object path, which can be

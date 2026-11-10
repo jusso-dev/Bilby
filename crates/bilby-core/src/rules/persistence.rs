@@ -789,6 +789,14 @@ fn wmi_command_suspicious(cmd: &str) -> bool {
     script_host || encoded || url || writable
 }
 
+fn consumer_class(c: &WmiConsumerKind) -> &str {
+    match c {
+        WmiConsumerKind::CommandLine { .. } => "CommandLineEventConsumer",
+        WmiConsumerKind::ActiveScript { .. } => "ActiveScriptEventConsumer",
+        WmiConsumerKind::Other { class } => class,
+    }
+}
+
 fn wmi_finding(
     id: &str,
     severity: Severity,
@@ -800,7 +808,17 @@ fn wmi_finding(
         SignalFamily::Persistence,
         severity,
         confidence,
-        Subject::Setting(format!("wmi.{}.{}", w.namespace, w.name).to_lowercase()),
+        // Class as well as name: a command and a script consumer may share
+        // a name, and each needs its own id for "I know this one".
+        Subject::Setting(
+            format!(
+                "wmi.{}.{}.{}",
+                w.namespace,
+                consumer_class(&w.consumer),
+                w.name
+            )
+            .to_lowercase(),
+        ),
     )
     .var("name", &w.name)
     .text("evidence.wmi_namespace", &w.namespace)
@@ -917,6 +935,34 @@ fn wmi_unbound(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn same_named_wmi_consumers_get_different_ids() {
+        let sub = |consumer| WmiSubscription {
+            namespace: r"root\subscription".to_owned(),
+            name: "Same".to_owned(),
+            consumer,
+            filters: Vec::new(),
+        };
+        let p = PersistenceFacts {
+            wmi: vec![
+                sub(WmiConsumerKind::CommandLine {
+                    command_line: Some("x.exe".to_owned()),
+                    executable: None,
+                }),
+                sub(WmiConsumerKind::ActiveScript {
+                    engine: Some("VBScript".to_owned()),
+                    text: Some("x".to_owned()),
+                    file: None,
+                }),
+            ],
+            ..PersistenceFacts::default()
+        };
+        let ctx = RuleContext::at(time::OffsetDateTime::UNIX_EPOCH);
+        let ids: std::collections::HashSet<String> =
+            wmi_unbound(&p, &ctx).iter().map(Finding::id).collect();
+        assert_eq!(ids.len(), 2);
+    }
 
     #[test]
     fn shells() {
