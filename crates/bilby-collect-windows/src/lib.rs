@@ -12,5 +12,7 @@ pub mod files;
 pub mod handle;
 pub mod hash;
 pub mod paths;
+pub mod persistence;
 pub mod processes;
+pub mod registry;
 pub mod sig;

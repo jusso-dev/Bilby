@@ -2,6 +2,7 @@
 //! family. Every rule needs a row in `docs/signals.md` and fixtures for
 //! "fires" and "look-alike".
 
+pub mod persistence;
 pub mod processes;
 pub mod protection;
 
@@ -78,8 +79,21 @@ impl RuleContext {
 
 /// Cross-family facts from a snapshot. Persistence (#9 to #11) and network
 /// (#12) add theirs here.
-fn relations_from(_snap: &SystemSnapshot) -> HashMap<String, BTreeSet<Relation>> {
-    HashMap::new()
+fn relations_from(snap: &SystemSnapshot) -> HashMap<String, BTreeSet<Relation>> {
+    let mut out: HashMap<String, BTreeSet<Relation>> = HashMap::new();
+    if let Some(p) = &snap.persistence {
+        for item in p.items.iter().filter(|i| i.enabled) {
+            if let Some(t) = &item.target {
+                out.entry(crate::paths::normalise(
+                    &t.path,
+                    &crate::paths::KnownFolders::default(),
+                ))
+                .or_default()
+                .insert(Relation::StartsByItself);
+            }
+        }
+    }
+    out
 }
 
 /// A single check over a snapshot.
@@ -97,6 +111,7 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
     let mut rules = Vec::new();
     rules.extend(protection::rules());
     rules.extend(processes::rules());
+    rules.extend(persistence::rules());
     rules
 }
 

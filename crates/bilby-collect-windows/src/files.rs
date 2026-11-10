@@ -48,3 +48,23 @@ pub fn file_facts(path: &str, folders: &KnownFolders, cache: &FileCache) -> File
         user_writable: classified.user_writable,
     })
 }
+
+/// Facts for a file Bilby chose not to open (for example on a network
+/// drive). `exists` is true so it's never reported as missing; the
+/// signature says it wasn't checked.
+pub fn not_checked(path: &str, folders: &KnownFolders, why: &str) -> FileFacts {
+    let classified = classify(path, folders);
+    FileFacts {
+        path: path.to_owned(),
+        exists: true,
+        size: None,
+        created: None,
+        modified: None,
+        sha256: None,
+        signature: SignatureStatus::Error {
+            reason: why.to_owned(),
+        },
+        class: classified.class,
+        user_writable: classified.user_writable,
+    }
+}

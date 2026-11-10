@@ -5,6 +5,7 @@
 //! [`score::overall`] turns findings into a traffic light.
 
 pub mod cim;
+pub mod cmdline;
 pub mod copy;
 pub mod demo;
 pub mod model;

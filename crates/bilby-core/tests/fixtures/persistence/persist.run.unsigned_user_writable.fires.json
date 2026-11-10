@@ -1,0 +1,188 @@
+{
+  "note": "Test plan simulation 6: Run key pointing at an unsigned file in Temp.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [
+        {
+          "source": "run",
+          "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "OneDrive",
+          "command": "\"%LOCALAPPDATA%\\Microsoft\\OneDrive\\OneDrive.exe\" /background",
+          "target": {
+            "path": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Microsoft Corporation",
+                "issuer": "Example CA",
+                "kind": "embedded",
+                "is_windows_component": false
+              }
+            },
+            "class": "user_app_programs",
+            "user_writable": true
+          },
+          "args": "/background",
+          "host": null,
+          "host_args": null,
+          "enabled": true
+        },
+        {
+          "source": "run",
+          "location": "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "SecurityHealth",
+          "command": "%windir%\\system32\\SecurityHealthSystray.exe",
+          "target": {
+            "path": "C:\\Windows\\system32\\SecurityHealthSystray.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Microsoft Windows",
+                "issuer": "Microsoft Windows Production PCA 2011",
+                "kind": "catalog",
+                "is_windows_component": true
+              }
+            },
+            "class": "windows_system",
+            "user_writable": false
+          },
+          "args": null,
+          "host": null,
+          "host_args": null,
+          "enabled": true
+        },
+        {
+          "source": "run",
+          "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "Spotify",
+          "command": "C:\\Users\\Alex\\AppData\\Roaming\\Spotify\\Spotify.exe /minimized",
+          "target": {
+            "path": "C:\\Users\\Alex\\AppData\\Roaming\\Spotify\\Spotify.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Spotify AB",
+                "issuer": "Example CA",
+                "kind": "embedded",
+                "is_windows_component": false
+              }
+            },
+            "class": "user_app_data",
+            "user_writable": true
+          },
+          "args": "/minimized",
+          "host": null,
+          "host_args": null,
+          "enabled": true
+        },
+        {
+          "source": "run",
+          "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "Steam",
+          "command": "\"C:\\Program Files (x86)\\Steam\\steam.exe\" -silent",
+          "target": {
+            "path": "C:\\Program Files (x86)\\Steam\\steam.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Valve Corp.",
+                "issuer": "Example CA",
+                "kind": "embedded",
+                "is_windows_component": false
+              }
+            },
+            "class": "program_files",
+            "user_writable": false
+          },
+          "args": "-silent",
+          "host": null,
+          "host_args": null,
+          "enabled": true
+        },
+        {
+          "source": "run",
+          "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "com.squirrel.Teams.Teams",
+          "command": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\Teams\\Update.exe --processStart Teams.exe",
+          "target": {
+            "path": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\Teams\\Update.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Microsoft Corporation",
+                "issuer": "Example CA",
+                "kind": "embedded",
+                "is_windows_component": false
+              }
+            },
+            "class": "user_app_programs",
+            "user_writable": true
+          },
+          "args": null,
+          "host": null,
+          "host_args": null,
+          "enabled": true
+        },
+        {
+          "source": "run",
+          "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "BilbyTest",
+          "command": "C:\\Users\\Alex\\AppData\\Local\\Temp\\updater.exe",
+          "target": {
+            "path": "C:\\Users\\Alex\\AppData\\Local\\Temp\\updater.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": "unsigned",
+            "class": "temp",
+            "user_writable": true
+          },
+          "args": null,
+          "host": null,
+          "host_args": null,
+          "enabled": true
+        }
+      ],
+      "winlogon": {
+        "shell_machine": "explorer.exe",
+        "shell_user": null,
+        "userinit": "C:\\Windows\\system32\\userinit.exe,"
+      },
+      "ifeo": [],
+      "appinit": [
+        {
+          "location": "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows",
+          "load": 0,
+          "dlls": ""
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "persist.run.unsigned_user_writable",
+      "severity": "medium",
+      "confidence": "high"
+    }
+  ],
+  "absent": [
+    "persist.run.script_host",
+    "persist.run.rundll32_user_writable",
+    "persist.run.missing_target",
+    "persist.winlogon.shell",
+    "persist.winlogon.userinit",
+    "persist.ifeo.debugger",
+    "persist.appinit"
+  ]
+}
