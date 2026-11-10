@@ -75,6 +75,8 @@ command_line = "Command line"
 publisher = "Made by"
 startup_state = "Startup state"
 command = "Command"
+service = "Service"
+task = "Scheduled task"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -167,6 +169,54 @@ title = "Windows is set to load an extra file into most programs."
 what = "A setting called AppInit makes many programs load an extra file when they start."
 why = "Modern programs rarely need this, and it's been used to hide harmful code."
 todo = "Ask someone you trust to look at this computer."
+
+[persist.service.user_writable]
+title = "A Windows service runs from an unusual folder."
+what = "The service {name} starts with Windows and runs a file from a folder anyone's programs can write to."
+why = "Services run with full access to the computer, so they're normally installed in Windows' own folders or Program Files."
+todo = "Ask someone you trust to look at it. Bilby can stop it starting, and you can undo that later."
+
+[persist.service.unsigned]
+title = "A Windows service has no digital signature."
+what = "The service {name} runs a program with no digital signature (a seal that shows who made it), from outside Program Files."
+why = "Services run with full access to the computer. Most are signed by the company that made them."
+todo = "Check whether you recognise it. If you don't, ask someone you trust to look."
+
+[persist.service.svchost_dll_outside_system]
+title = "A Windows service loads a file from outside Windows' folders."
+what = "The service {name} runs inside a shared Windows program but loads its code from somewhere else."
+why = "Real Windows services keep this code in Windows' own folder. This is a way to hide inside a trusted program."
+todo = "Ask someone you trust to look at this computer."
+
+[persist.service.script_host]
+title = "A Windows service runs a hidden script."
+what = "The service {name} starts a script in a way that hides what it does, or from a folder anyone's programs can write to."
+why = "Real services don't usually run scripts like this. Harmful programs often do, to come back after a restart."
+todo = "Ask someone you trust to look at this computer."
+
+[persist.task.user_writable]
+title = "A scheduled task runs a program without a digital signature."
+what = "The task {name} runs a program from a folder anyone's programs can write to, and it has no digital signature."
+why = "Scheduled tasks are a common way for unwanted programs to come back after a restart."
+todo = "Check whether you recognise it. If you don't, Bilby can turn the task off, and you can undo that later."
+
+[persist.task.script_host]
+title = "A scheduled task runs a hidden script."
+what = "The task {name} runs a script in a way that hides what it does, or from a folder anyone's programs can write to."
+why = "Normal tasks rarely run scripts like this. Harmful programs often do."
+todo = "Ask someone you trust to look at it. Bilby can turn the task off, and you can undo that later."
+
+[persist.task.hidden_unsigned]
+title = "A hidden scheduled task runs an unsigned program."
+what = "The task {name} is set to hide itself, and the program it runs has no digital signature."
+why = "Programs from well-known companies rarely hide their tasks."
+todo = "Check whether you recognise it. If you don't, Bilby can turn the task off, and you can undo that later."
+
+[persist.task.missing_target]
+title = "A scheduled task points to a program that's gone."
+what = "The task {name} runs a program that isn't there any more."
+why = "This is usually left over from a program that was uninstalled. It's harmless."
+todo = "Leave it. Nothing runs."
 
 [tamper.proxy_set]
 title = "Your web traffic goes through another computer."

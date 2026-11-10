@@ -6,7 +6,8 @@ use super::{FindingBuilder, Rule, RuleContext};
 use crate::model::{Confidence, Evidence, Finding, NextStepKind, Severity, SignalFamily, Subject};
 use crate::paths::{KnownFolders, normalise};
 use crate::snapshot::{
-    FileFacts, IfeoEntry, PathClass, PersistenceFacts, SignatureStatus, StartupItem, SystemSnapshot,
+    FileFacts, IfeoEntry, PathClass, PersistenceFacts, ServiceFact, ServiceKind, SignatureStatus,
+    StartType, StartupItem, SystemSnapshot, TaskAction, TaskFact,
 };
 
 /// Fix id for turning a startup item off the way Task Manager does (#31).
@@ -109,6 +110,38 @@ rule!(
 );
 rule!(IfeoDebugger, "persist.ifeo.debugger", ifeo_debugger);
 rule!(AppInitDlls, "persist.appinit", appinit);
+rule!(
+    ServiceUserWritable,
+    "persist.service.user_writable",
+    service_user_writable
+);
+rule!(
+    ServiceUnsigned,
+    "persist.service.unsigned",
+    service_unsigned
+);
+rule!(
+    ServiceSvchostDll,
+    "persist.service.svchost_dll_outside_system",
+    service_svchost_dll
+);
+rule!(
+    ServiceScriptHost,
+    "persist.service.script_host",
+    service_script_host
+);
+rule!(
+    TaskUserWritable,
+    "persist.task.user_writable",
+    task_user_writable
+);
+rule!(TaskScriptHost, "persist.task.script_host", task_script_host);
+rule!(
+    TaskHiddenUnsigned,
+    "persist.task.hidden_unsigned",
+    task_hidden_unsigned
+);
+rule!(TaskMissing, "persist.task.missing_target", task_missing);
 
 /// Every persistence rule in this module.
 pub fn rules() -> Vec<Box<dyn Rule>> {
@@ -121,6 +154,14 @@ pub fn rules() -> Vec<Box<dyn Rule>> {
         Box::new(WinlogonUserinit),
         Box::new(IfeoDebugger),
         Box::new(AppInitDlls),
+        Box::new(ServiceUserWritable),
+        Box::new(ServiceUnsigned),
+        Box::new(ServiceSvchostDll),
+        Box::new(ServiceScriptHost),
+        Box::new(TaskUserWritable),
+        Box::new(TaskScriptHost),
+        Box::new(TaskHiddenUnsigned),
+        Box::new(TaskMissing),
     ]
 }
 
@@ -403,6 +444,307 @@ fn appinit(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
             .build()
         })
         .collect()
+}
+
+/// Fix id for disabling a service or task the way Windows does (#31).
+pub const FIX_DISABLE_SERVICE: &str = "disable_service";
+/// Fix id for disabling a scheduled task (#31).
+pub const FIX_DISABLE_TASK: &str = "disable_task";
+
+/// Would this service run without anyone asking? Drivers are #15's.
+fn service_runs(s: &ServiceFact) -> bool {
+    s.kind != ServiceKind::Driver
+        && (matches!(s.start, StartType::Auto | StartType::Boot)
+            || (s.start == StartType::Demand && s.running))
+}
+
+fn service_finding(
+    id: &str,
+    severity: Severity,
+    confidence: Confidence,
+    s: &ServiceFact,
+) -> FindingBuilder {
+    let mut b = FindingBuilder::new(
+        id,
+        SignalFamily::Persistence,
+        severity,
+        confidence,
+        Subject::Service(s.name.to_lowercase()),
+    )
+    .var("name", s.display_name.as_deref().unwrap_or(&s.name))
+    .text("evidence.service", &s.name)
+    .text("evidence.command", &s.binary_path)
+    .next(NextStepKind::Fix(FIX_DISABLE_SERVICE.to_owned()));
+    for f in [&s.binary, &s.service_dll].into_iter().flatten() {
+        b = b.evidence(Evidence::Path(f.path.clone()));
+        if let Some(p) = f.signature.publisher() {
+            b = b.text("evidence.publisher", p);
+        }
+    }
+    b
+}
+
+fn service_user_writable(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.services
+        .iter()
+        .filter(|s| service_runs(s))
+        .filter_map(|s| {
+            let files: Vec<&FileFacts> = [&s.binary, &s.service_dll]
+                .into_iter()
+                .flatten()
+                .filter(|f| f.exists && f.user_writable)
+                .collect();
+            if files.is_empty() {
+                return None;
+            }
+            let confidence = if files.iter().any(|f| unsigned(f)) {
+                Confidence::High
+            } else {
+                Confidence::Medium
+            };
+            Some(
+                service_finding(
+                    "persist.service.user_writable",
+                    Severity::High,
+                    confidence,
+                    s,
+                )
+                .build(),
+            )
+        })
+        .collect()
+}
+
+fn service_unsigned(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.services
+        .iter()
+        .filter(|s| s.kind != ServiceKind::Driver && s.start != StartType::Disabled)
+        .filter(|s| {
+            s.binary.as_ref().is_some_and(|f| {
+                f.exists
+                    && unsigned(f)
+                    && !matches!(f.class, PathClass::WindowsSystem | PathClass::ProgramFiles)
+                    // A user-writable binary is already High above.
+                    && !f.user_writable
+            })
+        })
+        .map(|s| {
+            service_finding(
+                "persist.service.unsigned",
+                Severity::Medium,
+                Confidence::Medium,
+                s,
+            )
+            .build()
+        })
+        .collect()
+}
+
+fn service_svchost_dll(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.services
+        .iter()
+        .filter(|s| s.kind != ServiceKind::Driver)
+        .filter(|s| {
+            s.service_dll
+                .as_ref()
+                .is_some_and(|d| d.exists && d.class != PathClass::WindowsSystem)
+        })
+        .map(|s| {
+            service_finding(
+                "persist.service.svchost_dll_outside_system",
+                Severity::High,
+                Confidence::Medium,
+                s,
+            )
+            .build()
+        })
+        .collect()
+}
+
+/// A script host or loader running something from a user-writable folder,
+/// or PowerShell hiding its command.
+fn hosted_badly(host: Option<&str>, host_args: Option<&str>, target: Option<&FileFacts>) -> bool {
+    let writable = target.is_some_and(writable_not_installed);
+    match host {
+        Some("powershell") => {
+            writable || encoded_powershell(&format!("powershell {}", host_args.unwrap_or_default()))
+        }
+        Some("cmd" | "rundll32" | "script_host") => writable,
+        Some("mshta" | "regsvr32") => writable || target.is_some_and(|t| is_url(&t.path)),
+        _ => false,
+    }
+}
+
+fn service_script_host(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.services
+        .iter()
+        .filter(|s| s.kind != ServiceKind::Driver && s.start != StartType::Disabled)
+        .filter(|s| hosted_badly(s.host.as_deref(), s.host_args.as_deref(), s.binary.as_ref()))
+        .map(|s| {
+            service_finding(
+                "persist.service.script_host",
+                Severity::High,
+                Confidence::High,
+                s,
+            )
+            .build()
+        })
+        .collect()
+}
+
+/// Tasks Windows itself ships, under `\Microsoft\Windows\`.
+fn microsoft_windows_task(t: &TaskFact) -> bool {
+    t.path
+        .to_ascii_lowercase()
+        .starts_with(r"\microsoft\windows\")
+}
+
+fn task_finding(
+    id: &str,
+    severity: Severity,
+    confidence: Confidence,
+    t: &TaskFact,
+    cmd: &str,
+) -> FindingBuilder {
+    let name = t.path.rsplit('\\').next().unwrap_or(&t.path);
+    FindingBuilder::new(
+        id,
+        SignalFamily::Persistence,
+        severity,
+        confidence,
+        Subject::Task(t.path.to_lowercase()),
+    )
+    .var("name", name)
+    .text("evidence.task", &t.path)
+    .text("evidence.command", cmd)
+    .next(NextStepKind::Fix(FIX_DISABLE_TASK.to_owned()))
+}
+
+/// Exec actions of enabled tasks, as (command, target, host, host args).
+fn exec_actions(
+    t: &TaskFact,
+) -> impl Iterator<Item = (&str, Option<&FileFacts>, Option<&str>, Option<&str>)> {
+    t.actions.iter().filter_map(|a| match a {
+        TaskAction::Exec {
+            command,
+            target,
+            host,
+            host_args,
+        } => Some((
+            command.as_str(),
+            target.as_deref(),
+            host.as_deref(),
+            host_args.as_deref(),
+        )),
+        TaskAction::ComHandler { .. } => None,
+    })
+}
+
+fn task_user_writable(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    let mut out = Vec::new();
+    for t in p.tasks.iter().filter(|t| t.enabled) {
+        for (cmd, target, host, _) in exec_actions(t) {
+            // Script hosts and loaders have their own rule.
+            if !matches!(host, None | Some("cmd" | "explorer" | "msiexec")) {
+                continue;
+            }
+            let Some(f) = target.filter(|f| f.exists && unsigned(f) && writable_not_installed(f))
+            else {
+                continue;
+            };
+            let high = matches!(
+                f.class,
+                PathClass::Temp | PathClass::Downloads | PathClass::Public | PathClass::RecycleBin
+            );
+            let confidence = if high {
+                Confidence::High
+            } else {
+                Confidence::Medium
+            };
+            out.push(
+                task_finding(
+                    "persist.task.user_writable",
+                    Severity::Medium,
+                    confidence,
+                    t,
+                    cmd,
+                )
+                .build(),
+            );
+        }
+    }
+    out
+}
+
+fn task_script_host(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    let mut out = Vec::new();
+    for t in p.tasks.iter().filter(|t| t.enabled) {
+        for (cmd, target, host, host_args) in exec_actions(t) {
+            if hosted_badly(host, host_args, target) {
+                out.push(
+                    task_finding(
+                        "persist.task.script_host",
+                        Severity::High,
+                        Confidence::High,
+                        t,
+                        cmd,
+                    )
+                    .build(),
+                );
+            }
+        }
+    }
+    out
+}
+
+fn task_hidden_unsigned(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.tasks
+        .iter()
+        .filter(|t| {
+            t.enabled && t.hidden && !t.path.to_ascii_lowercase().starts_with(r"\microsoft\")
+        })
+        .filter_map(|t| {
+            let (cmd, _, _, _) = exec_actions(t)
+                .find(|(_, target, _, _)| target.is_some_and(|f| f.exists && unsigned(f)))?;
+            Some(
+                task_finding(
+                    "persist.task.hidden_unsigned",
+                    Severity::Medium,
+                    Confidence::Medium,
+                    t,
+                    cmd,
+                )
+                .build(),
+            )
+        })
+        .collect()
+}
+
+fn task_missing(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    let mut out = Vec::new();
+    for t in &p.tasks {
+        // Windows' own tasks sometimes point at features that aren't
+        // installed; that's Windows' business, not a leftover.
+        if microsoft_windows_task(t) {
+            continue;
+        }
+        for (cmd, target, _, _) in exec_actions(t) {
+            if target.is_some_and(|f| !f.exists && !is_url(&f.path)) {
+                out.push(
+                    task_finding(
+                        "persist.task.missing_target",
+                        Severity::Info,
+                        Confidence::High,
+                        t,
+                        cmd,
+                    )
+                    .next(NextStepKind::Learn)
+                    .build(),
+                );
+            }
+        }
+    }
+    out
 }
 
 #[cfg(test)]

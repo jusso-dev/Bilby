@@ -1,0 +1,352 @@
+{
+  "note": "Unsigned but installed in Program Files: quiet (some small vendors don't sign).",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [
+        {
+          "name": "Schedule",
+          "display_name": "Schedule",
+          "kind": "shared_process",
+          "start": "auto",
+          "running": true,
+          "binary_path": "C:\\Windows\\system32\\svchost.exe -k netsvcs -p",
+          "binary": {
+            "path": "C:\\Windows\\system32\\svchost.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Microsoft Windows",
+                "issuer": "Microsoft Windows Production PCA 2011",
+                "kind": "catalog",
+                "is_windows_component": true
+              }
+            },
+            "class": "windows_system",
+            "user_writable": false
+          },
+          "host": null,
+          "host_args": null,
+          "service_dll": {
+            "path": "C:\\Windows\\system32\\schedsvc.dll",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Microsoft Windows",
+                "issuer": "Microsoft Windows Production PCA 2011",
+                "kind": "catalog",
+                "is_windows_component": true
+              }
+            },
+            "class": "windows_system",
+            "user_writable": false
+          },
+          "account": "LocalSystem"
+        },
+        {
+          "name": "NVDisplay.ContainerLocalSystem",
+          "display_name": "NVDisplay.ContainerLocalSystem",
+          "kind": "own_process",
+          "start": "auto",
+          "running": true,
+          "binary_path": "\"C:\\Windows\\System32\\DriverStore\\FileRepository\\nv_dispi.inf_amd64\\Display.NvContainer\\NVDisplay.Container.exe\" -s NVDisplay.ContainerLocalSystem",
+          "binary": {
+            "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nv_dispi.inf_amd64\\Display.NvContainer\\NVDisplay.Container.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "NVIDIA Corporation",
+                "issuer": "Example CA",
+                "kind": "embedded",
+                "is_windows_component": false
+              }
+            },
+            "class": "windows_system",
+            "user_writable": false
+          },
+          "host": null,
+          "host_args": null,
+          "service_dll": null,
+          "account": "LocalSystem"
+        },
+        {
+          "name": "Steam Client Service",
+          "display_name": "Steam Client Service",
+          "kind": "own_process",
+          "start": "demand",
+          "running": false,
+          "binary_path": "\"C:\\Program Files (x86)\\Common Files\\Steam\\steamservice.exe\" /RunAsService",
+          "binary": {
+            "path": "C:\\Program Files (x86)\\Common Files\\Steam\\steamservice.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Valve Corp.",
+                "issuer": "Example CA",
+                "kind": "embedded",
+                "is_windows_component": false
+              }
+            },
+            "class": "program_files",
+            "user_writable": false
+          },
+          "host": null,
+          "host_args": null,
+          "service_dll": null,
+          "account": "LocalSystem"
+        },
+        {
+          "name": "tcpip",
+          "display_name": "tcpip",
+          "kind": "driver",
+          "start": "boot",
+          "running": true,
+          "binary_path": "\\SystemRoot\\System32\\drivers\\tcpip.sys",
+          "binary": {
+            "path": "C:\\Windows\\System32\\drivers\\tcpip.sys",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": {
+              "signed": {
+                "publisher": "Microsoft Windows",
+                "issuer": "Microsoft Windows Production PCA 2011",
+                "kind": "catalog",
+                "is_windows_component": true
+              }
+            },
+            "class": "windows_system",
+            "user_writable": false
+          },
+          "host": null,
+          "host_args": null,
+          "service_dll": null,
+          "account": "LocalSystem"
+        },
+        {
+          "name": "VendorSvc",
+          "display_name": "VendorSvc",
+          "kind": "own_process",
+          "start": "auto",
+          "running": true,
+          "binary_path": "\"C:\\Program Files\\Vendor\\svc.exe\"",
+          "binary": {
+            "path": "C:\\Program Files\\Vendor\\svc.exe",
+            "exists": true,
+            "size": 1000,
+            "sha256": null,
+            "signature": "unsigned",
+            "class": "program_files",
+            "user_writable": false
+          },
+          "host": null,
+          "host_args": null,
+          "service_dll": null,
+          "account": "LocalSystem"
+        }
+      ],
+      "tasks": [
+        {
+          "path": "\\GoogleUpdaterTaskSystem140.0.7300.0{GUID}",
+          "enabled": true,
+          "hidden": false,
+          "author": null,
+          "user": "SYSTEM",
+          "elevated": false,
+          "actions": [
+            {
+              "exec": {
+                "command": "\"C:\\Program Files (x86)\\Google\\GoogleUpdater\\140.0.7300.0\\updater.exe\" --wake --system",
+                "target": {
+                  "path": "C:\\Program Files (x86)\\Google\\GoogleUpdater\\140.0.7300.0\\updater.exe",
+                  "exists": true,
+                  "size": 1000,
+                  "sha256": null,
+                  "signature": {
+                    "signed": {
+                      "publisher": "Google LLC",
+                      "issuer": "Example CA",
+                      "kind": "embedded",
+                      "is_windows_component": false
+                    }
+                  },
+                  "class": "program_files",
+                  "user_writable": false
+                },
+                "host": null,
+                "host_args": null
+              }
+            }
+          ]
+        },
+        {
+          "path": "\\MicrosoftEdgeUpdateTaskMachineCore",
+          "enabled": true,
+          "hidden": false,
+          "author": null,
+          "user": "SYSTEM",
+          "elevated": false,
+          "actions": [
+            {
+              "exec": {
+                "command": "\"C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe\" /c",
+                "target": {
+                  "path": "C:\\Program Files (x86)\\Microsoft\\EdgeUpdate\\MicrosoftEdgeUpdate.exe",
+                  "exists": true,
+                  "size": 1000,
+                  "sha256": null,
+                  "signature": {
+                    "signed": {
+                      "publisher": "Microsoft Corporation",
+                      "issuer": "Example CA",
+                      "kind": "embedded",
+                      "is_windows_component": false
+                    }
+                  },
+                  "class": "program_files",
+                  "user_writable": false
+                },
+                "host": null,
+                "host_args": null
+              }
+            }
+          ]
+        },
+        {
+          "path": "\\OneDrive Standalone Update Task-S-1-5-21-1111-2222-3333-1001",
+          "enabled": true,
+          "hidden": false,
+          "author": null,
+          "user": "SYSTEM",
+          "elevated": false,
+          "actions": [
+            {
+              "exec": {
+                "command": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\OneDrive\\OneDriveStandaloneUpdater.exe",
+                "target": {
+                  "path": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\OneDrive\\OneDriveStandaloneUpdater.exe",
+                  "exists": true,
+                  "size": 1000,
+                  "sha256": null,
+                  "signature": {
+                    "signed": {
+                      "publisher": "Microsoft Corporation",
+                      "issuer": "Example CA",
+                      "kind": "embedded",
+                      "is_windows_component": false
+                    }
+                  },
+                  "class": "user_app_programs",
+                  "user_writable": true
+                },
+                "host": null,
+                "host_args": null
+              }
+            }
+          ]
+        },
+        {
+          "path": "\\Microsoft\\Windows\\Defrag\\ScheduledDefrag",
+          "enabled": true,
+          "hidden": false,
+          "author": null,
+          "user": "SYSTEM",
+          "elevated": false,
+          "actions": [
+            {
+              "exec": {
+                "command": "%windir%\\system32\\defrag.exe -c -h -o -$",
+                "target": {
+                  "path": "C:\\Windows\\system32\\defrag.exe",
+                  "exists": true,
+                  "size": 1000,
+                  "sha256": null,
+                  "signature": {
+                    "signed": {
+                      "publisher": "Microsoft Windows",
+                      "issuer": "Microsoft Windows Production PCA 2011",
+                      "kind": "catalog",
+                      "is_windows_component": true
+                    }
+                  },
+                  "class": "windows_system",
+                  "user_writable": false
+                },
+                "host": null,
+                "host_args": null
+              }
+            }
+          ]
+        },
+        {
+          "path": "\\Microsoft\\Windows\\SomeFeature\\NotInstalled",
+          "enabled": true,
+          "hidden": false,
+          "author": null,
+          "user": "SYSTEM",
+          "elevated": false,
+          "actions": [
+            {
+              "exec": {
+                "command": "%windir%\\system32\\gone.exe",
+                "target": {
+                  "path": "C:\\Windows\\system32\\gone.exe",
+                  "exists": false,
+                  "size": null,
+                  "sha256": null,
+                  "signature": {
+                    "error": {
+                      "reason": "file not found"
+                    }
+                  },
+                  "class": "windows_system",
+                  "user_writable": false
+                },
+                "host": null,
+                "host_args": null
+              }
+            }
+          ]
+        },
+        {
+          "path": "\\Microsoft\\Windows\\Shell\\CreateObjectTask",
+          "enabled": true,
+          "hidden": true,
+          "author": null,
+          "user": null,
+          "elevated": false,
+          "actions": [
+            {
+              "com_handler": {
+                "class_id": "{8A6D3F2B-0000-0000-0000-000000000000}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": [],
+  "absent": [
+    "persist.service.user_writable",
+    "persist.service.unsigned",
+    "persist.service.svchost_dll_outside_system",
+    "persist.service.script_host",
+    "persist.task.user_writable",
+    "persist.task.script_host",
+    "persist.task.hidden_unsigned",
+    "persist.task.missing_target"
+  ]
+}

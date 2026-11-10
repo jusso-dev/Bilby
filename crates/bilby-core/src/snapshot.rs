@@ -302,6 +302,124 @@ pub struct PersistenceFacts {
     /// `AppInit_DLLs` settings, 64-bit and 32-bit views.
     #[serde(default)]
     pub appinit: Vec<AppInit>,
+    /// Windows services and kernel drivers.
+    #[serde(default)]
+    pub services: Vec<ServiceFact>,
+    /// Scheduled tasks.
+    #[serde(default)]
+    pub tasks: Vec<TaskFact>,
+}
+
+/// A service or driver.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ServiceKind {
+    /// Runs in its own process.
+    OwnProcess,
+    /// Shares a process, usually `svchost.exe`.
+    SharedProcess,
+    /// A kernel or file-system driver. Evaluated by the drivers rules (#15).
+    Driver,
+}
+
+/// When a service starts.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum StartType {
+    /// Boot or system start (drivers).
+    Boot,
+    /// Starts with Windows.
+    Auto,
+    /// Starts when something asks for it.
+    Demand,
+    /// Turned off.
+    Disabled,
+}
+
+/// One service from the Service Control Manager.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ServiceFact {
+    /// Service name.
+    pub name: String,
+    /// Display name.
+    #[serde(default)]
+    pub display_name: Option<String>,
+    /// Process type.
+    pub kind: ServiceKind,
+    /// When it starts.
+    pub start: StartType,
+    /// Running now.
+    pub running: bool,
+    /// `lpBinaryPathName` as stored.
+    pub binary_path: String,
+    /// The file the binary path runs.
+    #[serde(default)]
+    pub binary: Option<FileFacts>,
+    /// The host the binary path runs through, if any.
+    #[serde(default)]
+    pub host: Option<String>,
+    /// Arguments given to that host.
+    #[serde(default)]
+    pub host_args: Option<String>,
+    /// `Parameters\ServiceDll` for shared services.
+    #[serde(default)]
+    pub service_dll: Option<FileFacts>,
+    /// Account it runs as.
+    #[serde(default)]
+    pub account: Option<String>,
+}
+
+/// One scheduled task.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TaskFact {
+    /// Full path, for example `\Microsoft\Windows\Defrag\ScheduledDefrag`.
+    pub path: String,
+    /// Enabled.
+    pub enabled: bool,
+    /// Marked hidden in its settings.
+    #[serde(default)]
+    pub hidden: bool,
+    /// `RegistrationInfo.Author`.
+    #[serde(default)]
+    pub author: Option<String>,
+    /// Account it runs as.
+    #[serde(default)]
+    pub user: Option<String>,
+    /// Runs with highest privileges.
+    #[serde(default)]
+    pub elevated: bool,
+    /// Last time it ran.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub last_run: Option<time::OffsetDateTime>,
+    /// What it runs.
+    #[serde(default)]
+    pub actions: Vec<TaskAction>,
+}
+
+/// One task action.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskAction {
+    /// Runs a program.
+    Exec {
+        /// `Path` and `Arguments` joined, as a command line.
+        command: String,
+        /// The file it runs, after looking through hosts. Boxed, because
+        /// file facts are large next to a COM class id.
+        #[serde(default)]
+        target: Option<Box<FileFacts>>,
+        /// The host it runs through.
+        #[serde(default)]
+        host: Option<String>,
+        /// Arguments given to that host.
+        #[serde(default)]
+        host_args: Option<String>,
+    },
+    /// Calls a COM handler. Recorded, Info only.
+    ComHandler {
+        /// The class id.
+        class_id: String,
+    },
 }
 
 /// Where a startup item came from.
