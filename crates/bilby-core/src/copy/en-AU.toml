@@ -82,6 +82,8 @@ wmi_filter = "Triggered by"
 wmi_engine = "Script language"
 wmi_script = "Script"
 wmi_class = "Consumer type"
+boosted_by = "Raised by"
+more_connections = "More connections not shown"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -240,6 +242,30 @@ title = "A leftover hidden Windows setting was found."
 what = "A WMI subscription called {name} is set up to run something, but nothing triggers it."
 why = "On its own it can't run. It's often left over from software that was removed, but it can also be left behind by harmful programs."
 todo = "Ask someone you trust to look if you're worried. Otherwise you can leave it."
+
+[net.outbound_from_suspicious]
+title = "This program is also talking to the internet."
+what = "{name} has a connection to an address on the internet."
+why = "A program that was already unusual is more worth checking when it's online."
+todo = "Ask Windows Security to scan it. Bilby can start that for you."
+
+[net.listen_unsigned_user_writable]
+title = "An unsigned program is waiting for connections from other computers."
+what = "{name} runs from a folder anyone's programs can write to, has no digital signature, and is waiting for other computers to connect to it."
+why = "Programs that accept connections from outside can be used to control a computer remotely."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+
+[net.listen_script_host]
+title = "A Windows scripting tool is waiting for connections from other computers."
+what = "{name} is waiting for other computers to connect to it."
+why = "Scripting tools rarely need to do this. It can be a sign of remote control."
+todo = "Ask someone you trust to look at this computer."
+
+[net.many_remote_peers]
+title = "An unsigned program is talking to a lot of internet addresses."
+what = "{name} has connections to {count} different internet addresses, and it has no digital signature."
+why = "Ordinary programs usually talk to a handful of addresses. This might be nothing, but it's worth a check."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
 
 [tamper.proxy_set]
 title = "Your web traffic goes through another computer."

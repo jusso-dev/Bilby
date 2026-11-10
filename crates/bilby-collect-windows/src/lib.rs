@@ -11,6 +11,7 @@ pub mod defender;
 pub mod files;
 pub mod handle;
 pub mod hash;
+pub mod network;
 pub mod paths;
 pub mod persistence;
 pub mod processes;

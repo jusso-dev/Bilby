@@ -138,3 +138,43 @@ fn demo_kind_parses() {
     );
     assert!("red".parse::<DemoKind>().is_err());
 }
+
+/// The outbound boost changes a process finding's confidence and never adds
+/// a card, so the number of findings, and so the cards, stays the same.
+#[test]
+fn outbound_boost_adds_no_card_and_raises_confidence() {
+    use bilby_core::rules::{RuleContext, evaluate_all};
+    use bilby_core::snapshot::SystemSnapshot;
+    let read = |name: &str| -> (SystemSnapshot, time::OffsetDateTime) {
+        #[derive(serde::Deserialize)]
+        struct F {
+            #[serde(with = "time::serde::rfc3339")]
+            now: time::OffsetDateTime,
+            snapshot: SystemSnapshot,
+        }
+        let text = std::fs::read_to_string(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("tests/fixtures/network")
+                .join(name),
+        )
+        .expect("fixture");
+        let f: F = serde_json::from_str(&text).expect("parses");
+        (f.snapshot, f.now)
+    };
+    let (boosted, now) = read("net.outbound_from_suspicious.fires.json");
+    let (local_only, _) = read("net.outbound_from_suspicious.lookalike.json");
+    let a = evaluate_all(&boosted, &RuleContext::at(now));
+    let b = evaluate_all(&local_only, &RuleContext::at(now));
+    assert_eq!(a.len(), b.len(), "the boost adds no finding of its own");
+    // Medium/Medium is Worth a look either way; the boost makes it more sure
+    // without changing the light for a Medium-severity finding.
+    assert_eq!(overall(&a, &HashSet::new()), Light::WorthALook);
+    assert_eq!(overall(&b, &HashSet::new()), Light::WorthALook);
+    let conf = |fs: &[Finding]| {
+        fs.iter()
+            .find(|f| f.rule_id == "proc.unsigned_user_writable")
+            .map(|f| f.confidence)
+    };
+    assert_eq!(conf(&a), Some(C::High));
+    assert_eq!(conf(&b), Some(C::Medium));
+}

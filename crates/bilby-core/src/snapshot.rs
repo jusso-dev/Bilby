@@ -577,9 +577,52 @@ pub struct AppInit {
     pub dlls: Option<String>,
 }
 
-/// Network connections. Filled in by the network issue.
+/// Network connections and listeners, with the process that owns each.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct NetworkFacts {}
+pub struct NetworkFacts {
+    /// Every TCP and UDP row whose process was in the process list.
+    #[serde(default)]
+    pub connections: Vec<ConnectionFact>,
+}
+
+/// TCP or UDP.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum Proto {
+    /// TCP.
+    Tcp,
+    /// UDP.
+    Udp,
+}
+
+/// TCP state, for the states the rules care about.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TcpState {
+    /// Waiting for connections.
+    Listen,
+    /// Connected.
+    Established,
+    /// Anything else (closing, time-wait...).
+    Other,
+}
+
+/// One row from the connection tables.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ConnectionFact {
+    /// TCP or UDP.
+    pub proto: Proto,
+    /// Local address and port.
+    pub local: std::net::SocketAddr,
+    /// Remote address and port, for TCP rows that have one.
+    #[serde(default)]
+    pub remote: Option<std::net::SocketAddr>,
+    /// TCP state. `None` for UDP.
+    #[serde(default)]
+    pub state: Option<TcpState>,
+    /// Owning process id.
+    pub pid: u32,
+}
 
 /// Browser extensions. Filled in by the browser issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]

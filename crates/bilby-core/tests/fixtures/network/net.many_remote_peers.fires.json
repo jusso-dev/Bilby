@@ -1,0 +1,3217 @@
+{
+  "note": "",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "processes": [
+      {
+        "pid": 700,
+        "ppid": 4,
+        "name": "services.exe",
+        "image_path": "C:\\Windows\\System32\\services.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Windows\\System32\\services.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 900,
+        "ppid": 4,
+        "name": "svchost.exe",
+        "image_path": "C:\\Windows\\System32\\svchost.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Windows\\System32\\svchost.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 2000,
+        "ppid": 4,
+        "name": "chrome.exe",
+        "image_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Google LLC",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "program_files",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 2100,
+        "ppid": 4,
+        "name": "ms-teams.exe",
+        "image_path": "C:\\Program Files\\WindowsApps\\MSTeams_x64\\ms-teams.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Program Files\\WindowsApps\\MSTeams_x64\\ms-teams.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Corporation",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_apps",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 2200,
+        "ppid": 4,
+        "name": "Spotify.exe",
+        "image_path": "C:\\Users\\Alex\\AppData\\Roaming\\Spotify\\Spotify.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Users\\Alex\\AppData\\Roaming\\Spotify\\Spotify.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Spotify AB",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "user_app_data",
+          "user_writable": true
+        }
+      },
+      {
+        "pid": 2300,
+        "ppid": 4,
+        "name": "steam.exe",
+        "image_path": "C:\\Program Files (x86)\\Steam\\steam.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Program Files (x86)\\Steam\\steam.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Valve Corp.",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "program_files",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 2400,
+        "ppid": 4,
+        "name": "OneDrive.exe",
+        "image_path": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Users\\Alex\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Corporation",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "user_app_programs",
+          "user_writable": true
+        }
+      },
+      {
+        "pid": 2500,
+        "ppid": 4,
+        "name": "Dropbox.exe",
+        "image_path": "C:\\Program Files (x86)\\Dropbox\\Client\\Dropbox.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Program Files (x86)\\Dropbox\\Client\\Dropbox.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Dropbox, Inc",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "program_files",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 2600,
+        "ppid": 4,
+        "name": "node.exe",
+        "image_path": "C:\\Program Files\\nodejs\\node.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Program Files\\nodejs\\node.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "OpenJS Foundation",
+              "issuer": "Example CA",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "program_files",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 5000,
+        "ppid": 4,
+        "name": "updater.exe",
+        "image_path": "C:\\Users\\Alex\\AppData\\Local\\Temp\\updater.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Users\\Alex\\AppData\\Local\\Temp\\updater.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": "unsigned",
+          "class": "temp",
+          "user_writable": true
+        }
+      }
+    ],
+    "network": {
+      "connections": [
+        {
+          "proto": "tcp",
+          "local": "0.0.0.0:135",
+          "remote": null,
+          "state": "listen",
+          "pid": 900
+        },
+        {
+          "proto": "tcp",
+          "local": "0.0.0.0:445",
+          "remote": null,
+          "state": "listen",
+          "pid": 4
+        },
+        {
+          "proto": "tcp",
+          "local": "[::]:135",
+          "remote": null,
+          "state": "listen",
+          "pid": 900
+        },
+        {
+          "proto": "tcp",
+          "local": "0.0.0.0:57621",
+          "remote": null,
+          "state": "listen",
+          "pid": 2200
+        },
+        {
+          "proto": "udp",
+          "local": "0.0.0.0:57621",
+          "remote": null,
+          "state": null,
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "0.0.0.0:3000",
+          "remote": null,
+          "state": "listen",
+          "pid": 2600
+        },
+        {
+          "proto": "tcp",
+          "local": "127.0.0.1:9222",
+          "remote": null,
+          "state": "listen",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50000",
+          "remote": "20.40.1.1:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50001",
+          "remote": "21.40.1.2:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50002",
+          "remote": "22.40.1.3:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50003",
+          "remote": "23.40.1.4:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50004",
+          "remote": "24.40.1.5:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50005",
+          "remote": "25.40.1.6:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50006",
+          "remote": "26.40.1.7:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50007",
+          "remote": "27.40.1.8:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50008",
+          "remote": "28.40.1.9:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50009",
+          "remote": "29.40.1.10:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50010",
+          "remote": "30.40.1.11:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50011",
+          "remote": "31.40.1.12:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50012",
+          "remote": "32.40.1.13:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50013",
+          "remote": "33.40.1.14:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50014",
+          "remote": "34.40.1.15:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50015",
+          "remote": "35.40.1.16:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50016",
+          "remote": "36.40.1.17:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50017",
+          "remote": "37.40.1.18:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50018",
+          "remote": "38.40.1.19:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50019",
+          "remote": "39.40.1.20:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50020",
+          "remote": "40.40.1.21:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50021",
+          "remote": "41.40.1.22:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50022",
+          "remote": "42.40.1.23:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50023",
+          "remote": "43.40.1.24:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50024",
+          "remote": "44.40.1.25:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50025",
+          "remote": "45.40.1.26:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50026",
+          "remote": "46.40.1.27:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50027",
+          "remote": "47.40.1.28:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50028",
+          "remote": "48.40.1.29:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50029",
+          "remote": "49.40.1.30:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50030",
+          "remote": "50.40.1.31:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50031",
+          "remote": "51.40.1.32:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50032",
+          "remote": "52.40.1.33:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50033",
+          "remote": "53.40.1.34:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50034",
+          "remote": "54.40.1.35:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50035",
+          "remote": "55.40.1.36:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50036",
+          "remote": "56.40.1.37:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50037",
+          "remote": "57.40.1.38:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50038",
+          "remote": "58.40.1.39:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50039",
+          "remote": "59.40.1.40:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50040",
+          "remote": "60.40.1.41:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50041",
+          "remote": "61.40.1.42:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50042",
+          "remote": "62.40.1.43:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50043",
+          "remote": "63.40.1.44:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50044",
+          "remote": "64.40.1.45:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50045",
+          "remote": "65.40.1.46:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50046",
+          "remote": "66.40.1.47:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50047",
+          "remote": "67.40.1.48:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50048",
+          "remote": "68.40.1.49:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50049",
+          "remote": "69.40.1.50:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50050",
+          "remote": "70.40.1.51:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50051",
+          "remote": "71.40.1.52:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50052",
+          "remote": "72.40.1.53:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50053",
+          "remote": "73.40.1.54:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50054",
+          "remote": "74.40.1.55:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50055",
+          "remote": "75.40.1.56:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50056",
+          "remote": "76.40.1.57:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50057",
+          "remote": "77.40.1.58:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50058",
+          "remote": "78.40.1.59:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50059",
+          "remote": "79.40.1.60:443",
+          "state": "established",
+          "pid": 2000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50100",
+          "remote": "20.41.1.1:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50101",
+          "remote": "21.41.1.2:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50102",
+          "remote": "22.41.1.3:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50103",
+          "remote": "23.41.1.4:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50104",
+          "remote": "24.41.1.5:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50105",
+          "remote": "25.41.1.6:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50106",
+          "remote": "26.41.1.7:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50107",
+          "remote": "27.41.1.8:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50108",
+          "remote": "28.41.1.9:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50109",
+          "remote": "29.41.1.10:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50110",
+          "remote": "30.41.1.11:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50111",
+          "remote": "31.41.1.12:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50112",
+          "remote": "32.41.1.13:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50113",
+          "remote": "33.41.1.14:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50114",
+          "remote": "34.41.1.15:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50115",
+          "remote": "35.41.1.16:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50116",
+          "remote": "36.41.1.17:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50117",
+          "remote": "37.41.1.18:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50118",
+          "remote": "38.41.1.19:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50119",
+          "remote": "39.41.1.20:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50120",
+          "remote": "40.41.1.21:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50121",
+          "remote": "41.41.1.22:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50122",
+          "remote": "42.41.1.23:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50123",
+          "remote": "43.41.1.24:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50124",
+          "remote": "44.41.1.25:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50125",
+          "remote": "45.41.1.26:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50126",
+          "remote": "46.41.1.27:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50127",
+          "remote": "47.41.1.28:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50128",
+          "remote": "48.41.1.29:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50129",
+          "remote": "49.41.1.30:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50130",
+          "remote": "50.41.1.31:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50131",
+          "remote": "51.41.1.32:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50132",
+          "remote": "52.41.1.33:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50133",
+          "remote": "53.41.1.34:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50134",
+          "remote": "54.41.1.35:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50135",
+          "remote": "55.41.1.36:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50136",
+          "remote": "56.41.1.37:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50137",
+          "remote": "57.41.1.38:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50138",
+          "remote": "58.41.1.39:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50139",
+          "remote": "59.41.1.40:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50140",
+          "remote": "60.41.1.41:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50141",
+          "remote": "61.41.1.42:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50142",
+          "remote": "62.41.1.43:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50143",
+          "remote": "63.41.1.44:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50144",
+          "remote": "64.41.1.45:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50145",
+          "remote": "65.41.1.46:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50146",
+          "remote": "66.41.1.47:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50147",
+          "remote": "67.41.1.48:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50148",
+          "remote": "68.41.1.49:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50149",
+          "remote": "69.41.1.50:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50150",
+          "remote": "70.41.1.51:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50151",
+          "remote": "71.41.1.52:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50152",
+          "remote": "72.41.1.53:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50153",
+          "remote": "73.41.1.54:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50154",
+          "remote": "74.41.1.55:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50155",
+          "remote": "75.41.1.56:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50156",
+          "remote": "76.41.1.57:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50157",
+          "remote": "77.41.1.58:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50158",
+          "remote": "78.41.1.59:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50159",
+          "remote": "79.41.1.60:443",
+          "state": "established",
+          "pid": 2100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50200",
+          "remote": "20.42.1.1:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50201",
+          "remote": "21.42.1.2:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50202",
+          "remote": "22.42.1.3:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50203",
+          "remote": "23.42.1.4:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50204",
+          "remote": "24.42.1.5:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50205",
+          "remote": "25.42.1.6:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50206",
+          "remote": "26.42.1.7:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50207",
+          "remote": "27.42.1.8:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50208",
+          "remote": "28.42.1.9:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50209",
+          "remote": "29.42.1.10:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50210",
+          "remote": "30.42.1.11:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50211",
+          "remote": "31.42.1.12:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50212",
+          "remote": "32.42.1.13:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50213",
+          "remote": "33.42.1.14:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50214",
+          "remote": "34.42.1.15:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50215",
+          "remote": "35.42.1.16:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50216",
+          "remote": "36.42.1.17:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50217",
+          "remote": "37.42.1.18:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50218",
+          "remote": "38.42.1.19:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50219",
+          "remote": "39.42.1.20:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50220",
+          "remote": "40.42.1.21:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50221",
+          "remote": "41.42.1.22:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50222",
+          "remote": "42.42.1.23:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50223",
+          "remote": "43.42.1.24:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50224",
+          "remote": "44.42.1.25:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50225",
+          "remote": "45.42.1.26:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50226",
+          "remote": "46.42.1.27:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50227",
+          "remote": "47.42.1.28:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50228",
+          "remote": "48.42.1.29:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50229",
+          "remote": "49.42.1.30:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50230",
+          "remote": "50.42.1.31:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50231",
+          "remote": "51.42.1.32:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50232",
+          "remote": "52.42.1.33:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50233",
+          "remote": "53.42.1.34:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50234",
+          "remote": "54.42.1.35:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50235",
+          "remote": "55.42.1.36:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50236",
+          "remote": "56.42.1.37:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50237",
+          "remote": "57.42.1.38:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50238",
+          "remote": "58.42.1.39:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50239",
+          "remote": "59.42.1.40:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50240",
+          "remote": "60.42.1.41:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50241",
+          "remote": "61.42.1.42:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50242",
+          "remote": "62.42.1.43:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50243",
+          "remote": "63.42.1.44:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50244",
+          "remote": "64.42.1.45:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50245",
+          "remote": "65.42.1.46:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50246",
+          "remote": "66.42.1.47:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50247",
+          "remote": "67.42.1.48:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50248",
+          "remote": "68.42.1.49:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50249",
+          "remote": "69.42.1.50:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50250",
+          "remote": "70.42.1.51:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50251",
+          "remote": "71.42.1.52:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50252",
+          "remote": "72.42.1.53:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50253",
+          "remote": "73.42.1.54:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50254",
+          "remote": "74.42.1.55:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50255",
+          "remote": "75.42.1.56:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50256",
+          "remote": "76.42.1.57:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50257",
+          "remote": "77.42.1.58:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50258",
+          "remote": "78.42.1.59:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50259",
+          "remote": "79.42.1.60:443",
+          "state": "established",
+          "pid": 2200
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50300",
+          "remote": "20.43.1.1:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50301",
+          "remote": "21.43.1.2:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50302",
+          "remote": "22.43.1.3:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50303",
+          "remote": "23.43.1.4:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50304",
+          "remote": "24.43.1.5:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50305",
+          "remote": "25.43.1.6:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50306",
+          "remote": "26.43.1.7:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50307",
+          "remote": "27.43.1.8:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50308",
+          "remote": "28.43.1.9:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50309",
+          "remote": "29.43.1.10:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50310",
+          "remote": "30.43.1.11:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50311",
+          "remote": "31.43.1.12:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50312",
+          "remote": "32.43.1.13:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50313",
+          "remote": "33.43.1.14:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50314",
+          "remote": "34.43.1.15:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50315",
+          "remote": "35.43.1.16:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50316",
+          "remote": "36.43.1.17:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50317",
+          "remote": "37.43.1.18:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50318",
+          "remote": "38.43.1.19:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50319",
+          "remote": "39.43.1.20:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50320",
+          "remote": "40.43.1.21:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50321",
+          "remote": "41.43.1.22:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50322",
+          "remote": "42.43.1.23:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50323",
+          "remote": "43.43.1.24:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50324",
+          "remote": "44.43.1.25:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50325",
+          "remote": "45.43.1.26:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50326",
+          "remote": "46.43.1.27:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50327",
+          "remote": "47.43.1.28:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50328",
+          "remote": "48.43.1.29:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50329",
+          "remote": "49.43.1.30:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50330",
+          "remote": "50.43.1.31:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50331",
+          "remote": "51.43.1.32:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50332",
+          "remote": "52.43.1.33:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50333",
+          "remote": "53.43.1.34:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50334",
+          "remote": "54.43.1.35:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50335",
+          "remote": "55.43.1.36:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50336",
+          "remote": "56.43.1.37:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50337",
+          "remote": "57.43.1.38:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50338",
+          "remote": "58.43.1.39:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50339",
+          "remote": "59.43.1.40:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50340",
+          "remote": "60.43.1.41:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50341",
+          "remote": "61.43.1.42:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50342",
+          "remote": "62.43.1.43:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50343",
+          "remote": "63.43.1.44:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50344",
+          "remote": "64.43.1.45:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50345",
+          "remote": "65.43.1.46:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50346",
+          "remote": "66.43.1.47:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50347",
+          "remote": "67.43.1.48:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50348",
+          "remote": "68.43.1.49:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50349",
+          "remote": "69.43.1.50:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50350",
+          "remote": "70.43.1.51:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50351",
+          "remote": "71.43.1.52:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50352",
+          "remote": "72.43.1.53:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50353",
+          "remote": "73.43.1.54:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50354",
+          "remote": "74.43.1.55:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50355",
+          "remote": "75.43.1.56:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50356",
+          "remote": "76.43.1.57:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50357",
+          "remote": "77.43.1.58:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50358",
+          "remote": "78.43.1.59:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50359",
+          "remote": "79.43.1.60:443",
+          "state": "established",
+          "pid": 2300
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50400",
+          "remote": "20.44.1.1:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50401",
+          "remote": "21.44.1.2:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50402",
+          "remote": "22.44.1.3:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50403",
+          "remote": "23.44.1.4:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50404",
+          "remote": "24.44.1.5:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50405",
+          "remote": "25.44.1.6:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50406",
+          "remote": "26.44.1.7:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50407",
+          "remote": "27.44.1.8:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50408",
+          "remote": "28.44.1.9:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50409",
+          "remote": "29.44.1.10:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50410",
+          "remote": "30.44.1.11:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50411",
+          "remote": "31.44.1.12:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50412",
+          "remote": "32.44.1.13:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50413",
+          "remote": "33.44.1.14:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50414",
+          "remote": "34.44.1.15:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50415",
+          "remote": "35.44.1.16:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50416",
+          "remote": "36.44.1.17:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50417",
+          "remote": "37.44.1.18:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50418",
+          "remote": "38.44.1.19:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50419",
+          "remote": "39.44.1.20:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50420",
+          "remote": "40.44.1.21:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50421",
+          "remote": "41.44.1.22:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50422",
+          "remote": "42.44.1.23:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50423",
+          "remote": "43.44.1.24:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50424",
+          "remote": "44.44.1.25:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50425",
+          "remote": "45.44.1.26:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50426",
+          "remote": "46.44.1.27:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50427",
+          "remote": "47.44.1.28:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50428",
+          "remote": "48.44.1.29:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50429",
+          "remote": "49.44.1.30:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50430",
+          "remote": "50.44.1.31:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50431",
+          "remote": "51.44.1.32:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50432",
+          "remote": "52.44.1.33:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50433",
+          "remote": "53.44.1.34:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50434",
+          "remote": "54.44.1.35:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50435",
+          "remote": "55.44.1.36:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50436",
+          "remote": "56.44.1.37:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50437",
+          "remote": "57.44.1.38:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50438",
+          "remote": "58.44.1.39:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50439",
+          "remote": "59.44.1.40:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50440",
+          "remote": "60.44.1.41:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50441",
+          "remote": "61.44.1.42:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50442",
+          "remote": "62.44.1.43:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50443",
+          "remote": "63.44.1.44:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50444",
+          "remote": "64.44.1.45:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50445",
+          "remote": "65.44.1.46:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50446",
+          "remote": "66.44.1.47:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50447",
+          "remote": "67.44.1.48:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50448",
+          "remote": "68.44.1.49:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50449",
+          "remote": "69.44.1.50:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50450",
+          "remote": "70.44.1.51:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50451",
+          "remote": "71.44.1.52:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50452",
+          "remote": "72.44.1.53:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50453",
+          "remote": "73.44.1.54:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50454",
+          "remote": "74.44.1.55:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50455",
+          "remote": "75.44.1.56:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50456",
+          "remote": "76.44.1.57:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50457",
+          "remote": "77.44.1.58:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50458",
+          "remote": "78.44.1.59:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50459",
+          "remote": "79.44.1.60:443",
+          "state": "established",
+          "pid": 2400
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50500",
+          "remote": "20.45.1.1:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50501",
+          "remote": "21.45.1.2:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50502",
+          "remote": "22.45.1.3:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50503",
+          "remote": "23.45.1.4:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50504",
+          "remote": "24.45.1.5:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50505",
+          "remote": "25.45.1.6:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50506",
+          "remote": "26.45.1.7:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50507",
+          "remote": "27.45.1.8:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50508",
+          "remote": "28.45.1.9:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50509",
+          "remote": "29.45.1.10:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50510",
+          "remote": "30.45.1.11:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50511",
+          "remote": "31.45.1.12:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50512",
+          "remote": "32.45.1.13:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50513",
+          "remote": "33.45.1.14:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50514",
+          "remote": "34.45.1.15:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50515",
+          "remote": "35.45.1.16:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50516",
+          "remote": "36.45.1.17:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50517",
+          "remote": "37.45.1.18:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50518",
+          "remote": "38.45.1.19:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50519",
+          "remote": "39.45.1.20:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50520",
+          "remote": "40.45.1.21:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50521",
+          "remote": "41.45.1.22:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50522",
+          "remote": "42.45.1.23:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50523",
+          "remote": "43.45.1.24:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50524",
+          "remote": "44.45.1.25:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50525",
+          "remote": "45.45.1.26:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50526",
+          "remote": "46.45.1.27:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50527",
+          "remote": "47.45.1.28:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50528",
+          "remote": "48.45.1.29:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50529",
+          "remote": "49.45.1.30:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50530",
+          "remote": "50.45.1.31:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50531",
+          "remote": "51.45.1.32:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50532",
+          "remote": "52.45.1.33:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50533",
+          "remote": "53.45.1.34:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50534",
+          "remote": "54.45.1.35:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50535",
+          "remote": "55.45.1.36:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50536",
+          "remote": "56.45.1.37:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50537",
+          "remote": "57.45.1.38:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50538",
+          "remote": "58.45.1.39:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50539",
+          "remote": "59.45.1.40:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50540",
+          "remote": "60.45.1.41:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50541",
+          "remote": "61.45.1.42:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50542",
+          "remote": "62.45.1.43:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50543",
+          "remote": "63.45.1.44:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50544",
+          "remote": "64.45.1.45:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50545",
+          "remote": "65.45.1.46:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50546",
+          "remote": "66.45.1.47:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50547",
+          "remote": "67.45.1.48:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50548",
+          "remote": "68.45.1.49:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50549",
+          "remote": "69.45.1.50:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50550",
+          "remote": "70.45.1.51:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50551",
+          "remote": "71.45.1.52:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50552",
+          "remote": "72.45.1.53:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50553",
+          "remote": "73.45.1.54:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50554",
+          "remote": "74.45.1.55:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50555",
+          "remote": "75.45.1.56:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50556",
+          "remote": "76.45.1.57:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50557",
+          "remote": "77.45.1.58:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50558",
+          "remote": "78.45.1.59:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50559",
+          "remote": "79.45.1.60:443",
+          "state": "established",
+          "pid": 2500
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61000",
+          "remote": "30.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61001",
+          "remote": "31.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61002",
+          "remote": "32.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61003",
+          "remote": "33.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61004",
+          "remote": "34.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61005",
+          "remote": "35.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61006",
+          "remote": "36.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61007",
+          "remote": "37.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61008",
+          "remote": "38.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61009",
+          "remote": "39.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61010",
+          "remote": "40.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61011",
+          "remote": "41.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61012",
+          "remote": "42.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61013",
+          "remote": "43.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61014",
+          "remote": "44.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61015",
+          "remote": "45.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61016",
+          "remote": "46.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61017",
+          "remote": "47.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61018",
+          "remote": "48.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61019",
+          "remote": "49.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61020",
+          "remote": "50.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61021",
+          "remote": "51.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61022",
+          "remote": "52.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61023",
+          "remote": "53.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61024",
+          "remote": "54.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61025",
+          "remote": "55.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61026",
+          "remote": "56.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61027",
+          "remote": "57.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61028",
+          "remote": "58.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61029",
+          "remote": "59.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61030",
+          "remote": "60.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61031",
+          "remote": "61.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61032",
+          "remote": "62.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61033",
+          "remote": "63.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61034",
+          "remote": "64.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61035",
+          "remote": "65.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61036",
+          "remote": "66.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61037",
+          "remote": "67.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61038",
+          "remote": "68.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61039",
+          "remote": "69.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61040",
+          "remote": "70.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61041",
+          "remote": "71.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61042",
+          "remote": "72.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61043",
+          "remote": "73.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61044",
+          "remote": "74.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61045",
+          "remote": "75.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61046",
+          "remote": "76.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61047",
+          "remote": "77.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61048",
+          "remote": "78.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61049",
+          "remote": "79.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61050",
+          "remote": "80.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61051",
+          "remote": "81.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61052",
+          "remote": "82.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61053",
+          "remote": "83.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:61054",
+          "remote": "84.1.2.3:443",
+          "state": "established",
+          "pid": 5000
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "net.many_remote_peers",
+      "severity": "medium",
+      "confidence": "low"
+    },
+    {
+      "rule_id": "proc.unsigned_user_writable",
+      "severity": "medium",
+      "confidence": "high"
+    }
+  ],
+  "absent": [
+    "net.listen_unsigned_user_writable",
+    "net.listen_script_host",
+    "proc.masquerade.system_name",
+    "proc.masquerade.lookalike"
+  ]
+}

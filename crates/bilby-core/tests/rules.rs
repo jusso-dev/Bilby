@@ -19,7 +19,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use bilby_core::model::{Confidence, Severity};
-use bilby_core::rules::{RuleContext, all_rules, evaluate_all};
+use bilby_core::rules::{BOOST_RULES, RuleContext, all_rules, evaluate_all};
 use bilby_core::snapshot::SystemSnapshot;
 use serde::Deserialize;
 use time::OffsetDateTime;
@@ -114,9 +114,9 @@ fn every_rule_has_fires_and_lookalike_fixtures() {
         .filter_map(|p| p.file_name().map(|n| n.to_string_lossy().into_owned()))
         .collect();
     let mut missing = Vec::new();
-    for rule in all_rules() {
+    for id in rule_ids() {
         for case in ["fires", "lookalike"] {
-            let prefix = format!("{}.{case}", rule.id());
+            let prefix = format!("{id}.{case}");
             if !names.iter().any(|n| n.starts_with(&prefix)) {
                 missing.push(prefix);
             }
@@ -130,9 +130,8 @@ fn every_rule_is_in_signals_md() {
     let doc =
         fs::read_to_string(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/signals.md"))
             .expect("docs/signals.md");
-    let missing: Vec<&str> = all_rules()
-        .iter()
-        .map(|r| r.id())
+    let missing: Vec<&str> = rule_ids()
+        .into_iter()
         .filter(|id| !doc.contains(&format!("| `{id}` |")))
         .collect();
     assert!(
@@ -144,13 +143,39 @@ fn every_rule_is_in_signals_md() {
 #[test]
 fn every_rule_has_copy() {
     let mut missing = Vec::new();
-    for rule in all_rules() {
+    for id in rule_ids() {
         for part in ["title", "what", "why", "todo"] {
-            let key = format!("{}.{part}", rule.id());
+            let key = format!("{id}.{part}");
             if !bilby_core::copy::CATALOGUE.contains_key(&key) {
                 missing.push(key);
             }
         }
     }
     assert!(missing.is_empty(), "missing copy: {missing:?}");
+}
+
+/// Every rule id: the ones that make cards and the boost-only ones.
+fn rule_ids() -> Vec<&'static str> {
+    let mut ids: Vec<&'static str> = all_rules().iter().map(|r| r.id()).collect();
+    ids.extend_from_slice(BOOST_RULES);
+    ids
+}
+
+/// Fixture expectations can name a boost rule; it never appears as a
+/// finding of its own.
+#[test]
+fn boost_rules_never_make_their_own_finding() {
+    for path in fixture_files() {
+        let text = fs::read_to_string(&path).expect("readable fixture");
+        let fixture: Fixture = serde_json::from_str(&text).expect("fixture parses");
+        let findings = evaluate_all(&fixture.snapshot, &RuleContext::at(fixture.now));
+        for f in &findings {
+            assert!(
+                !BOOST_RULES.contains(&f.rule_id.as_str()),
+                "{}: {} made its own finding",
+                path.display(),
+                f.rule_id
+            );
+        }
+    }
 }

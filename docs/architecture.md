@@ -37,6 +37,8 @@ crates/
     src/score.rs            findings -> traffic light
     src/paths.rs            pure path normalisation and PathClass classification
     src/cim.rs              WMI datetime and OLE date parsing
+    src/cmdline.rs          command line to target resolution (CreateProcess rules, hosts)
+    src/net.rs              address classes and Windows table byte order
     src/data/               windows_core_processes.toml (where each core Windows program belongs)
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
@@ -51,7 +53,7 @@ crates/
     src/defender.rs         protection status: Defender, Security Center, firewall, UAC, updates
     src/processes.rs        Toolhelp snapshot, PROCESS_QUERY_LIMITED_INFORMATION only, WMI command lines
     src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
-    src/network.rs
+    src/network.rs          GetExtendedTcpTable/UdpTable, IPv4 and IPv6, owning pids, no lookups
     src/browser.rs
     src/tamper.rs           hosts, proxy, root certificates
     src/drivers.rs
@@ -163,6 +165,10 @@ Rules get a `RuleContext` holding the suppressions and `now`, the scan's start t
 ### Cross-family facts
 
 Some findings mean more together. An unsigned program in AppData is Low on its own, but it's more interesting if the same file also starts by itself or connects out. `RuleContext::with_relations(now, snapshot)` builds a map from normalised file path to `Relation`s (`StartsByItself`, `OutboundConnection`, `ListeningPort`). `RuleContext::related(path)` reads it. Each family adds its relations in `rules::relations_from` as its collector lands: persistence in #9 to #11, network in #12. Rules only ever raise confidence this way. They never lower a finding because of it.
+
+### Boost-only rules
+
+Some rules only adjust findings that other rules made, and never make a card of their own. They're listed in `rules::BOOST_RULES` and run after all the other rules, in `evaluate_all`. `net.outbound_from_suspicious` is the first: an unsigned or masquerading program that's also connected to a public address gets its process finding raised one confidence level, with the connections added as evidence. The fixture harness checks that a boost rule never appears as a finding.
 
 ## Signal families (Windows)
 
