@@ -1,0 +1,125 @@
+{
+  "note": "Roots Windows ships that aren't in Microsoft's program list, as seen on a clean Windows image.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "tamper": {
+      "hosts": {
+        "path": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+        "default_path": true,
+        "entries": [
+          {
+            "line": 22,
+            "ip": "127.0.0.1",
+            "names": [
+              "localhost"
+            ]
+          },
+          {
+            "line": 23,
+            "ip": "::1",
+            "names": [
+              "localhost"
+            ]
+          }
+        ]
+      },
+      "proxy": {
+        "enabled": false,
+        "server": null,
+        "bypass": null,
+        "pac_url": null,
+        "listener": null
+      },
+      "winhttp_proxy": null,
+      "roots": [
+        {
+          "store": "machine",
+          "sha1": "cabd2a79a1076a31f21d253635cb039d4329a5e8",
+          "subject_cn": "ISRG Root X1",
+          "subject_o": null,
+          "issuer": "ISRG Root X1",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true,
+          "is_ca": null
+        },
+        {
+          "store": "machine",
+          "sha1": "d4de20d05e66fc53fe1a50882c78db2852cae474",
+          "subject_cn": "Baltimore CyberTrust Root",
+          "subject_o": null,
+          "issuer": "Baltimore CyberTrust Root",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true,
+          "is_ca": null
+        },
+        {
+          "store": "user",
+          "sha1": "cdd4eeae6000ac7f40c3802c171e30148030c072",
+          "subject_cn": "Microsoft Root Certificate Authority",
+          "subject_o": null,
+          "issuer": "Microsoft Root Certificate Authority",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true,
+          "is_ca": null
+        },
+        {
+          "store": "machine",
+          "sha1": "7f88cd7223f3c813818c994614a89c99fa3b5247",
+          "subject_cn": "Microsoft Authenticode(tm) Root Authority",
+          "subject_o": "MSFT",
+          "issuer": "Microsoft Authenticode(tm) Root Authority",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": false,
+          "is_ca": null
+        },
+        {
+          "store": "machine",
+          "sha1": "245c97df7514e7cf2df8be72ae957b9e04741e85",
+          "subject_cn": null,
+          "subject_o": "Microsoft Trust Network",
+          "issuer": null,
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": false,
+          "is_ca": null
+        },
+        {
+          "store": "machine",
+          "sha1": "f8db7e1c16f1ffd4aaad4aad8dff0f2445184aeb",
+          "subject_cn": "Microsoft Development Root Certificate Authority 2014",
+          "subject_o": "Microsoft Corporation",
+          "issuer": "Microsoft Development Root Certificate Authority 2014",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": false,
+          "is_ca": null
+        }
+      ],
+      "microsoft_list_read": true,
+      "dns_servers": [
+        "192.168.1.1"
+      ],
+      "computer_name": "LAPTOP-AB12",
+      "management": {
+        "managed": false,
+        "reasons": []
+      }
+    }
+  },
+  "expect": [],
+  "absent": [
+    "tamper.hosts.watch_domain",
+    "tamper.hosts.path_moved",
+    "tamper.hosts.many_entries",
+    "tamper.proxy.unexpected",
+    "tamper.proxy.pac_http",
+    "tamper.winhttp_proxy",
+    "tamper.root.known_bad",
+    "tamper.root.unknown",
+    "tamper.root.dev_tool"
+  ]
+}

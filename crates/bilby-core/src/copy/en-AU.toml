@@ -101,6 +101,7 @@ issuer = "Issued by"
 not_before = "Valid from"
 recent_root = "Recently added"
 ms_list = "Microsoft's root list"
+machine_cert = "Made by a computer for itself"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.

@@ -66,6 +66,61 @@ static DEV: LazyLock<DevTable> = LazyLock::new(|| {
         .expect("known_dev_roots.toml is valid")
 });
 
+#[derive(Deserialize)]
+struct WindowsRoot {
+    sha1: String,
+}
+
+#[derive(Deserialize)]
+struct WindowsTable {
+    root: Vec<WindowsRoot>,
+}
+
+static WINDOWS: LazyLock<WindowsTable> = LazyLock::new(|| {
+    toml::from_str(include_str!("../../data/known_windows_roots.toml"))
+        .expect("known_windows_roots.toml is valid")
+});
+
+/// A root Windows ships or needs that isn't in Microsoft's program list.
+/// By thumbprint only, so a copy of the name doesn't count.
+pub fn windows_own(r: &RootCert) -> bool {
+    WINDOWS
+        .root
+        .iter()
+        .any(|w| w.sha1.eq_ignore_ascii_case(&r.sha1))
+}
+
+/// How a root looks like a certificate a computer made for itself (Remote
+/// Desktop and `WinRM` do this): issued to and by one computer-style name,
+/// no organisation, and not marked as able to vouch for other sites.
+#[derive(Debug, PartialEq, Eq)]
+enum MachineCert {
+    /// Named after this computer.
+    ThisComputer,
+    /// Named like a computer, but not this one (a renamed PC, or the
+    /// machine a Windows image was built on).
+    OtherComputer,
+}
+
+fn machine_cert(r: &RootCert, computer: Option<&str>) -> Option<MachineCert> {
+    let cn = r.subject_cn.as_deref()?;
+    let looks_like_computer = !cn.is_empty()
+        && cn.len() <= 15
+        && cn.chars().all(|c| c.is_ascii_alphanumeric() || c == '-');
+    let self_issued = r
+        .issuer
+        .as_deref()
+        .is_some_and(|i| i.eq_ignore_ascii_case(cn));
+    if !looks_like_computer || !self_issued || r.subject_o.is_some() || r.is_ca == Some(true) {
+        return None;
+    }
+    Some(if computer.is_some_and(|c| c.eq_ignore_ascii_case(cn)) {
+        MachineCert::ThisComputer
+    } else {
+        MachineCert::OtherComputer
+    })
+}
+
 /// The known-bad root this certificate is, by thumbprint or subject.
 pub fn known_bad(r: &RootCert) -> Option<&'static str> {
     let sha = r.sha1.to_ascii_lowercase();
@@ -444,12 +499,19 @@ fn root_unknown(t: &TamperFacts, ctx: &RuleContext) -> Vec<Finding> {
                     .any(|o| o.sha1.eq_ignore_ascii_case(&r.sha1) && enterprise(o))
                 && known_bad(r).is_none()
                 && dev_tool(r).is_none()
+                && !windows_own(r)
         })
-        .map(|r| {
+        .filter_map(|r| {
+            let machine = machine_cert(r, t.computer_name.as_deref());
+            if machine == Some(MachineCert::ThisComputer) {
+                return None;
+            }
             let recent = r.not_before.is_some_and(|nb| nb >= ctx.now - RECENT_ROOT);
             // Without Microsoft's list Bilby can't tell a root it doesn't
-            // know from one it can't check, so stay at Low.
-            let confidence = if recent && t.microsoft_list_read {
+            // know from one it can't check, so stay at Low. A certificate
+            // another computer made for itself is usually harmless (the
+            // PC was renamed), so it stays Low too.
+            let confidence = if recent && t.microsoft_list_read && machine.is_none() {
                 Confidence::Medium
             } else {
                 Confidence::Low
@@ -464,7 +526,13 @@ fn root_unknown(t: &TamperFacts, ctx: &RuleContext) -> Vec<Finding> {
             if !t.microsoft_list_read {
                 b = b.text("evidence.ms_list", "Microsoft's root list couldn't be read");
             }
-            b.build()
+            if machine.is_some() {
+                b = b.text(
+                    "evidence.machine_cert",
+                    "looks like a certificate a computer made for itself, named after another computer",
+                );
+            }
+            Some(b.build())
         })
         .collect()
 }
@@ -487,6 +555,12 @@ fn root_dev_tool(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn windows_roots_load() {
+        assert_eq!(WINDOWS.root.len(), 7);
+        assert!(WINDOWS.root.iter().all(|w| w.sha1.len() == 40));
+    }
 
     #[test]
     fn data_files_load() {

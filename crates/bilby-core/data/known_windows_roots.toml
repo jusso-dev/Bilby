@@ -1,0 +1,47 @@
+# Roots Windows itself ships or needs that aren't in Microsoft's trusted
+# root program list (AuthRoot EncodedCtl), so tamper.root.unknown leaves
+# them alone. Matched by SHA-1 thumbprint only: a certificate that copies
+# one of these names but has a different thumbprint is still reported.
+#
+# Checked 10-11-2026 against the clean GitHub Actions windows-latest
+# runner image (Microsoft-built), CI run 42761979151, which listed subject,
+# serial and validity for each one.
+
+[[root]]
+name = "Microsoft Authenticode(tm) Root Authority"
+sha1 = "7f88cd7223f3c813818c994614a89c99fa3b5247"
+source = "Microsoft KB 293781 'Required trusted root certificates' (serial 01, expires 12/31/1999, 'Do not remove them'), https://learn.microsoft.com/en-us/troubleshoot/windows-server/certificates-and-public-key-infrastructure-pki/trusted-root-certificates-are-required. Subject and serial matched on the runner."
+
+[[root]]
+name = "Microsoft Timestamp Root (Copyright (c) 1997 Microsoft Corp.)"
+sha1 = "245c97df7514e7cf2df8be72ae957b9e04741e85"
+source = "Microsoft KB 293781, as above (issued to 'Copyright (c) 1997 Microsoft Corp.', serial 01, expires 12/30/1999). Subject and serial matched on the runner."
+
+# Microsoft's own development and test roots. They aren't in KB 293781.
+# They ship with Microsoft-built Windows images (seen on the runner) and
+# Windows Insider builds. Self-signed by Microsoft Corporation.
+
+[[root]]
+name = "Microsoft Development Root Certificate Authority 2014"
+sha1 = "f8db7e1c16f1ffd4aaad4aad8dff0f2445184aeb"
+source = "Runner image, serial 078f0a9d03df119e434e4fec1bf0235a, valid from 28-05-2014."
+
+[[root]]
+name = "Microsoft ECC Development Root Certificate Authority 2018"
+sha1 = "6ca22e5501cc80885ff281dd8b3338e89398ee18"
+source = "Runner image, serial 38623f7c7714c6aa4424574a882945ae, valid from 27-02-2018."
+
+[[root]]
+name = "Microsoft ECC Testing Root Certificate Authority 2017"
+sha1 = "a4b37f4f6de956922273d5cb8e7e0aafb7033b90"
+source = "Runner image, serial 6086a185eafa2b9943b4671603f40323, valid from 09-11-2017."
+
+[[root]]
+name = "Microsoft Testing Root Certificate Authority 2010"
+sha1 = "8a334aa8052dd244a647306a76b8178fa215f344"
+source = "Runner image, serial 7445c8784e0cc9964ab42fbcda29e1bc, valid from 17-06-2010."
+
+[[root]]
+name = "Microsoft Test Root Authority"
+sha1 = "2bd63d28d7bcd0e251195aeb519243c13142ebc3"
+source = "Runner image, serial 5fea4fd2f21d4310b6e8543ed8952618, valid from 10-01-1999."

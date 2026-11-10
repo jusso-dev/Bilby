@@ -42,7 +42,7 @@ crates/
     src/browser.rs          lenient parsing of Preferences, manifests, profiles.ini, extensions.json
     src/hosts.rs            hosts file decoding (UTF-8, UTF-16) and parsing, domain watch list
     src/data/               windows_core_processes.toml (where each core Windows program belongs)
-    data/                   watch_domains.txt, known_bad_roots.toml, known_dev_roots.toml (each entry cites its source)
+    data/                   watch_domains.txt, known_bad_roots.toml, known_dev_roots.toml, known_windows_roots.toml (each entry cites its source)
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
     tests/fixtures/         JSON snapshots used by unit tests

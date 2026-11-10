@@ -40,7 +40,8 @@
           "issuer": "ISRG Root X1",
           "not_before": "2015-01-01T00:00:00Z",
           "not_after": "2040-01-01T00:00:00Z",
-          "in_microsoft_list": true
+          "in_microsoft_list": true,
+          "is_ca": null
         },
         {
           "store": "machine",
@@ -50,7 +51,8 @@
           "issuer": "Baltimore CyberTrust Root",
           "not_before": "2015-01-01T00:00:00Z",
           "not_after": "2040-01-01T00:00:00Z",
-          "in_microsoft_list": true
+          "in_microsoft_list": true,
+          "is_ca": null
         },
         {
           "store": "user",
@@ -60,7 +62,8 @@
           "issuer": "Microsoft Root Certificate Authority",
           "not_before": "2015-01-01T00:00:00Z",
           "not_after": "2040-01-01T00:00:00Z",
-          "in_microsoft_list": true
+          "in_microsoft_list": true,
+          "is_ca": null
         },
         {
           "store": "user",
@@ -70,13 +73,15 @@
           "issuer": "Bilby Test Root",
           "not_before": "2026-10-20T00:00:00Z",
           "not_after": "2040-01-01T00:00:00Z",
-          "in_microsoft_list": false
+          "in_microsoft_list": false,
+          "is_ca": null
         }
       ],
       "microsoft_list_read": true,
       "dns_servers": [
         "192.168.1.1"
       ],
+      "computer_name": "LAPTOP-AB12",
       "management": {
         "managed": false,
         "reasons": []

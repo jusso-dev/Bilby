@@ -106,4 +106,15 @@ fn tamper_collector_runs() {
             f.rule_id, f.severity, f.confidence, f.subject
         );
     }
+    // A clean Microsoft-built image must not look tampered with: no
+    // tampering finding is sure enough to change the light.
+    let counted: Vec<_> = findings
+        .iter()
+        .filter(|f| {
+            f.severity > bilby_core::model::Severity::Info
+                && f.confidence >= bilby_core::score::MIN_CONFIDENCE_TO_COUNT
+        })
+        .map(|f| (&f.rule_id, &f.subject))
+        .collect();
+    assert!(counted.is_empty(), "clean runner flagged: {counted:?}");
 }
