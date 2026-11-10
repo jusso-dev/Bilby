@@ -2,7 +2,9 @@
 //! `KEY_READ`, shortcuts loaded with `STGM_READ` and never resolved.
 
 mod run_keys;
+pub mod services;
 mod startup_folders;
+pub mod tasks;
 
 use bilby_core::cmdline::{Host, resolve};
 use bilby_core::model::{Check, CheckStatus, SignalFamily};
@@ -31,16 +33,28 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
     for item in &mut items {
         fill_target(item, folders, cache);
     }
+    let check = |id: &str, status| Check {
+        id: id.to_owned(),
+        family: SignalFamily::Persistence,
+        status,
+    };
+    let (services, services_status) = match services::collect(folders, cache) {
+        Ok(list) => (list, CheckStatus::Ran),
+        Err(e) => (Vec::new(), CheckStatus::Failed(e.message())),
+    };
+    let (tasks, tasks_status) = match tasks::collect(folders, cache) {
+        // Some task folders need admin. Say so rather than look complete.
+        Ok(c) if c.folders_denied > 0 => (c.tasks, CheckStatus::NeedsAdmin),
+        Ok(c) => (c.tasks, CheckStatus::Ran),
+        Err(e) => (Vec::new(), CheckStatus::Failed(e.message())),
+    };
     let facts = PersistenceFacts {
         items,
         winlogon: Some(winlogon()),
         ifeo: ifeo(folders, cache),
         appinit: appinit(),
-    };
-    let check = |id: &str, status| Check {
-        id: id.to_owned(),
-        family: SignalFamily::Persistence,
-        status,
+        services,
+        tasks,
     };
     Collected {
         facts,
@@ -48,11 +62,13 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
             check("persistence.run_keys", CheckStatus::Ran),
             check("persistence.startup_folders", folder_status),
             check("persistence.winlogon", CheckStatus::Ran),
+            check("persistence.services", services_status),
+            check("persistence.tasks", tasks_status),
         ],
     }
 }
 
-fn host_name(h: Host) -> &'static str {
+pub(crate) fn host_name(h: Host) -> &'static str {
     match h {
         Host::Rundll32 => "rundll32",
         Host::Cmd => "cmd",

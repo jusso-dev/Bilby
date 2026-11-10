@@ -52,6 +52,28 @@ fn persistence_collector_runs() {
         ..Default::default()
     };
     let findings = evaluate_all(&snap, &RuleContext::at(time::OffsetDateTime::now_utc()));
+    // Print the command and resolved target behind every task finding, so a
+    // false alarm can be traced from the log.
+    for t in &p.tasks {
+        if findings
+            .iter()
+            .any(|f| f.subject == bilby_core::model::Subject::Task(t.path.to_lowercase()))
+        {
+            for a in &t.actions {
+                if let bilby_core::snapshot::TaskAction::Exec {
+                    command, target, ..
+                } = a
+                {
+                    println!(
+                        "  task {} | {command} -> {:?} exists {:?}",
+                        t.path,
+                        target.as_ref().map(|f| &f.path),
+                        target.as_ref().map(|f| f.exists)
+                    );
+                }
+            }
+        }
+    }
     println!("persistence findings on this runner: {}", findings.len());
     for f in &findings {
         println!(

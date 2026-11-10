@@ -46,6 +46,8 @@ windows = { version = "0.62.2", default-features = false, features = [
   "Win32_System_Diagnostics_ToolHelp",   # process snapshot (processes.rs)
   "Win32_System_Threading",              # OpenProcess, image path, times (processes.rs)
   "Win32_System_RemoteDesktop",          # ProcessIdToSessionId (processes.rs)
+  "Win32_System_Services",               # Service Control Manager, read-only (persistence/services.rs)
+  "Win32_System_TaskScheduler",          # ITaskService, getters only (persistence/tasks.rs)
 ] }
 sha2 = "0.10.9"
 time = { version = "0.3.55", default-features = false, features = ["std"] }
