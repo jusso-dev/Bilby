@@ -208,9 +208,14 @@ fn hosts_watch(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
             let Some((domain, group)) = watched(name) else {
                 continue;
             };
-            // Some privacy tools block update and security sites on purpose;
-            // a redirect anywhere else is the real trick.
-            let confidence = if group == WatchGroup::UpdatesAndSecurity && e.ip == "0.0.0.0" {
+            // Some privacy tools block update and security sites on purpose,
+            // and privacy lists block telemetry subdomains (for example
+            // telemetry.microsoft.com). An unroutable address can't reach an
+            // attacker's server; a redirect anywhere else is the real trick.
+            let unroutable = matches!(e.ip.as_str(), "0.0.0.0" | "::");
+            let confidence = if unroutable
+                && (group == WatchGroup::UpdatesAndSecurity || name.trim_end_matches('.') != domain)
+            {
                 Confidence::Medium
             } else {
                 Confidence::High

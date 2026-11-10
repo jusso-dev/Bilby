@@ -76,21 +76,21 @@ fn tamper_collector_runs() {
         "subject names are read"
     );
     if t.microsoft_list_read {
-        // A clean runner's machine roots are almost all in Microsoft's list.
-        let machine = t
-            .roots
+        // Every root outside Microsoft's list is one Windows ships (by
+        // thumbprint) or a self-signed machine certificate (no organisation,
+        // not a CA, issued by itself).
+        let unexplained: Vec<_> = outside
             .iter()
-            .filter(|r| r.store == RootStore::Machine)
-            .count();
-        let listed = t
-            .roots
-            .iter()
-            .filter(|r| r.store == RootStore::Machine && r.in_microsoft_list)
-            .count();
-        assert!(
-            listed * 10 >= machine * 8,
-            "{listed} of {machine} machine roots in Microsoft's list"
-        );
+            .filter(|r| {
+                !bilby_core::rules::tamper::windows_own(r)
+                    && (r.subject_o.is_some()
+                        || r.is_ca == Some(true)
+                        || r.issuer.is_none()
+                        || r.issuer != r.subject_cn)
+            })
+            .map(|r| (&r.sha1, &r.subject_cn))
+            .collect();
+        assert!(unexplained.is_empty(), "unexplained roots: {unexplained:?}");
     }
     let after = std::fs::metadata(&hosts).and_then(|m| m.modified()).ok();
     assert_eq!(before, after, "the hosts file must not change");

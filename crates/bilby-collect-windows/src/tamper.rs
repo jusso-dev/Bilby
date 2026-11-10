@@ -103,11 +103,15 @@ fn hosts(folders: &KnownFolders) -> Option<HostsFacts> {
     let default_path =
         configured.is_none_or(|c| normalise(&c, folders) == normalise(&default, folders));
     let path = format!(r"{}\hosts", normalise(&dir, folders));
-    let bytes = std::fs::read(Path::new(&expand(&dir, folders)).join("hosts")).ok()?;
+    let bytes = std::fs::read(Path::new(&expand(&dir, folders)).join("hosts"));
+    // A moved hosts path matters even if the file there can't be read.
+    if bytes.is_err() && default_path {
+        return None;
+    }
     Some(HostsFacts {
         path,
         default_path,
-        entries: parse(&decode(&bytes)),
+        entries: parse(&decode(&bytes.unwrap_or_default())),
     })
 }
 
