@@ -1,4 +1,9 @@
 <section class="results" aria-labelledby="results-heading">
   <h1 id="results-heading">{{ headline_key|t }}</h1>
   <p>{{ placeholder }}</p>
+  {% if offer_deep_check %}
+  <p>{{ "deep.intro"|t }}</p>
+  <button type="button" data-action="deep-check">{{ "deep.button"|t }}</button>
+  <p id="deep-status" role="status"></p>
+  {% endif %}
 </section>

@@ -16,7 +16,7 @@
 
 Use a fresh Windows 11 Enterprise evaluation VM (free 90-day ISO from Microsoft's Evaluation Center) with Hyper-V, VirtualBox or UTM. Install: Chrome, Firefox, Microsoft 365 apps or LibreOffice, Zoom, Teams, Spotify, Steam, Adobe Acrobat Reader, 7-Zip, VLC, Dropbox or OneDrive. Fully update Windows.
 
-Run Bilby as a standard user and as admin. Pass: **Looks healthy**, and zero Medium or High findings. Save the JSON snapshot (Bilby's hidden `--dump-snapshot <file>` flag, added in the orchestration issue) with user names and hostnames scrubbed, and add it to `tests/fixtures/baseline/` as a regression fixture.
+Run Bilby as a standard user and as admin. Pass: **Looks healthy**, and zero Medium or High findings. Save the JSON snapshot (`bilby.exe --dump-snapshot <file>`, a hidden flag that writes the scrubbed snapshot and exits without a window) with user names and hostnames scrubbed, and add it to `tests/fixtures/baseline/` as a regression fixture.
 
 ## Benign simulations
 

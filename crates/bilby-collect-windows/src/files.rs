@@ -13,6 +13,10 @@ use crate::{hash, sig};
 /// `cache` so repeat lookups in one scan are free. Never follows the path
 /// anywhere it doesn't say: reparse points are reported as the path given.
 pub fn file_facts(path: &str, folders: &KnownFolders, cache: &FileCache) -> FileFacts {
+    // A cancelled scan's results are thrown away, so don't open the file.
+    if cache.cancelled() {
+        return not_checked(path, folders, "scan cancelled");
+    }
     // Classify the long form, so a short 8.3 spelling can't dodge a folder
     // class. The reported path stays as Windows gave it.
     let classified = classify(&crate::paths::long_path(path), folders);

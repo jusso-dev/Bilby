@@ -20,6 +20,11 @@ must_use_candidate = "allow"
 missing_errors_doc = "allow"
 undocumented_unsafe_blocks = "deny"
 
+[features]
+# Test only: adds a collector that hangs for 60 seconds, to prove the scan
+# times it out (#17). Never enabled in a release build.
+slow-collector-test = []
+
 [dependencies]
 bilby-core = { path = "../bilby-core" }
 
@@ -55,6 +60,7 @@ windows = { version = "0.62.2", default-features = false, features = [
   "Win32_System_ProcessStatus",          # EnumDeviceDrivers, GetDeviceDriverFileNameW (drivers.rs)
   "Wdk_System_SystemInformation",        # NtQuerySystemInformation, code integrity only (drivers.rs)
   "Win32_Networking_WinHttp",            # default WinHTTP proxy, read only (tamper.rs)
+  "Win32_UI_WindowsAndMessaging",        # SW_SHOWNORMAL for the UAC relaunch (elevation.rs)
 ] }
 sha2 = "0.11.1"
 time = { version = "0.3.55", default-features = false, features = ["std"] }

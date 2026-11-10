@@ -1,4 +1,6 @@
-<section class="home" aria-labelledby="home-heading">
+<section class="home" aria-labelledby="home-heading"{% if autostart %} data-autostart{% endif %}>
   <h1 id="home-heading">{{ "home.heading"|t }}</h1>
   <button type="button" class="big-button" data-action="start-scan">{{ "home.button"|t }}</button>
+  <p id="scan-status" role="status">{% if let Some(m) = message %}{{ m }}{% endif %}</p>
+  <button type="button" data-action="cancel-scan" hidden>{{ "scan.cancel"|t }}</button>
 </section>

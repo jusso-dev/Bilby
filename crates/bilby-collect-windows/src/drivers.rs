@@ -29,10 +29,14 @@ pub struct Collected {
 /// Collects loaded drivers and boot integrity.
 pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
     let mut checks = Vec::new();
-    let paths = loaded_paths(folders);
+    let (paths, hidden) = loaded_paths(folders);
     checks.push((
         "drivers.loaded",
-        if paths.is_empty() {
+        if hidden {
+            // Windows 11 24H2 and later only give driver addresses to
+            // callers with SeDebugPrivilege; the rest get all NULLs.
+            CheckStatus::NeedsAdmin
+        } else if paths.is_empty() {
             CheckStatus::Failed("no loaded drivers listed".to_owned())
         } else {
             CheckStatus::Ran
@@ -81,15 +85,20 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
     }
 }
 
-/// Paths of every loaded driver, as Win32 paths.
-fn loaded_paths(folders: &KnownFolders) -> Vec<String> {
+/// Paths of every loaded driver, as Win32 paths, and whether Windows hid
+/// the list. From Windows 11 24H2, `EnumDeviceDrivers` "will require
+/// `SeDebugPrivilege` to return valid `ImageBase` values ... the returned
+/// `lpImageBase` array will contain addresses that are all NULL" (Microsoft
+/// Learn, `EnumDeviceDrivers`). Bilby then can't name the drivers and says it
+/// needs admin rather than report a near-empty list as checked.
+fn loaded_paths(folders: &KnownFolders) -> (Vec<String>, bool) {
     let mut bases: Vec<*mut core::ffi::c_void> = vec![std::ptr::null_mut(); 1024];
     for _ in 0..3 {
         let mut needed = 0u32;
         let bytes = u32::try_from(bases.len() * size_of::<usize>()).unwrap_or(u32::MAX);
         // SAFETY: `bases` holds `bytes` bytes of pointers.
         if unsafe { EnumDeviceDrivers(bases.as_mut_ptr(), bytes, &raw mut needed) }.is_err() {
-            return Vec::new();
+            return (Vec::new(), false);
         }
         let count = needed as usize / size_of::<usize>();
         if count <= bases.len() {
@@ -97,6 +106,9 @@ fn loaded_paths(folders: &KnownFolders) -> Vec<String> {
             break;
         }
         bases = vec![std::ptr::null_mut(); count + 64];
+    }
+    if !bases.is_empty() && bases.iter().all(|b| b.is_null()) {
+        return (Vec::new(), true);
     }
     let mut out = Vec::with_capacity(bases.len());
     let mut buf = vec![0u16; 1024];
@@ -115,7 +127,7 @@ fn loaded_paths(folders: &KnownFolders) -> Vec<String> {
             out.push(path);
         }
     }
-    out
+    (out, false)
 }
 
 /// Crash dump drivers (`dump_diskdump.sys`, `dump_storvsc.sys`, ...) are

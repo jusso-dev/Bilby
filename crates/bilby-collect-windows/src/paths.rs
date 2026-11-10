@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 
 use bilby_core::paths::KnownFolders;
 use windows::Win32::Storage::FileSystem::{
-    GetDriveTypeW, GetLogicalDrives, GetLongPathNameW, GetTempPathW,
+    GetDriveTypeW, GetLogicalDrives, GetLongPathNameW, GetShortPathNameW, GetTempPathW,
 };
 use windows::Win32::System::Com::CoTaskMemFree;
 use windows::Win32::System::SystemInformation::{
@@ -69,6 +69,25 @@ pub fn long_path(path: &str) -> String {
     let mut buf = vec![0u16; needed as usize];
     // SAFETY: `buf` has the length Windows asked for.
     let written = unsafe { GetLongPathNameW(&wide, Some(&mut buf)) } as usize;
+    if written == 0 || written >= buf.len() {
+        return path.to_owned();
+    }
+    String::from_utf16_lossy(&buf[..written])
+}
+
+/// The 8.3 short form of `path` (`C:\Users\RUNNER~1`), or `path` itself
+/// if Windows has none. Used to scrub both spellings of the profile folder.
+pub fn short_path(path: &str) -> String {
+    let wide = HSTRING::from(path);
+    // SAFETY: `wide` is NUL-terminated. With no buffer the call returns the
+    // length needed, including the terminator.
+    let needed = unsafe { GetShortPathNameW(&wide, None) };
+    if needed == 0 {
+        return path.to_owned();
+    }
+    let mut buf = vec![0u16; needed as usize];
+    // SAFETY: `buf` has the length Windows asked for.
+    let written = unsafe { GetShortPathNameW(&wide, Some(&mut buf)) } as usize;
     if written == 0 || written >= buf.len() {
         return path.to_owned();
     }
