@@ -2,6 +2,7 @@
 //! family. Every rule needs a row in `docs/signals.md` and fixtures for
 //! "fires" and "look-alike".
 
+pub mod browser;
 pub mod network;
 pub mod persistence;
 pub mod processes;
@@ -114,6 +115,7 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
     rules.extend(processes::rules());
     rules.extend(persistence::rules());
     rules.extend(network::rules());
+    rules.extend(browser::rules());
     rules
 }
 

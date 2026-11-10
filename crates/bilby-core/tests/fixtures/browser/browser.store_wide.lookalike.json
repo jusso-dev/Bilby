@@ -1,0 +1,46 @@
+{
+  "note": "A store extension without broad access: nothing at all.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "browser": {
+      "extensions": [
+        {
+          "browser": "chrome",
+          "profile": "Default",
+          "id": "x",
+          "name": "Dark Reader",
+          "version": "1.0",
+          "source": "store",
+          "raw_location": "1",
+          "enabled": true,
+          "permissions": [
+            "storage"
+          ],
+          "update_url": null,
+          "signed_state": null
+        }
+      ],
+      "policies": [],
+      "shortcuts": [
+        {
+          "path": "C:\\Users\\Alex\\Desktop\\Google Chrome.lnk",
+          "browser": "chrome",
+          "arguments": ""
+        },
+        {
+          "path": "C:\\Users\\Alex\\Desktop\\Chrome (Work).lnk",
+          "browser": "chrome",
+          "arguments": "--profile-directory=\"Profile 1\""
+        }
+      ],
+      "management": {
+        "managed": false,
+        "reasons": []
+      }
+    }
+  },
+  "expect": [],
+  "absent": [
+    "browser.store_wide"
+  ]
+}

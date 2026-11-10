@@ -1,0 +1,153 @@
+{
+  "note": "Test plan simulation 14: load unpacked with <all_urls> and webRequest.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "browser": {
+      "extensions": [
+        {
+          "browser": "chrome",
+          "profile": "Default",
+          "id": "cjpalhdlnbpafiamejdnhcphjbkeiagm",
+          "name": "uBlock Origin",
+          "version": "1.0",
+          "source": "store",
+          "raw_location": "1",
+          "enabled": true,
+          "permissions": [
+            "storage",
+            "<all_urls>"
+          ],
+          "update_url": null,
+          "signed_state": null
+        },
+        {
+          "browser": "chrome",
+          "profile": "Default",
+          "id": "aeblfdkhhhdcdjpifhhbdiojplfjncoa",
+          "name": "1Password",
+          "version": "1.0",
+          "source": "store",
+          "raw_location": "1",
+          "enabled": true,
+          "permissions": [
+            "storage",
+            "https://*/*"
+          ],
+          "update_url": null,
+          "signed_state": null
+        },
+        {
+          "browser": "chrome",
+          "profile": "Default",
+          "id": "kbfnbcaeplbcioakkpcpgfkobkghlhen",
+          "name": "Grammarly",
+          "version": "1.0",
+          "source": "store",
+          "raw_location": "1",
+          "enabled": true,
+          "permissions": [
+            "<all_urls>"
+          ],
+          "update_url": null,
+          "signed_state": null
+        },
+        {
+          "browser": "chrome",
+          "profile": "Default",
+          "id": "ghbmnnjooekpmoecnnnilnnbdlolhkhi",
+          "name": "Google Docs Offline",
+          "version": "1.0",
+          "source": "external",
+          "raw_location": "6",
+          "enabled": true,
+          "permissions": [
+            "storage"
+          ],
+          "update_url": null,
+          "signed_state": null
+        },
+        {
+          "browser": "edge",
+          "profile": "Default",
+          "id": "jmjflgjpcpepeafmmgdpfkogkghcpiha",
+          "name": "Edge built-in",
+          "version": "1.0",
+          "source": "component",
+          "raw_location": "5",
+          "enabled": true,
+          "permissions": [
+            "<all_urls>"
+          ],
+          "update_url": null,
+          "signed_state": null
+        },
+        {
+          "browser": "firefox",
+          "profile": "Default",
+          "id": "uBlock0@raymondhill.net",
+          "name": "uBlock Origin",
+          "version": "1.0",
+          "source": "firefox_profile",
+          "raw_location": "app-profile",
+          "enabled": true,
+          "permissions": [
+            "<all_urls>"
+          ],
+          "update_url": null,
+          "signed_state": 2
+        },
+        {
+          "browser": "chrome",
+          "profile": "Default",
+          "id": "abcdefabcdefabcdefabcdefabcdefab",
+          "name": "Coupon Helper",
+          "version": "1.0",
+          "source": "unpacked",
+          "raw_location": "4",
+          "enabled": true,
+          "permissions": [
+            "<all_urls>",
+            "webRequest"
+          ],
+          "update_url": null,
+          "signed_state": null
+        }
+      ],
+      "policies": [],
+      "shortcuts": [
+        {
+          "path": "C:\\Users\\Alex\\Desktop\\Google Chrome.lnk",
+          "browser": "chrome",
+          "arguments": ""
+        },
+        {
+          "path": "C:\\Users\\Alex\\Desktop\\Chrome (Work).lnk",
+          "browser": "chrome",
+          "arguments": "--profile-directory=\"Profile 1\""
+        }
+      ],
+      "management": {
+        "managed": false,
+        "reasons": []
+      }
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "browser.sideloaded_wide",
+      "severity": "medium",
+      "confidence": "medium"
+    },
+    {
+      "rule_id": "browser.store_wide",
+      "severity": "info",
+      "confidence": "high"
+    }
+  ],
+  "absent": [
+    "browser.forced_unmanaged",
+    "browser.forced_managed",
+    "browser.shortcut_load_extension",
+    "browser.firefox_unsigned"
+  ]
+}

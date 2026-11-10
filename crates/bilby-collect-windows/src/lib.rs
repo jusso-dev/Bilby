@@ -6,6 +6,7 @@
 //! access only.
 #![cfg(windows)]
 
+pub mod browser;
 pub mod cache;
 pub mod defender;
 pub mod files;
