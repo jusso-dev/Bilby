@@ -789,6 +789,13 @@ pub struct ProxyFacts {
     /// computer.
     #[serde(default)]
     pub listener: Option<ProcessFact>,
+    /// `AutoDetect` (WPAD). Windows' default, so shown but never a finding.
+    #[serde(default)]
+    pub auto_detect: bool,
+    /// The `ProxySettingsPerUser` policy is 0: an organisation set one proxy
+    /// for the whole machine.
+    #[serde(default)]
+    pub per_machine_policy: bool,
 }
 
 /// Which certificate store a root was found in.
@@ -812,6 +819,9 @@ pub struct RootCert {
     pub store: RootStore,
     /// SHA-1 thumbprint, lower-case hex.
     pub sha1: String,
+    /// SHA-256 of the certificate, lower-case hex.
+    #[serde(default)]
+    pub sha256: Option<String>,
     /// Subject common name.
     #[serde(default)]
     pub subject_cn: Option<String>,

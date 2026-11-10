@@ -19,8 +19,8 @@ use windows::Win32::Networking::WinHttp::{
 use windows::Win32::Security::Cryptography::{
     CERT_CONTEXT, CERT_NAME_ATTR_TYPE, CERT_NAME_ISSUER_FLAG, CERT_NAME_SIMPLE_DISPLAY_TYPE,
     CERT_OPEN_STORE_FLAGS, CERT_QUERY_ENCODING_TYPE, CERT_SHA1_HASH_PROP_ID,
-    CERT_STORE_OPEN_EXISTING_FLAG, CERT_STORE_PROV_SYSTEM_W, CERT_STORE_READONLY_FLAG,
-    CERT_SYSTEM_STORE_CURRENT_USER, CERT_SYSTEM_STORE_LOCAL_MACHINE,
+    CERT_SHA256_HASH_PROP_ID, CERT_STORE_OPEN_EXISTING_FLAG, CERT_STORE_PROV_SYSTEM_W,
+    CERT_STORE_READONLY_FLAG, CERT_SYSTEM_STORE_CURRENT_USER, CERT_SYSTEM_STORE_LOCAL_MACHINE,
     CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE_ID, CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY_ID,
     CERT_SYSTEM_STORE_LOCATION_SHIFT, CertCloseStore, CertCreateCTLContext,
     CertEnumCertificatesInStore, CertFreeCTLContext, CertGetCertificateContextProperty,
@@ -82,8 +82,7 @@ pub fn collect(
             winhttp_proxy: winhttp_proxy(),
             roots,
             microsoft_list_read,
-            // No rule uses DNS servers yet; the helper view (#21) can add them.
-            dns_servers: Vec::new(),
+            dns_servers: dns_servers(),
             management,
         },
         checks,
@@ -151,8 +150,18 @@ fn proxy(processes: &[ProcessFact], connections: &[ConnectionFact]) -> ProxyFact
     } else {
         None
     };
+    // An organisation can set one proxy for every user on the machine.
+    let per_machine_policy = Key::open(
+        HKEY_LOCAL_MACHINE,
+        r"Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings",
+        KEY_WOW64_64KEY,
+    )
+    .and_then(|k| dword(&k, "ProxySettingsPerUser"))
+        == Some(0);
     ProxyFacts {
         enabled,
+        auto_detect: key.as_ref().and_then(|k| dword(k, "AutoDetect")) == Some(1),
+        per_machine_policy,
         bypass: text("ProxyOverride"),
         pac_url: text("AutoConfigURL"),
         listener,
@@ -275,19 +284,20 @@ fn display(cert: *const CERT_CONTEXT, flags: u32) -> Option<String> {
 }
 
 fn sha1(cert: *const CERT_CONTEXT) -> Option<String> {
-    let mut hash = [0u8; 20];
-    let mut size = 20u32;
-    // SAFETY: SHA-1 is 20 bytes; Windows computes it if not cached.
+    thumbprint::<20>(cert, CERT_SHA1_HASH_PROP_ID)
+}
+
+/// A hash of the certificate, `N` bytes long. Windows computes it if the
+/// store hasn't cached it.
+fn thumbprint<const N: usize>(cert: *const CERT_CONTEXT, prop: u32) -> Option<String> {
+    let mut hash = [0u8; N];
+    let mut size = u32::try_from(N).ok()?;
+    // SAFETY: the buffer holds N bytes and `size` says so.
     unsafe {
-        CertGetCertificateContextProperty(
-            cert,
-            CERT_SHA1_HASH_PROP_ID,
-            Some(hash.as_mut_ptr().cast()),
-            &raw mut size,
-        )
+        CertGetCertificateContextProperty(cert, prop, Some(hash.as_mut_ptr().cast()), &raw mut size)
     }
     .ok()?;
-    Some(hex(&hash[..size as usize]))
+    Some(hex(&hash[..(size as usize).min(N)]))
 }
 
 fn roots(microsoft: &HashSet<String>) -> Vec<RootCert> {
@@ -330,6 +340,7 @@ fn roots(microsoft: &HashSet<String>) -> Vec<RootCert> {
                 issuer: display(cert, CERT_NAME_ISSUER_FLAG),
                 not_before: info.and_then(|i| crate::processes::from_filetime(i.NotBefore)),
                 not_after: info.and_then(|i| crate::processes::from_filetime(i.NotAfter)),
+                sha256: thumbprint::<32>(cert, CERT_SHA256_HASH_PROP_ID),
                 sha1: sha,
             });
         }
@@ -406,4 +417,77 @@ fn microsoft_roots() -> (HashSet<String>, bool) {
         }
     }
     (out, false)
+}
+
+/// DNS servers on adapters that are up, for the helper view. No finding.
+fn dns_servers() -> Vec<String> {
+    use windows::Win32::NetworkManagement::IpHelper::{
+        GAA_FLAG_SKIP_ANYCAST, GAA_FLAG_SKIP_MULTICAST, GAA_FLAG_SKIP_UNICAST,
+        GetAdaptersAddresses, IP_ADAPTER_ADDRESSES_LH,
+    };
+    use windows::Win32::NetworkManagement::Ndis::IfOperStatusUp;
+    use windows::Win32::Networking::WinSock::{
+        AF_INET, AF_INET6, AF_UNSPEC, SOCKADDR_IN, SOCKADDR_IN6,
+    };
+
+    let flags = GAA_FLAG_SKIP_UNICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST;
+    let mut size = 16 * 1024u32;
+    let mut buf: Vec<u64> = Vec::new();
+    for _ in 0..3 {
+        buf = vec![0u64; (size as usize).div_ceil(8)];
+        // SAFETY: the buffer is `size` bytes, 8-byte aligned.
+        let rc = unsafe {
+            GetAdaptersAddresses(
+                u32::from(AF_UNSPEC.0),
+                flags,
+                None,
+                Some(buf.as_mut_ptr().cast()),
+                &raw mut size,
+            )
+        };
+        match rc {
+            0 => break,
+            111 => {} // ERROR_BUFFER_OVERFLOW: `size` now holds what's needed.
+            _ => return Vec::new(),
+        }
+    }
+    let mut out = Vec::new();
+    let mut adapter = buf.as_ptr().cast::<IP_ADAPTER_ADDRESSES_LH>();
+    // SAFETY: a linked list inside `buf`, filled by Windows, ending in null.
+    while let Some(a) = unsafe { adapter.as_ref() } {
+        if a.OperStatus == IfOperStatusUp {
+            let mut dns = a.FirstDnsServerAddress;
+            // SAFETY: as above.
+            while let Some(d) = unsafe { dns.as_ref() } {
+                let sa = d.Address.lpSockaddr;
+                let len = usize::try_from(d.Address.iSockaddrLength).unwrap_or(0);
+                // SAFETY: the family and length say which sockaddr type this
+                // is; read_unaligned copes with any alignment.
+                let ip: Option<std::net::IpAddr> = unsafe {
+                    match sa.as_ref().map(|s| s.sa_family) {
+                        Some(f) if f == AF_INET && len >= size_of::<SOCKADDR_IN>() => {
+                            let v4 = sa.cast::<SOCKADDR_IN>().read_unaligned();
+                            Some(
+                                std::net::Ipv4Addr::from(u32::from_be(v4.sin_addr.S_un.S_addr))
+                                    .into(),
+                            )
+                        }
+                        Some(f) if f == AF_INET6 && len >= size_of::<SOCKADDR_IN6>() => {
+                            let v6 = sa.cast::<SOCKADDR_IN6>().read_unaligned();
+                            Some(std::net::Ipv6Addr::from(v6.sin6_addr.u.Byte).into())
+                        }
+                        _ => None,
+                    }
+                };
+                if let Some(ip) = ip.map(|i| i.to_string())
+                    && !out.contains(&ip)
+                {
+                    out.push(ip);
+                }
+                dns = d.Next;
+            }
+        }
+        adapter = a.Next;
+    }
+    out
 }

@@ -33,6 +33,7 @@ fn tamper_collector_runs() {
     );
     println!("proxy {:?}", t.proxy);
     println!("winhttp {:?}", t.winhttp_proxy);
+    println!("dns servers {:?}", t.dns_servers);
     println!(
         "roots {} microsoft list read {}",
         t.roots.len(),
@@ -62,6 +63,13 @@ fn tamper_collector_runs() {
         t.roots.iter().all(|r| r.sha1.len() == 40),
         "thumbprints are SHA-1 hex"
     );
+    assert!(
+        t.roots
+            .iter()
+            .all(|r| r.sha256.as_ref().is_some_and(|h| h.len() == 64)),
+        "every root has a SHA-256"
+    );
+    assert!(!t.dns_servers.is_empty(), "the runner has a DNS server");
     assert!(
         t.roots.iter().any(|r| r.subject_cn.is_some()),
         "subject names are read"

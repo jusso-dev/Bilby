@@ -242,7 +242,7 @@ fn proxy_unexpected(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
     let Some(p) = &t.proxy else { return Vec::new() };
     let active = (p.enabled && p.server.as_deref().is_some_and(|s| !s.trim().is_empty()))
         || p.pac_url.as_deref().is_some_and(|u| !u.trim().is_empty());
-    if !active || t.management.managed {
+    if !active || t.management.managed || p.per_machine_policy {
         return Vec::new();
     }
     let confidence = match &p.listener {
