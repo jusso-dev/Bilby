@@ -22,6 +22,7 @@ Bilby reads private parts of a computer, so the code that goes into it has to be
 |---|---|---|
 | MPL-2.0: `cssparser`, `cssparser-macros`, `dtoa-short`, `selectors` | Pulled in by Tauri (`tauri-utils` uses `dom_query` to edit HTML at build time). Used unmodified. | When Tauri changes it |
 | MPL-2.0: `option-ext` | Pulled in by Tauri and wry through `dirs`. Used unmodified. | When Tauri changes it |
+| CDLA-Permissive-2.0: `webpki-roots` | Mozilla's CA root list as data, for rustls in the opt-in online checks (`bilby-reputation`). A permissive data licence. | When ureq changes it |
 | RUSTSEC-2024-0370, `proc-macro-error` unmaintained | Only reached through gtk, Tauri's Linux webview stack. Bilby ships no Linux app. | 09-05-2027 |
 | RUSTSEC-2024-0429, `glib` unsound iterator | Same Linux-only gtk stack. Bilby never calls it. Listed in `.cargo/audit.toml` only, because cargo-deny doesn't report unsound advisories by default. | 09-05-2027 |
 

@@ -34,6 +34,7 @@ crates/
     src/model.rs            Finding, Severity, Confidence, Evidence, NextStep, ScanReport
     src/snapshot.rs         SystemSnapshot: the raw facts collectors return
     src/rules/              one module per signal family, pure functions snapshot -> findings
+    src/settings.rs         OnlineChecks { circl, virustotal }, both off by default, booleans only
     src/score.rs            findings -> traffic light
     src/paths.rs            pure path normalisation and PathClass classification
     src/cim.rs              WMI datetime and OLE date parsing
@@ -61,7 +62,11 @@ crates/
     src/tamper.rs           hosts (DataBasePath), WinINet and WinHTTP proxy, read-only root stores, Microsoft's root list (EncodedCtl)
     src/drivers.rs          EnumDeviceDrivers paths, code integrity (NtQuerySystemInformation), DeviceGuard WMI, blocklist and Secure Boot values
   bilby-collect-macos/      later
-  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal)
+  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal); see docs/privacy.md
+    src/allowlist.rs        the only HTTP client: HTTPS to two hosts, no redirects, no env proxy, 10 s timeout
+    src/circl.rs            hashlookup.circl.lu, 200 known / 404 unknown
+    src/virustotal.rs       /api/v3/files/<sha256> last_analysis_stats, key from Credential Manager (key.rs)
+    src/defender.rs         MpCmdRun custom scan of one file, user-started only
   bilby-report/             HTML report (Askama) and PDF export
   bilby-fix/                reversible fix actions and the undo journal
 app/

@@ -1,0 +1,22 @@
+{
+  "data": {
+    "id": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+    "type": "file",
+    "links": { "self": "https://www.virustotal.com/api/v3/files/275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f" },
+    "attributes": {
+      "last_analysis_date": 1762560000,
+      "last_analysis_stats": {
+        "malicious": 62,
+        "suspicious": 0,
+        "undetected": 8,
+        "harmless": 0,
+        "timeout": 0,
+        "confirmed-timeout": 0,
+        "failure": 1,
+        "type-unsupported": 5
+      },
+      "type_description": "Text",
+      "meaningful_name": "eicar.com"
+    }
+  }
+}

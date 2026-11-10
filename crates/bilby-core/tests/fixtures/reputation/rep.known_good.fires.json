@@ -1,0 +1,44 @@
+{
+  "note": "CIRCL recognises the hash: the process finding drops from Medium to Low confidence (so it no longer moves the light), and no card of its own.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "processes": [
+      {
+        "pid": 900,
+        "ppid": 4,
+        "name": "updater.exe",
+        "image_path": "C:\\Users\\alex\\Downloads\\updater.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Users\\alex\\Downloads\\updater.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "signature": "unsigned",
+          "class": "downloads",
+          "user_writable": true
+        }
+      }
+    ],
+    "reputation": {
+      "virustotal": [],
+      "known_good": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "defender_scans": []
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "proc.unsigned_user_writable",
+      "severity": "medium",
+      "confidence": "low"
+    }
+  ],
+  "absent": [
+    "rep.vt.malicious",
+    "rep.vt.few",
+    "rep.defender.threat"
+  ]
+}

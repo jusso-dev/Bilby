@@ -1,0 +1,55 @@
+{
+  "note": "Clean, and a failed scan: neither is a threat.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "processes": [
+      {
+        "pid": 900,
+        "ppid": 4,
+        "name": "updater.exe",
+        "image_path": "C:\\Users\\alex\\Downloads\\updater.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Users\\alex\\Downloads\\updater.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "signature": "unsigned",
+          "class": "downloads",
+          "user_writable": true
+        }
+      }
+    ],
+    "reputation": {
+      "virustotal": [],
+      "known_good": [],
+      "defender_scans": [
+        {
+          "path": "C:\\Users\\alex\\Downloads\\updater.exe",
+          "outcome": "clean"
+        },
+        {
+          "path": "C:\\Users\\alex\\Downloads\\updater.exe",
+          "outcome": {
+            "failed": {
+              "reason": "exit code 2 with no threat named"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "proc.unsigned_user_writable",
+      "severity": "medium",
+      "confidence": "medium"
+    }
+  ],
+  "absent": [
+    "rep.vt.malicious",
+    "rep.vt.few",
+    "rep.defender.threat"
+  ]
+}

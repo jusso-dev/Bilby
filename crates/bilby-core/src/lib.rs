@@ -15,4 +15,5 @@ pub mod net;
 pub mod paths;
 pub mod rules;
 pub mod score;
+pub mod settings;
 pub mod snapshot;

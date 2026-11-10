@@ -898,9 +898,70 @@ pub const CI_DEBUGMODE: u32 = 0x80;
 /// `CODEINTEGRITY_OPTION_HVCI_KMCI_ENABLED`: memory integrity for drivers.
 pub const CI_HVCI_KMCI: u32 = 0x400;
 
-/// Online lookup results. Filled in by the online checks issue.
+/// Online lookup results, and Defender scans the user asked for. Only
+/// present for services the user switched on (ADR 0004). Keyed by
+/// lower-case SHA-256.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct ReputationFacts {}
+pub struct ReputationFacts {
+    /// VirusTotal results for hashes it has seen.
+    #[serde(default)]
+    pub virustotal: Vec<VtResult>,
+    /// Hashes CIRCL hashlookup knows (NSRL and other known-software sets).
+    #[serde(default)]
+    pub known_good: Vec<String>,
+    /// Defender scans the user started from a finding.
+    #[serde(default)]
+    pub defender_scans: Vec<DefenderScan>,
+}
+
+/// VirusTotal's `last_analysis_stats` for one file.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct VtResult {
+    /// Lower-case SHA-256.
+    pub sha256: String,
+    /// Engines that call it malicious.
+    pub malicious: u32,
+    /// Engines that call it suspicious.
+    #[serde(default)]
+    pub suspicious: u32,
+    /// Engines that found nothing.
+    #[serde(default)]
+    pub undetected: u32,
+    /// Engines that call it harmless.
+    #[serde(default)]
+    pub harmless: u32,
+    /// `last_analysis_date`.
+    #[serde(default, with = "time::serde::rfc3339::option")]
+    pub analysed: Option<time::OffsetDateTime>,
+}
+
+/// The result of an "Ask Windows Security to check this file" scan.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DefenderScan {
+    /// The file scanned.
+    pub path: String,
+    /// What Defender said.
+    pub outcome: DefenderScanOutcome,
+}
+
+/// `MpCmdRun -Scan -ScanType 3` result.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum DefenderScanOutcome {
+    /// Exit code 0 with `-DisableRemediation`: no threat found.
+    Clean,
+    /// A threat was found; the name, if Defender printed one.
+    Threat {
+        /// Threat name from the output.
+        #[serde(default)]
+        name: Option<String>,
+    },
+    /// The scan couldn't run or returned something else.
+    Failed {
+        /// Why, for the helper view.
+        reason: String,
+    },
+}
 
 /// How a file's digital signature checked out.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

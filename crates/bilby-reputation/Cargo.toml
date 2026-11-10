@@ -1,0 +1,47 @@
+[package]
+name = "bilby-reputation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+description = "Opt-in hash lookups (CIRCL, VirusTotal) and user-started Defender scans. Off by default (ADR 0004)."
+
+[features]
+# Panics if the HTTP client is ever built while every online switch is off.
+# Turned on in CI to prove a default scan makes no network connections.
+no-network-guard = []
+
+[dependencies]
+bilby-core = { path = "../bilby-core" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+time = { version = "0.3.55", default-features = false, features = ["std"] }
+# rustls with ring and Mozilla's roots (webpki-roots). No openssl, no
+# native-tls, no proxy auto-detection from the environment.
+ureq = { version = "3.5.1", default-features = false, features = ["rustls"] }
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62.2", default-features = false, features = [
+  "Win32_Foundation",
+  "Win32_Security_Credentials", # CredReadW / CredWriteW, generic credential "Bilby/VirusTotal"
+] }
+
+[target.'cfg(windows)'.dev-dependencies]
+# tests/offline.rs runs every collector to prove a default scan connects
+# nowhere.
+bilby-collect-windows = { path = "../bilby-collect-windows" }
+
+[lints.rust]
+# Credential Manager calls need unsafe. Every unsafe block needs a SAFETY
+# comment (clippy::undocumented_unsafe_blocks is denied below).
+unsafe_code = "allow"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+undocumented_unsafe_blocks = "deny"
