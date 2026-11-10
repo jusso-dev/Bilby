@@ -10,7 +10,7 @@ use std::time::{Duration, Instant};
 
 use bilby_collect_windows::cache::FileCache;
 use bilby_collect_windows::paths::known_folders;
-use bilby_collect_windows::persistence::{Collected, collect};
+use bilby_collect_windows::persistence::{Collected, collect_timed};
 use bilby_core::model::{CheckStatus, Finding, Subject};
 use bilby_core::rules::{RuleContext, evaluate_all};
 use bilby_core::snapshot::{ServiceKind, StartupSource, SystemSnapshot, TaskAction};
@@ -28,8 +28,12 @@ fn run() -> &'static Run {
         let folders = known_folders();
         let cache = FileCache::new();
         let start = Instant::now();
-        let collected = collect(&folders, &cache);
+        let (collected, phases) = collect_timed(&folders, &cache);
         let elapsed = start.elapsed();
+        for (name, d) in &phases {
+            println!("  phase {name}: {:.2}s", d.as_secs_f64());
+        }
+        println!("  distinct files checked: {}", cache.len());
         let snap = SystemSnapshot {
             persistence: Some(collected.facts.clone()),
             ..Default::default()

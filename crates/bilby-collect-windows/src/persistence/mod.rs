@@ -26,8 +26,23 @@ pub struct Collected {
 
 /// Collects Run keys, startup folders, Winlogon, IFEO and `AppInit_DLLs`.
 pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
+    collect_timed(folders, cache).0
+}
+
+/// Like [`collect`], also returning how long each phase took, by name.
+pub fn collect_timed(
+    folders: &KnownFolders,
+    cache: &FileCache,
+) -> (Collected, Vec<(&'static str, std::time::Duration)>) {
+    let mut phases = Vec::new();
+    let mut lap = std::time::Instant::now();
+    let mut mark = |name: &'static str, phases: &mut Vec<(&'static str, std::time::Duration)>| {
+        phases.push((name, lap.elapsed()));
+        lap = std::time::Instant::now();
+    };
     crate::defender::init_com();
     let mut items = run_keys::run_items();
+    mark("run keys", &mut phases);
     let (folder_items, folder_status) = startup_folders::items();
     items.extend(folder_items);
     for item in &mut items {
@@ -38,17 +53,21 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
         family: SignalFamily::Persistence,
         status,
     };
+    mark("startup folders and command lines", &mut phases);
     let (services, services_status) = match services::collect(folders) {
         Ok(list) => (list, CheckStatus::Ran),
         Err(e) => (Vec::new(), CheckStatus::Failed(e.message())),
     };
+    mark("services", &mut phases);
     let (tasks, tasks_status) = match tasks::collect(folders) {
         // Some task folders need admin. Say so rather than look complete.
         Ok(c) if c.folders_denied > 0 => (c.tasks, CheckStatus::NeedsAdmin),
         Ok(c) => (c.tasks, CheckStatus::Ran),
         Err(e) => (Vec::new(), CheckStatus::Failed(e.message())),
     };
+    mark("tasks", &mut phases);
     let (wmi, wmi_status) = wmi_subs::collect();
+    mark("wmi", &mut phases);
     let mut facts = PersistenceFacts {
         wmi,
         items,
@@ -59,8 +78,10 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
         tasks,
     };
     // All file checks for every source, in parallel, once.
+    mark("winlogon, ifeo and appinit", &mut phases);
     fill_pending(&mut facts, folders, cache);
-    Collected {
+    mark("file checks", &mut phases);
+    let collected = Collected {
         facts,
         checks: vec![
             check("persistence.run_keys", CheckStatus::Ran),
@@ -70,7 +91,8 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
             check("persistence.tasks", tasks_status),
             check("persistence.wmi", wmi_status),
         ],
-    }
+    };
+    (collected, phases)
 }
 
 pub(crate) fn host_name(h: Host) -> &'static str {
