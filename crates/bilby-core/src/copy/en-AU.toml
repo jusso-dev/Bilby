@@ -426,6 +426,12 @@ what = "The hosts file sends {name} to {ip} instead of the real {domain} site."
 why = "This is how fake login pages steal passwords and banking details. The real site never needs this."
 todo = "If you didn't set this up, Bilby can remove that line and keep a backup, and you can undo that later."
 
+[tamper.hosts.blocked_subdomain]
+title = "The hosts file blocks part of a well-known website."
+what = "The hosts file sends {name} to {ip}, so this computer can't reach it. The main {domain} site isn't affected."
+why = "Privacy tools often block tracking and data collection addresses like this. It doesn't send you to a different site."
+todo = "Leave it if you or a privacy tool set this up. If part of {domain} stops working, this may be why."
+
 [tamper.hosts.path_moved]
 title = "Windows is reading its hosts file from an unusual place."
 what = "The setting that tells Windows where to find its hosts file has been changed."

@@ -1,5 +1,5 @@
 {
-  "note": "A privacy list blocking a telemetry subdomain: an unroutable address, so Medium.",
+  "note": "A privacy list blocking a telemetry subdomain to 0.0.0.0: a block, not a redirect, so Info.",
   "now": "2026-11-09T09:00:00Z",
   "snapshot": {
     "tamper": {
@@ -86,12 +86,13 @@
   },
   "expect": [
     {
-      "rule_id": "tamper.hosts.watch_domain",
-      "severity": "high",
-      "confidence": "medium"
+      "rule_id": "tamper.hosts.blocked_subdomain",
+      "severity": "info",
+      "confidence": "high"
     }
   ],
   "absent": [
+    "tamper.hosts.watch_domain",
     "tamper.hosts.path_moved",
     "tamper.hosts.many_entries",
     "tamper.proxy.unexpected",

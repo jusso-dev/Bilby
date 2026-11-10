@@ -183,6 +183,7 @@ macro_rules! rule {
 }
 
 rule!(HostsWatch, "tamper.hosts.watch_domain", hosts_watch);
+rule!(HostsBlocked, "tamper.hosts.blocked_subdomain", hosts_blocked);
 rule!(HostsMoved, "tamper.hosts.path_moved", hosts_moved);
 rule!(HostsMany, "tamper.hosts.many_entries", hosts_many);
 rule!(ProxyUnexpected, "tamper.proxy.unexpected", proxy_unexpected);
@@ -196,6 +197,7 @@ rule!(RootDevTool, "tamper.root.dev_tool", root_dev_tool);
 pub fn rules() -> Vec<Box<dyn Rule>> {
     vec![
         Box::new(HostsWatch),
+        Box::new(HostsBlocked),
         Box::new(HostsMoved),
         Box::new(HostsMany),
         Box::new(ProxyUnexpected),
@@ -215,6 +217,9 @@ fn hosts_watch(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
             let Some((domain, group)) = watched(name) else {
                 continue;
             };
+            if blocks_sign_in_subdomain(&e.ip, name, domain, group) {
+                continue;
+            }
             // Some privacy tools block update and security sites on purpose,
             // and privacy lists block telemetry subdomains (for example
             // telemetry.microsoft.com). An unroutable address can't reach an
@@ -244,6 +249,54 @@ fn hosts_watch(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
                     format!("line {}: {} {}", e.line, e.ip, e.names.join(" ")),
                 )
                 .next(NextStepKind::Fix(FIX_HOSTS_LINE.to_owned()))
+                .build(),
+            );
+        }
+    }
+    out
+}
+
+/// Privacy tweaks block Microsoft's and Google's telemetry and tracking
+/// subdomains (`data.microsoft.com`, `edge.microsoft.com`), often to
+/// 127.0.0.1. A block to this computer or to nowhere can't show a fake
+/// login page, so it's `tamper.hosts.blocked_subdomain` (Info), not a
+/// redirect. Only for the email and sign-in group, and only subdomains:
+/// banks, government, payments, security updates and whole sign-in domains
+/// keep `tamper.hosts.watch_domain`.
+fn blocks_sign_in_subdomain(ip: &str, name: &str, domain: &str, group: WatchGroup) -> bool {
+    matches!(ip, "0.0.0.0" | "::" | "127.0.0.1" | "::1")
+        && group == WatchGroup::Email
+        && name.trim_end_matches('.') != domain
+}
+
+fn hosts_blocked(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
+    let Some(h) = &t.hosts else { return Vec::new() };
+    let mut out = Vec::new();
+    for e in &h.entries {
+        for name in &e.names {
+            let Some((domain, group)) = watched(name) else {
+                continue;
+            };
+            if !blocks_sign_in_subdomain(&e.ip, name, domain, group) {
+                continue;
+            }
+            out.push(
+                FindingBuilder::new(
+                    "tamper.hosts.blocked_subdomain",
+                    SignalFamily::Tamper,
+                    Severity::Info,
+                    Confidence::High,
+                    Subject::HostsEntry(format!("{}:{name}", e.line)),
+                )
+                .var("name", name)
+                .var("domain", domain)
+                .var("ip", &e.ip)
+                .evidence(Evidence::Path(h.path.clone()))
+                .text(
+                    "evidence.hosts_line",
+                    format!("line {}: {} {}", e.line, e.ip, e.names.join(" ")),
+                )
+                .next(NextStepKind::Learn)
                 .build(),
             );
         }
