@@ -40,7 +40,9 @@ crates/
     src/cmdline.rs          command line to target resolution (CreateProcess rules, hosts)
     src/net.rs              address classes and Windows table byte order
     src/browser.rs          lenient parsing of Preferences, manifests, profiles.ini, extensions.json
+    src/hosts.rs            hosts file decoding (UTF-8, UTF-16) and parsing, domain watch list
     src/data/               windows_core_processes.toml (where each core Windows program belongs)
+    data/                   watch_domains.txt, known_bad_roots.toml, known_dev_roots.toml, known_windows_roots.toml (each entry cites its source)
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
     tests/fixtures/         JSON snapshots used by unit tests
@@ -56,7 +58,7 @@ crates/
     src/persistence/        run_keys.rs, startup_folders.rs, services.rs, tasks.rs, wmi_subs.rs
     src/network.rs          GetExtendedTcpTable/UdpTable, IPv4 and IPv6, owning pids, no lookups
     src/browser.rs          Chromium and Firefox profiles, extension policies, join state, browser shortcuts
-    src/tamper.rs           hosts, proxy, root certificates
+    src/tamper.rs           hosts (DataBasePath), WinINet and WinHTTP proxy, read-only root stores, Microsoft's root list (EncodedCtl)
     src/drivers.rs
   bilby-collect-macos/      later
   bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal)

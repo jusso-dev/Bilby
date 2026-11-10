@@ -1,0 +1,101 @@
+{
+  "note": "",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "tamper": {
+      "hosts": {
+        "path": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+        "default_path": true,
+        "entries": [
+          {
+            "line": 22,
+            "ip": "127.0.0.1",
+            "names": [
+              "localhost"
+            ]
+          },
+          {
+            "line": 23,
+            "ip": "::1",
+            "names": [
+              "localhost"
+            ]
+          }
+        ]
+      },
+      "proxy": {
+        "enabled": false,
+        "server": null,
+        "bypass": "<local>",
+        "pac_url": "http://203.0.113.5/proxy.pac",
+        "listener": null
+      },
+      "winhttp_proxy": null,
+      "roots": [
+        {
+          "store": "machine",
+          "sha1": "cabd2a79a1076a31f21d253635cb039d4329a5e8",
+          "subject_cn": "ISRG Root X1",
+          "subject_o": null,
+          "issuer": "ISRG Root X1",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true,
+          "is_ca": null
+        },
+        {
+          "store": "machine",
+          "sha1": "d4de20d05e66fc53fe1a50882c78db2852cae474",
+          "subject_cn": "Baltimore CyberTrust Root",
+          "subject_o": null,
+          "issuer": "Baltimore CyberTrust Root",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true,
+          "is_ca": null
+        },
+        {
+          "store": "user",
+          "sha1": "cdd4eeae6000ac7f40c3802c171e30148030c072",
+          "subject_cn": "Microsoft Root Certificate Authority",
+          "subject_o": null,
+          "issuer": "Microsoft Root Certificate Authority",
+          "not_before": "2015-01-01T00:00:00Z",
+          "not_after": "2040-01-01T00:00:00Z",
+          "in_microsoft_list": true,
+          "is_ca": null
+        }
+      ],
+      "microsoft_list_read": true,
+      "dns_servers": [
+        "192.168.1.1"
+      ],
+      "computer_name": "LAPTOP-AB12",
+      "management": {
+        "managed": false,
+        "reasons": []
+      }
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "tamper.proxy.pac_http",
+      "severity": "medium",
+      "confidence": "medium"
+    },
+    {
+      "rule_id": "tamper.proxy.unexpected",
+      "severity": "medium",
+      "confidence": "medium"
+    }
+  ],
+  "absent": [
+    "tamper.hosts.watch_domain",
+    "tamper.hosts.path_moved",
+    "tamper.hosts.many_entries",
+    "tamper.winhttp_proxy",
+    "tamper.root.known_bad",
+    "tamper.root.unknown",
+    "tamper.root.dev_tool"
+  ]
+}

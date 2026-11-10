@@ -1,0 +1,38 @@
+# Root certificates that developer and debugging tools install on purpose,
+# so the tool can inspect the developer's own web traffic. Used by
+# tamper.root.dev_tool (Info). Each install makes its own root, so there's
+# no single thumbprint: roots are matched on the subject.
+#
+# field: "cn" (common name) or "o" (organisation). kind: "exact" or
+# "prefix". Matching ignores case. Sources checked 10-11-2026.
+
+[[root]]
+tool = "mkcert"
+field = "o"
+kind = "exact"
+value = "mkcert development CA"
+source = "mkcert cert.go newCA: Organization 'mkcert development CA', CommonName 'mkcert <user>@<host>', https://github.com/FiloSottile/mkcert/blob/master/cert.go"
+
+[[root]]
+tool = "Fiddler"
+field = "cn"
+kind = "exact"
+value = "DO_NOT_TRUST_FiddlerRoot"
+source = "Telerik Fiddler forums: subject 'CN=DO_NOT_TRUST_FiddlerRoot, O=DO_NOT_TRUST, OU=Created by http://www.fiddler2.com'; Fiddler Everywhere uses the same name, https://www.telerik.com/forums/https-certificate-name-is-do_not_trust"
+
+[[root]]
+tool = "Burp Suite"
+field = "cn"
+kind = "exact"
+value = "PortSwigger CA"
+source = "PortSwigger docs show the root as 'PortSwigger CA' (organisation PortSwigger), https://portswigger.net/burp/documentation/desktop/external-browser-config/certificate/ca-cert-firefox"
+
+[[root]]
+tool = "Charles Proxy"
+field = "cn"
+kind = "prefix"
+value = "Charles Proxy CA"
+source = "Charles docs call it the Charles Root Certificate; macOS shows it as 'Charles Proxy CA' followed by a date and host name, so the match is a prefix. https://www.charlesproxy.com/documentation/using-charles/ssl-certificates/"
+
+# mitmproxy is left out: its source builds the name from a caller-supplied
+# basename, and its default couldn't be confirmed from mitmproxy itself.

@@ -7,6 +7,7 @@ pub mod network;
 pub mod persistence;
 pub mod processes;
 pub mod protection;
+pub mod tamper;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
@@ -116,6 +117,7 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
     rules.extend(persistence::rules());
     rules.extend(network::rules());
     rules.extend(browser::rules());
+    rules.extend(tamper::rules());
     rules
 }
 

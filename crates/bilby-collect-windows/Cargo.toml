@@ -51,6 +51,8 @@ windows = { version = "0.62.2", default-features = false, features = [
   "Win32_NetworkManagement_IpHelper",    # GetExtendedTcpTable/UdpTable (network.rs)
   "Win32_Networking_WinSock",            # AF_INET, AF_INET6 (network.rs)
   "Win32_NetworkManagement_NetManagement", # domain and Entra join state (browser.rs)
+  "Win32_NetworkManagement_Ndis",        # IF_OPER_STATUS for adapters (tamper.rs)
+  "Win32_Networking_WinHttp",            # default WinHTTP proxy, read only (tamper.rs)
 ] }
 sha2 = "0.11.1"
 time = { version = "0.3.55", default-features = false, features = ["std"] }

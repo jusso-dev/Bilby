@@ -22,7 +22,7 @@
       "family": "tamper",
       "severity": "low",
       "confidence": "medium",
-      "title_key": "tamper.proxy_set",
+      "title_key": "tamper.proxy.unexpected",
       "vars": { "proxy": "127.0.0.1:8888" },
       "evidence": [
         { "registry_value": { "key": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "name": "ProxyServer", "data": "127.0.0.1:8888" } }
