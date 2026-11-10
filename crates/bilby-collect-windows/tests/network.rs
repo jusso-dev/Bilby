@@ -20,8 +20,18 @@ fn network_collector_runs() {
     let procs = processes::collect(&folders, &cache).expect("processes");
     let pids: HashSet<u32> = procs.iter().map(|p| p.pid).collect();
     let start = Instant::now();
-    let net = collect(&pids).expect("connection tables");
-    println!("network collected in {:.2}s", start.elapsed().as_secs_f64());
+    let collected = collect(&pids);
+    println!(
+        "network collected in {:.2}s: {:?}",
+        start.elapsed().as_secs_f64(),
+        collected.status
+    );
+    assert_eq!(
+        collected.status,
+        bilby_core::model::CheckStatus::Ran,
+        "every table reads"
+    );
+    let net = collected.facts.expect("connection tables");
 
     let listeners: Vec<_> = net
         .connections

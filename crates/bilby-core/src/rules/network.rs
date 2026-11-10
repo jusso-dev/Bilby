@@ -125,18 +125,36 @@ fn connection_evidence(c: &ConnectionFact) -> Evidence {
     }
 }
 
-/// Groups listening sockets outside loopback by process, one entry per pid.
-fn listeners<'a>(c: &Ctx<'a>) -> Vec<(&'a ProcessFact, Vec<&'a ConnectionFact>)> {
-    let mut by: HashMap<u32, Vec<&ConnectionFact>> = HashMap::new();
-    for conn in c.net.connections.iter().filter(|x| listening_outside(x)) {
-        by.entry(conn.pid).or_default().push(conn);
+/// The key a finding is about: the program's file, so several running
+/// copies of one program make one card with one id.
+fn file_key(p: &ProcessFact) -> String {
+    norm(p.image_path.as_deref().unwrap_or(&p.name))
+}
+
+/// Groups connections matching `keep` by program file. Returns one process
+/// per file (the lowest pid, for a stable result) and all its connections.
+fn by_file<'a>(
+    c: &Ctx<'a>,
+    keep: impl Fn(&ConnectionFact) -> bool,
+) -> Vec<(&'a ProcessFact, Vec<&'a ConnectionFact>)> {
+    let mut by: HashMap<String, (&ProcessFact, Vec<&ConnectionFact>)> = HashMap::new();
+    for conn in c.net.connections.iter().filter(|x| keep(x)) {
+        let Some(p) = c.by_pid.get(&conn.pid).copied() else {
+            continue;
+        };
+        let e = by.entry(file_key(p)).or_insert((p, Vec::new()));
+        if p.pid < e.0.pid {
+            e.0 = p;
+        }
+        e.1.push(conn);
     }
-    let mut out: Vec<_> = by
-        .into_iter()
-        .filter_map(|(pid, conns)| Some((*c.by_pid.get(&pid)?, conns)))
-        .collect();
-    out.sort_by_key(|(p, _)| p.pid);
+    let mut out: Vec<_> = by.into_values().collect();
+    out.sort_by_key(|(p, _)| file_key(p));
     out
+}
+
+fn listeners<'a>(c: &Ctx<'a>) -> Vec<(&'a ProcessFact, Vec<&'a ConnectionFact>)> {
+    by_file(c, listening_outside)
 }
 
 struct ListenUnsigned;
@@ -191,20 +209,14 @@ impl Rule for ManyPeers {
         let Some(c) = ctx(snap) else {
             return Vec::new();
         };
-        let mut peers: HashMap<u32, (HashSet<IpAddr>, Vec<&ConnectionFact>)> = HashMap::new();
-        for conn in &c.net.connections {
-            if let Some(ip) = public_peer(conn) {
-                let e = peers.entry(conn.pid).or_default();
-                e.0.insert(ip);
-                e.1.push(conn);
-            }
-        }
-        let mut out: Vec<Finding> = peers
+        let mut out: Vec<Finding> = by_file(&c, |x| public_peer(x).is_some())
             .into_iter()
-            .filter(|(_, (ips, _))| ips.len() >= MANY_PEERS)
-            .filter_map(|(pid, (ips, conns))| {
-                let p = *c.by_pid.get(&pid)?;
+            .filter_map(|(p, conns)| {
                 p.file.as_ref().filter(|f| unsigned_writable(f))?;
+                let ips: HashSet<IpAddr> = conns.iter().filter_map(|x| public_peer(x)).collect();
+                if ips.len() < MANY_PEERS {
+                    return None;
+                }
                 let mut f = finding(self.id(), Severity::Medium, Confidence::Low, p, &conns);
                 f.vars.insert("count".to_owned(), ips.len().to_string());
                 Some(f)

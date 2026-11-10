@@ -4,6 +4,7 @@
 use std::collections::HashSet;
 use std::net::{IpAddr, Ipv6Addr, SocketAddr};
 
+use bilby_core::model::CheckStatus;
 use bilby_core::net::{ipv4_from_table, port_from_table};
 use bilby_core::snapshot::{ConnectionFact, NetworkFacts, Proto, TcpState};
 use windows::Win32::Foundation::{ERROR_INSUFFICIENT_BUFFER, NO_ERROR};
@@ -19,19 +20,30 @@ use windows::Win32::Networking::WinSock::{AF_INET, AF_INET6};
 const ATTEMPTS: usize = 5;
 
 /// Reads one table into an aligned buffer, retrying on
-/// `ERROR_INSUFFICIENT_BUFFER`. Returns the buffer, or `None` on failure.
-fn read_table(call: impl Fn(Option<*mut core::ffi::c_void>, &mut u32) -> u32) -> Option<Vec<u64>> {
+/// `ERROR_INSUFFICIENT_BUFFER`. On failure, the Win32 error code.
+fn read_table(
+    call: impl Fn(Option<*mut core::ffi::c_void>, &mut u32) -> u32,
+) -> Result<Vec<u64>, u32> {
     let mut size = 0u32;
     let _ = call(None, &mut size);
+    let mut last = ERROR_INSUFFICIENT_BUFFER.0;
     for _ in 0..ATTEMPTS {
         let mut buf = vec![0u64; (size as usize).div_ceil(8).max(1)];
         match call(Some(buf.as_mut_ptr().cast()), &mut size) {
-            rc if rc == NO_ERROR.0 => return Some(buf),
-            rc if rc == ERROR_INSUFFICIENT_BUFFER.0 => {}
-            _ => return None,
+            rc if rc == NO_ERROR.0 => return Ok(buf),
+            rc if rc == ERROR_INSUFFICIENT_BUFFER.0 => last = rc,
+            rc => return Err(rc),
         }
     }
-    None
+    Err(last)
+}
+
+/// What the network collector found and how reading went.
+pub struct Collected {
+    /// The rows, if any table could be read.
+    pub facts: Option<NetworkFacts>,
+    /// `Ran` if every table read; `Failed` naming the tables that didn't.
+    pub status: CheckStatus,
 }
 
 /// The rows of a table that starts with a `u32` count followed by rows.
@@ -76,7 +88,7 @@ fn v4(addr: u32, port: u32) -> SocketAddr {
 
 /// Every TCP and UDP row, IPv4 and IPv6, keeping only rows owned by a pid
 /// in `known_pids` (the process snapshot taken just before).
-pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Option<NetworkFacts> {
+pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Collected {
     let tcp = |family: u32| {
         read_table(|buf, size| {
             // SAFETY: `buf` is None (size query) or a buffer of `size` bytes
@@ -94,7 +106,18 @@ pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Optio
     let v6fam = u32::from(AF_INET6.0);
     let mut out = Vec::new();
     let mut any = false;
-    if let Some(buf) = tcp(v4fam) {
+    let mut failed: Vec<String> = Vec::new();
+    let mut note = |name: &str, r: &Result<Vec<u64>, u32>| {
+        if let Err(code) = r {
+            failed.push(format!("{name} table: error {code}"));
+        }
+    };
+    let (t4, t6, u4, u6) = (tcp(v4fam), tcp(v6fam), udp(v4fam), udp(v6fam));
+    note("TCP IPv4", &t4);
+    note("TCP IPv6", &t6);
+    note("UDP IPv4", &u4);
+    note("UDP IPv6", &u6);
+    if let Ok(buf) = t4 {
         any = true;
         for r in rows::<MIB_TCPROW_OWNER_PID>(&buf) {
             let state = tcp_state(r.dwState);
@@ -107,7 +130,7 @@ pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Optio
             });
         }
     }
-    if let Some(buf) = tcp(v6fam) {
+    if let Ok(buf) = t6 {
         any = true;
         for r in rows::<MIB_TCP6ROW_OWNER_PID>(&buf) {
             let state = tcp_state(r.dwState);
@@ -120,7 +143,7 @@ pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Optio
             });
         }
     }
-    if let Some(buf) = udp(v4fam) {
+    if let Ok(buf) = u4 {
         any = true;
         for r in rows::<MIB_UDPROW_OWNER_PID>(&buf) {
             out.push(ConnectionFact {
@@ -132,7 +155,7 @@ pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Optio
             });
         }
     }
-    if let Some(buf) = udp(v6fam) {
+    if let Ok(buf) = u6 {
         any = true;
         for r in rows::<MIB_UDP6ROW_OWNER_PID>(&buf) {
             out.push(ConnectionFact {
@@ -147,5 +170,14 @@ pub fn collect<S: std::hash::BuildHasher>(known_pids: &HashSet<u32, S>) -> Optio
     // Rows whose process has exited, or isn't in the snapshot, can't be
     // tied to a program, so they're dropped.
     out.retain(|c| known_pids.contains(&c.pid));
-    any.then_some(NetworkFacts { connections: out })
+    Collected {
+        facts: any.then_some(NetworkFacts { connections: out }),
+        // A missing table is a gap in what was checked, so say so rather
+        // than look complete.
+        status: if failed.is_empty() {
+            CheckStatus::Ran
+        } else {
+            CheckStatus::Failed(failed.join("; "))
+        },
+    }
 }

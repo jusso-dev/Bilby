@@ -179,3 +179,23 @@ fn boost_rules_never_make_their_own_finding() {
         }
     }
 }
+
+/// No two findings in one scan may share an id, or "I know this one" on one
+/// would hide the other.
+#[test]
+fn finding_ids_are_unique_in_every_fixture() {
+    for path in fixture_files() {
+        let text = fs::read_to_string(&path).expect("readable fixture");
+        let fixture: Fixture = serde_json::from_str(&text).expect("fixture parses");
+        let findings = evaluate_all(&fixture.snapshot, &RuleContext::at(fixture.now));
+        let mut seen = BTreeSet::new();
+        for f in &findings {
+            assert!(
+                seen.insert(f.id()),
+                "{}: duplicate id for {}",
+                path.display(),
+                f.rule_id
+            );
+        }
+    }
+}
