@@ -3,6 +3,7 @@
 //! "fires" and "look-alike".
 
 pub mod browser;
+pub mod drivers;
 pub mod network;
 pub mod persistence;
 pub mod processes;
@@ -118,6 +119,7 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
     rules.extend(network::rules());
     rules.extend(browser::rules());
     rules.extend(tamper::rules());
+    rules.extend(drivers::rules());
     rules
 }
 

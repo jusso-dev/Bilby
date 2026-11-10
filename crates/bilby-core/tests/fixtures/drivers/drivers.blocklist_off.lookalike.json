@@ -1,0 +1,2962 @@
+{
+  "note": "Explicitly on. Missing (the baseline) also means on.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "drivers": {
+      "loaded": [
+        {
+          "path": "C:\\Windows\\System32\\ntoskrnl.exe",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\hal.dll",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\kd.dll",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\ci.dll",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\cng.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\acpi.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\pci.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\volmgr.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\disk.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\ntfs.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\tcpip.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\afd.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\ndis.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\netbt.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\fltmgr.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\wdfilter.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\wd\\WdFilter.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\storport.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\stornvme.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\usbxhci.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\ucx01000.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\hidclass.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\kbdclass.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\mouclass.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\dxgkrnl.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\dxgmms2.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\win32k.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\win32kbase.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\win32kfull.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\cdd.dll",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv030.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv031.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv032.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv033.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv034.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv035.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv036.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv037.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv038.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv039.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv040.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv041.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv042.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv043.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv044.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv045.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv046.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv047.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv048.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv049.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv050.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv051.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv052.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv053.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv054.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv055.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv056.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv057.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv058.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv059.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv060.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv061.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv062.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv063.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv064.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv065.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv066.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv067.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv068.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv069.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv070.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv071.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv072.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv073.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv074.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv075.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv076.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv077.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv078.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv079.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv080.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv081.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv082.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv083.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv084.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv085.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv086.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv087.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv088.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv089.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv090.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv091.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv092.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv093.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv094.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv095.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv096.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv097.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv098.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv099.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv100.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv101.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv102.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv103.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv104.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv105.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv106.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv107.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv108.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv109.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv110.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv111.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv112.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv113.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv114.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv115.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv116.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv117.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv118.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv119.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv120.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv121.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv122.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv123.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv124.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv125.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv126.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv127.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv128.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv129.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv130.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv131.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv132.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv133.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv134.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv135.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv136.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv137.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv138.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv139.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv140.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv141.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv142.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv143.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv144.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv145.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv146.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv147.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv148.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\msdrv149.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\DriverStore\\FileRepository\\nv_dispi.inf_amd64_x\\nvlddmkm.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "NVIDIA Corporation",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\iaStorVD.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Intel(R) Corporation",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\RTKVHD64.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Realtek Semiconductor Corp.",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\amdppm.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Advanced Micro Devices, Inc.",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\SynTP.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Synaptics Incorporated",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\e1d68x64.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Intel Corporation",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\vmci.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "VMware, Inc.",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\LGBusEnum.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Logitech",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\btfilter.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Qualcomm Atheros",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Windows\\System32\\drivers\\wintun.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "WireGuard LLC",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        },
+        {
+          "path": "C:\\Program Files\\Oracle\\VirtualBox\\drivers\\vboxsup.sys",
+          "exists": true,
+          "size": 40000,
+          "created": "2024-05-01T00:00:00Z",
+          "modified": "2024-05-01T00:00:00Z",
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Oracle Corporation",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "program_files",
+          "user_writable": false
+        }
+      ],
+      "boot": {
+        "code_integrity_options": 9217,
+        "start_options": " NOEXECUTE=OPTIN  NOVGA",
+        "memory_integrity_running": true,
+        "memory_integrity_available": true,
+        "blocklist_value": 1,
+        "secure_boot": true
+      }
+    },
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [
+        {
+          "name": "OldScanner",
+          "display_name": "Old Scanner",
+          "kind": "driver",
+          "start": "demand",
+          "running": false,
+          "binary_path": "\\SystemRoot\\System32\\drivers\\oldscan.sys",
+          "binary": {
+            "path": "C:\\Windows\\System32\\drivers\\oldscan.sys",
+            "exists": true,
+            "size": 40000,
+            "created": "2024-05-01T00:00:00Z",
+            "modified": "2024-05-01T00:00:00Z",
+            "sha256": null,
+            "signature": "unsigned",
+            "class": "windows_system",
+            "user_writable": false
+          },
+          "host": null,
+          "host_args": null,
+          "service_dll": null,
+          "account": null
+        }
+      ],
+      "tasks": [],
+      "wmi": []
+    }
+  },
+  "expect": [],
+  "absent": [
+    "drivers.test_signing",
+    "drivers.integrity_off",
+    "drivers.kernel_debug",
+    "drivers.unsigned_loaded",
+    "drivers.unsigned_service",
+    "drivers.user_writable",
+    "drivers.recent_unknown",
+    "drivers.blocklist_off",
+    "drivers.memory_integrity_off",
+    "drivers.secure_boot_off"
+  ]
+}

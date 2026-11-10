@@ -9,6 +9,7 @@
 pub mod browser;
 pub mod cache;
 pub mod defender;
+pub mod drivers;
 pub mod files;
 pub mod handle;
 pub mod hash;

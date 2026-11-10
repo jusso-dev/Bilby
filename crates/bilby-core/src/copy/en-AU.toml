@@ -102,6 +102,10 @@ not_before = "Valid from"
 recent_root = "Recently added"
 ms_list = "Microsoft's root list"
 machine_cert = "Made by a computer for itself"
+code_integrity = "Driver checks"
+start_options = "Startup options"
+created = "Added"
+location = "Folder"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -441,8 +445,62 @@ what = "{tool} added a certificate so it can inspect web traffic."
 why = "Developers use this on purpose. It's for your helper's information."
 todo = "Leave it if you use {tool}. Otherwise remove it from Windows' trusted certificates."
 
+[drivers.test_signing]
+title = "Windows is allowing untested drivers."
+what = "Test signing is on, so Windows loads drivers that haven't been checked by Microsoft or a trusted maker."
+why = "Drivers run at the deepest level of Windows. Harmful programs switch this on so they can load their own."
+todo = "Ask your helper to look. If nobody here is a driver developer, it should be switched off."
+
+[drivers.integrity_off]
+title = "Windows has stopped checking drivers."
+what = "Windows normally refuses drivers that aren't signed. That check is switched off on this computer."
+why = "With the check off, any driver can load, including harmful ones."
+todo = "Ask your helper to switch driver checks back on."
+
+[drivers.kernel_debug]
+title = "Kernel debugging is switched on."
+what = "Windows is set up so another computer can inspect and change it while it runs."
+why = "Developers use this on purpose. On a home computer it's unusual, and it can let unsigned code load."
+todo = "If nobody here is a Windows developer, ask your helper to switch it off."
+
+[drivers.unsigned_loaded]
+title = "An unsigned driver is running."
+what = "The driver {name} is loaded, but it isn't properly signed."
+why = "Windows shouldn't let unsigned drivers run. One that does may have got around Windows' checks."
+todo = "Ask someone you trust to look at this soon."
+
+[drivers.unsigned_service]
+title = "An unsigned driver is set to start."
+what = "The driver {name} is set to start with Windows, but it isn't properly signed."
+why = "It isn't running now, but it may try to load each time Windows starts."
+todo = "Ask your helper whether it belongs to a device you use."
+
+[drivers.user_writable]
+title = "A driver lives in a folder anyone can change."
+what = "The driver {name} is in a folder that ordinary programs can write to."
+why = "Real drivers live in Windows' own folders. One that can be swapped by any program is a common trick."
+todo = "Ask someone you trust to look at this soon."
+
+[drivers.recent_unknown]
+title = "A new driver from a less common maker."
+what = "The driver {name} was added in the last two weeks."
+why = "It's signed, so this is just for your helper's information."
+todo = "If you recently plugged in a new device or installed new software, this is likely from that."
+
+[drivers.blocklist_off]
+title = "Windows' list of unsafe drivers is switched off."
+what = "Windows keeps a list of drivers known to be unsafe and blocks them. That list is switched off here."
+why = "Harmful programs sometimes bring an old, unsafe driver with them. The list stops that."
+todo = "Open Windows Security, go to Device security, then Core isolation, and switch the list back on."
+
 [drivers.memory_integrity_off]
 title = "Memory integrity is switched off."
 what = "This Windows Security feature blocks some harmful drivers. It's off on this computer."
 why = "Many computers ship with it off, so this is just for your information."
 todo = "Leave it, or open Windows Security to switch it on if your helper agrees."
+
+[drivers.secure_boot_off]
+title = "Secure Boot is switched off."
+what = "Secure Boot checks that Windows starts up untouched. It's off on this computer."
+why = "Many older computers have it off, so this is just for your information."
+todo = "Leave it, or ask your helper about switching it on in the computer's startup settings."

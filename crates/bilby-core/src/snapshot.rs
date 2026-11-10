@@ -853,9 +853,50 @@ pub struct RootCert {
     pub in_microsoft_list: bool,
 }
 
-/// Drivers and boot settings. Filled in by the drivers issue.
+/// Drivers and boot settings. Driver services come from
+/// [`PersistenceFacts::services`] (kind [`ServiceKind::Driver`]).
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
-pub struct DriverFacts {}
+pub struct DriverFacts {
+    /// Drivers loaded now (`EnumDeviceDrivers`), with their files.
+    #[serde(default)]
+    pub loaded: Vec<FileFacts>,
+    /// Code integrity, boot options and related settings.
+    #[serde(default)]
+    pub boot: BootIntegrity,
+}
+
+/// Whether Windows still insists on signed drivers, and related settings.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct BootIntegrity {
+    /// `SYSTEM_CODEINTEGRITY_INFORMATION.CodeIntegrityOptions`, if read.
+    #[serde(default)]
+    pub code_integrity_options: Option<u32>,
+    /// `HKLM\SYSTEM\CurrentControlSet\Control` `SystemStartOptions`.
+    #[serde(default)]
+    pub start_options: Option<String>,
+    /// Memory integrity (HVCI) is running (`SecurityServicesRunning` has 2).
+    #[serde(default)]
+    pub memory_integrity_running: Option<bool>,
+    /// The hardware can run it (`AvailableSecurityProperties` has 1,
+    /// hypervisor support).
+    #[serde(default)]
+    pub memory_integrity_available: Option<bool>,
+    /// `CI\Config` `VulnerableDriverBlocklistEnable`. Missing means on.
+    #[serde(default)]
+    pub blocklist_value: Option<u32>,
+    /// `SecureBoot\State` `UEFISecureBootEnabled`. `None` on BIOS computers.
+    #[serde(default)]
+    pub secure_boot: Option<bool>,
+}
+
+/// `CODEINTEGRITY_OPTION_ENABLED`: kernel code integrity is enforced.
+pub const CI_ENABLED: u32 = 0x01;
+/// `CODEINTEGRITY_OPTION_TESTSIGN`: test-signed drivers are allowed.
+pub const CI_TESTSIGN: u32 = 0x02;
+/// `CODEINTEGRITY_OPTION_DEBUGMODE_ENABLED`: a kernel debugger is attached.
+pub const CI_DEBUGMODE: u32 = 0x80;
+/// `CODEINTEGRITY_OPTION_HVCI_KMCI_ENABLED`: memory integrity for drivers.
+pub const CI_HVCI_KMCI: u32 = 0x400;
 
 /// Online lookup results. Filled in by the online checks issue.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
