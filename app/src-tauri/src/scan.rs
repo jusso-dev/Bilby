@@ -101,7 +101,9 @@ pub fn suppressions_path() -> Option<std::path::PathBuf> {
 }
 
 /// What the user told Bilby to ignore. A file that can't be read is logged
-/// and treated as empty for this scan; it's left on disk untouched.
+/// and treated as empty for this scan; it's left on disk untouched. Only
+/// the Windows scan uses it.
+#[cfg(windows)]
 pub fn load_suppressions() -> bilby_core::suppress::Suppressions {
     let Some(path) = suppressions_path() else {
         return bilby_core::suppress::Suppressions::default();
