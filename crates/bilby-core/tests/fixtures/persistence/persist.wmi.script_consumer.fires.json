@@ -1,0 +1,59 @@
+{
+  "note": "",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [],
+      "tasks": [],
+      "wmi": [
+        {
+          "namespace": "root\\subscription",
+          "name": "SCM Event Log Consumer",
+          "consumer": {
+            "other": {
+              "class": "NTEventLogEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "SCM Event Log Filter",
+              "query": "select * from MSFT_SCMEventLogEvent"
+            }
+          ]
+        },
+        {
+          "namespace": "root\\subscription",
+          "name": "Script",
+          "consumer": {
+            "active_script": {
+              "engine": "VBScript",
+              "text": "CreateObject(\"WScript.Shell\").Run \"calc\"",
+              "file": null
+            }
+          },
+          "filters": [
+            {
+              "name": "ScriptFilter",
+              "query": "SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "persist.wmi.script_consumer",
+      "severity": "high",
+      "confidence": "high"
+    }
+  ],
+  "absent": [
+    "persist.wmi.command_consumer",
+    "persist.wmi.unbound_consumer"
+  ]
+}

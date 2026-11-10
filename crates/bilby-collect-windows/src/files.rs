@@ -68,3 +68,46 @@ pub fn not_checked(path: &str, folders: &KnownFolders, why: &str) -> FileFacts {
         user_writable: classified.user_writable,
     }
 }
+
+/// Facts for many files at once, spread over the machine's cores, in the
+/// same order as `paths`. Signature checks and hashing dominate a scan, and
+/// each file is independent, so this is what collectors should call when
+/// they have a list. Uses and fills the shared cache.
+pub fn file_facts_many(
+    paths: &[String],
+    folders: &KnownFolders,
+    cache: &FileCache,
+) -> Vec<FileFacts> {
+    if paths.is_empty() {
+        return Vec::new();
+    }
+    let workers = std::thread::available_parallelism()
+        .map_or(4, std::num::NonZero::get)
+        .min(paths.len());
+    let chunk = paths.len().div_ceil(workers);
+    std::thread::scope(|scope| {
+        let handles: Vec<_> = paths
+            .chunks(chunk)
+            .map(|part| {
+                scope.spawn(move || {
+                    part.iter()
+                        .map(|p| file_facts(p, folders, cache))
+                        .collect::<Vec<_>>()
+                })
+            })
+            .collect();
+        handles
+            .into_iter()
+            .zip(paths.chunks(chunk))
+            .flat_map(|(h, part)| {
+                // A panic in one worker shouldn't lose the whole scan: report
+                // its files as not checked.
+                h.join().unwrap_or_else(|_| {
+                    part.iter()
+                        .map(|p| not_checked(p, folders, "check failed"))
+                        .collect()
+                })
+            })
+            .collect()
+    })
+}

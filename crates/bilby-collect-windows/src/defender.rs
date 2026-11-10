@@ -154,7 +154,7 @@ fn skipped_or_failed(e: &WMIError) -> CheckStatus {
     }
 }
 
-fn is_access_denied(e: &WMIError) -> bool {
+pub(crate) fn is_access_denied(e: &WMIError) -> bool {
     match e {
         WMIError::HResultError { hres } => {
             HRESULT(*hres) == E_ACCESSDENIED || (*hres).cast_unsigned() == 0x8004_1003 // WBEM_E_ACCESS_DENIED
@@ -171,7 +171,7 @@ fn hresult_status(code: HRESULT, message: &str) -> CheckStatus {
     }
 }
 
-type Row = HashMap<String, Variant>;
+pub(crate) type Row = HashMap<String, Variant>;
 
 fn get_bool(row: &Row, key: &str) -> Option<bool> {
     match row.get(key)? {
@@ -195,7 +195,7 @@ fn get_u32(row: &Row, key: &str) -> Option<u32> {
     }
 }
 
-fn get_string(row: &Row, key: &str) -> Option<String> {
+pub(crate) fn get_string(row: &Row, key: &str) -> Option<String> {
     match row.get(key)? {
         Variant::String(s) => Some(s.clone()),
         Variant::Null | Variant::Empty => None,

@@ -308,6 +308,65 @@ pub struct PersistenceFacts {
     /// Scheduled tasks.
     #[serde(default)]
     pub tasks: Vec<TaskFact>,
+    /// WMI event consumers, from `root\\subscription` and `root\\default`.
+    #[serde(default)]
+    pub wmi: Vec<WmiSubscription>,
+}
+
+/// What a WMI event consumer does when its event fires.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum WmiConsumerKind {
+    /// `CommandLineEventConsumer`: runs a program.
+    CommandLine {
+        /// `CommandLineTemplate`.
+        #[serde(default)]
+        command_line: Option<String>,
+        /// `ExecutablePath`.
+        #[serde(default)]
+        executable: Option<String>,
+    },
+    /// `ActiveScriptEventConsumer`: runs a `VBScript` or `JScript` script.
+    ActiveScript {
+        /// `ScriptingEngine`.
+        #[serde(default)]
+        engine: Option<String>,
+        /// `ScriptText`, cut to 2,000 characters.
+        #[serde(default)]
+        text: Option<String>,
+        /// `ScriptFileName`.
+        #[serde(default)]
+        file: Option<String>,
+    },
+    /// Writes to the event log, a file or email. Recorded, never flagged.
+    Other {
+        /// The WMI class, for example `NTEventLogEventConsumer`.
+        class: String,
+    },
+}
+
+/// One WMI event consumer and whether anything binds a filter to it.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct WmiSubscription {
+    /// `root\\subscription` or `root\\default`.
+    pub namespace: String,
+    /// Consumer `Name`.
+    pub name: String,
+    /// What it does.
+    pub consumer: WmiConsumerKind,
+    /// Filters bound to it (their `Name` and `Query`). Empty means unbound.
+    #[serde(default)]
+    pub filters: Vec<WmiFilter>,
+}
+
+/// An `__EventFilter` bound to a consumer.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct WmiFilter {
+    /// Filter `Name`.
+    pub name: String,
+    /// The WQL query that triggers it.
+    #[serde(default)]
+    pub query: Option<String>,
 }
 
 /// A service or driver.

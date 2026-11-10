@@ -1,0 +1,52 @@
+{
+  "note": "A log-file consumer only writes a file: never flagged.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [],
+      "tasks": [],
+      "wmi": [
+        {
+          "namespace": "root\\subscription",
+          "name": "SCM Event Log Consumer",
+          "consumer": {
+            "other": {
+              "class": "NTEventLogEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "SCM Event Log Filter",
+              "query": "select * from MSFT_SCMEventLogEvent"
+            }
+          ]
+        },
+        {
+          "namespace": "root\\subscription",
+          "name": "Log",
+          "consumer": {
+            "other": {
+              "class": "LogFileEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "LogFilter",
+              "query": "SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": [],
+  "absent": [
+    "persist.wmi.command_consumer",
+    "persist.wmi.script_consumer",
+    "persist.wmi.unbound_consumer"
+  ]
+}

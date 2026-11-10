@@ -15,8 +15,6 @@ use windows::Win32::System::Services::{
 };
 use windows::core::{HSTRING, PCWSTR, PWSTR};
 
-use crate::cache::FileCache;
-use crate::files::file_facts;
 use crate::registry::Key;
 
 /// A service manager or service handle, closed on drop.
@@ -42,10 +40,7 @@ fn wide(p: PWSTR) -> Option<String> {
 }
 
 /// Every Win32 service and driver.
-pub fn collect(
-    folders: &KnownFolders,
-    cache: &FileCache,
-) -> windows::core::Result<Vec<ServiceFact>> {
+pub fn collect(folders: &KnownFolders) -> windows::core::Result<Vec<ServiceFact>> {
     // SAFETY: local machine, default database, least access that lists.
     let scm = Handle(unsafe {
         OpenSCManagerW(
@@ -120,13 +115,8 @@ pub fn collect(
         let binary_path = config.binary_path.unwrap_or_default();
         // As for startup items: never open files on a network drive.
         let exists = |p: &str| !super::is_network(p, folders) && std::path::Path::new(p).is_file();
-        let facts_for = |path: &str| {
-            if super::is_network(path, folders) {
-                crate::files::not_checked(path, folders, "on a network drive, not checked")
-            } else {
-                file_facts(path, folders, cache)
-            }
-        };
+        // Placeholders; persistence::fill_pending checks them in parallel.
+        let facts_for = |path: &str| super::pending(path, folders);
         let r = resolve(&binary_path, folders, &exists);
         let service_dll = if kind == ServiceKind::SharedProcess {
             service_dll(&name)

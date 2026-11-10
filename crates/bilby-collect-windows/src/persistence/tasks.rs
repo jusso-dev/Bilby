@@ -14,9 +14,6 @@ use windows::Win32::System::TaskScheduler::{
 use windows::Win32::System::Variant::{VARIANT, VARIANT_0, VARIANT_0_0, VARIANT_0_0_0, VT_I4};
 use windows::core::{BSTR, Interface};
 
-use crate::cache::FileCache;
-use crate::files::file_facts;
-
 /// What the task walk found.
 pub struct Collected {
     /// Every task that could be read.
@@ -48,7 +45,7 @@ fn get_bstr(f: impl FnOnce(*mut BSTR) -> windows::core::Result<()>) -> Option<St
 }
 
 /// Walks every task folder from `\`.
-pub fn collect(folders: &KnownFolders, cache: &FileCache) -> windows::core::Result<Collected> {
+pub fn collect(folders: &KnownFolders) -> windows::core::Result<Collected> {
     crate::defender::init_com();
     // SAFETY: COM is initialised; TaskScheduler is an in-process class.
     let service: ITaskService =
@@ -62,17 +59,11 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> windows::core::Resu
         tasks: Vec::new(),
         folders_denied: 0,
     };
-    walk(&root, folders, cache, &mut out, 0);
+    walk(&root, folders, &mut out, 0);
     Ok(out)
 }
 
-fn walk(
-    folder: &ITaskFolder,
-    folders: &KnownFolders,
-    cache: &FileCache,
-    out: &mut Collected,
-    depth: u8,
-) {
+fn walk(folder: &ITaskFolder, folders: &KnownFolders, out: &mut Collected, depth: u8) {
     if depth > 32 {
         return;
     }
@@ -85,7 +76,7 @@ fn walk(
             for i in 1..=count {
                 // SAFETY: index within Count().
                 if let Ok(task) = unsafe { tasks.get_Item(&int_variant(i)) }
-                    && let Some(fact) = read_task(&task, folders, cache)
+                    && let Some(fact) = read_task(&task, folders)
                 {
                     out.tasks.push(fact);
                 }
@@ -103,7 +94,7 @@ fn walk(
     for i in 1..=count {
         // SAFETY: index within Count().
         if let Ok(sub) = unsafe { subs.get_Item(&int_variant(i)) } {
-            walk(&sub, folders, cache, out, depth + 1);
+            walk(&sub, folders, out, depth + 1);
         }
     }
 }
@@ -111,7 +102,6 @@ fn walk(
 fn read_task(
     task: &windows::Win32::System::TaskScheduler::IRegisteredTask,
     folders: &KnownFolders,
-    cache: &FileCache,
 ) -> Option<TaskFact> {
     // Every unsafe block in this function is a getter on a live COM
     // interface owned by this scope, writing only into locals or
@@ -155,7 +145,7 @@ fn read_task(
 
     // SAFETY: see above.
     let actions = match unsafe { def.Actions() } {
-        Ok(list) => read_actions(&list, folders, cache),
+        Ok(list) => read_actions(&list, folders),
         Err(_) => Vec::new(),
     };
     Some(TaskFact {
@@ -173,7 +163,6 @@ fn read_task(
 fn read_actions(
     list: &windows::Win32::System::TaskScheduler::IActionCollection,
     folders: &KnownFolders,
-    cache: &FileCache,
 ) -> Vec<TaskAction> {
     let mut actions = Vec::new();
     let mut count = 0i32;
@@ -197,7 +186,7 @@ fn read_actions(
             let program = get_bstr(|b| unsafe { exec.Path(b) }).unwrap_or_default();
             // SAFETY: see above.
             let args = get_bstr(|b| unsafe { exec.Arguments(b) }).unwrap_or_default();
-            actions.push(exec_action(&program, &args, folders, cache));
+            actions.push(exec_action(&program, &args, folders));
         } else if kind == TASK_ACTION_COM_HANDLER
             && let Ok(com) = action.cast::<IComHandlerAction>()
         {
@@ -210,7 +199,7 @@ fn read_actions(
     actions
 }
 
-fn exec_action(program: &str, args: &str, folders: &KnownFolders, cache: &FileCache) -> TaskAction {
+fn exec_action(program: &str, args: &str, folders: &KnownFolders) -> TaskAction {
     let quoted = if program.contains(' ') && !program.starts_with('"') {
         format!("\"{program}\"")
     } else {
@@ -219,11 +208,8 @@ fn exec_action(program: &str, args: &str, folders: &KnownFolders, cache: &FileCa
     let command = format!("{quoted} {args}").trim().to_owned();
     let exists = |p: &str| !super::is_network(p, folders) && std::path::Path::new(p).is_file();
     let r = resolve(&command, folders, &exists);
-    let target = if super::is_network(&r.target, folders) {
-        crate::files::not_checked(&r.target, folders, "on a network drive, not checked")
-    } else {
-        file_facts(&r.target, folders, cache)
-    };
+    // A placeholder; persistence::fill_pending checks it in parallel.
+    let target = super::pending(&r.target, folders);
     TaskAction::Exec {
         command,
         target: Some(Box::new(target)),
