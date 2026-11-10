@@ -33,6 +33,9 @@ button = "Check more deeply"
 declined = "That's fine. Bilby will keep checking without administrator permission, so a few things weren't checked."
 failed = "Bilby couldn't ask Windows for administrator permission. The check above still stands."
 
+[ignore]
+failed = "Bilby couldn't save that, so it will still show next time."
+
 [results]
 placeholder = "{count} thing(s) to show. The full results screen comes later."
 
@@ -102,6 +105,9 @@ wmi_script = "Script"
 wmi_class = "Consumer type"
 boosted_by = "Raised by"
 also_found = "Also found"
+known_publisher = "Signed by a well-known publisher"
+changed_since_ignored = "Changed since you asked Bilby to ignore it"
+ignore_unverified = "Bilby couldn't check this is the same file you asked it to ignore"
 more_connections = "More connections not shown"
 extension_id = "Extension ID"
 browser_profile = "Browser and profile"

@@ -1,0 +1,624 @@
+{
+ "note": "Hand-written home PC with the apps in docs/test-plan.md (Chrome, Firefox, Zoom, Teams, Spotify, Steam, Acrobat, 7-Zip, VLC, OneDrive, Dropbox, Slack), in their usual folders with their usual signers (7-Zip unsigned, as it ships). Updater services and tasks are copied from the windows-latest runner. A stand-in for the clean-VM baseline in docs/test-plan.md until someone runs that VM.",
+ "now": "2026-11-10T09:40:00Z",
+ "expected": [],
+ "snapshot": {
+  "processes": [
+   {
+    "pid": 3000,
+    "ppid": 2900,
+    "name": "chrome.exe",
+    "image_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Google LLC",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3001,
+    "ppid": 2900,
+    "name": "firefox.exe",
+    "image_path": "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Mozilla Corporation",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3002,
+    "ppid": 2900,
+    "name": "Zoom.exe",
+    "image_path": "%USERPROFILE%\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "%USERPROFILE%\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Zoom Video Communications, Inc.",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "user_app_data",
+     "user_writable": true
+    }
+   },
+   {
+    "pid": 3003,
+    "ppid": 2900,
+    "name": "ms-teams.exe",
+    "image_path": "C:\\Program Files\\WindowsApps\\MSTeams_x64\\ms-teams.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files\\WindowsApps\\MSTeams_x64\\ms-teams.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Microsoft Corporation",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "windows_apps",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3004,
+    "ppid": 2900,
+    "name": "Spotify.exe",
+    "image_path": "%USERPROFILE%\\AppData\\Roaming\\Spotify\\Spotify.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "%USERPROFILE%\\AppData\\Roaming\\Spotify\\Spotify.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Spotify AB",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "user_app_data",
+     "user_writable": true
+    }
+   },
+   {
+    "pid": 3005,
+    "ppid": 2900,
+    "name": "steam.exe",
+    "image_path": "C:\\Program Files (x86)\\Steam\\steam.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files (x86)\\Steam\\steam.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Valve Corp.",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3006,
+    "ppid": 2900,
+    "name": "Acrobat.exe",
+    "image_path": "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Adobe Inc.",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3007,
+    "ppid": 2900,
+    "name": "7zFM.exe",
+    "image_path": "C:\\Program Files\\7-Zip\\7zFM.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files\\7-Zip\\7zFM.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": "unsigned",
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3008,
+    "ppid": 2900,
+    "name": "vlc.exe",
+    "image_path": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "VideoLAN",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3009,
+    "ppid": 2900,
+    "name": "OneDrive.exe",
+    "image_path": "%USERPROFILE%\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "%USERPROFILE%\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Microsoft Corporation",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "user_app_programs",
+     "user_writable": true
+    }
+   },
+   {
+    "pid": 3010,
+    "ppid": 2900,
+    "name": "Dropbox.exe",
+    "image_path": "C:\\Program Files (x86)\\Dropbox\\Client\\Dropbox.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "C:\\Program Files (x86)\\Dropbox\\Client\\Dropbox.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Dropbox, Inc",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "program_files",
+     "user_writable": false
+    }
+   },
+   {
+    "pid": 3011,
+    "ppid": 2900,
+    "name": "slack.exe",
+    "image_path": "%USERPROFILE%\\AppData\\Local\\slack\\app-4.43.43\\slack.exe",
+    "created": "2026-11-10T08:00:00Z",
+    "session_id": 1,
+    "file": {
+     "path": "%USERPROFILE%\\AppData\\Local\\slack\\app-4.43.43\\slack.exe",
+     "exists": true,
+     "size": 1000,
+     "sha256": null,
+     "signature": {
+      "signed": {
+       "publisher": "Slack Technologies, LLC",
+       "issuer": "Example Code Signing CA",
+       "kind": "embedded",
+       "is_windows_component": false
+      }
+     },
+     "class": "user_app_data",
+     "user_writable": true
+    }
+   }
+  ],
+  "persistence": {
+   "items": [
+    {
+     "source": "run",
+     "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+     "name": "Spotify",
+     "command": "\"%USERPROFILE%\\AppData\\Roaming\\Spotify\\Spotify.exe\" /minimized",
+     "target": {
+      "path": "%USERPROFILE%\\AppData\\Roaming\\Spotify\\Spotify.exe",
+      "exists": true,
+      "size": 1000,
+      "sha256": null,
+      "signature": {
+       "signed": {
+        "publisher": "Spotify AB",
+        "issuer": "Example Code Signing CA",
+        "kind": "embedded",
+        "is_windows_component": false
+       }
+      },
+      "class": "user_app_data",
+      "user_writable": true
+     },
+     "args": "/minimized",
+     "host": null,
+     "host_args": null,
+     "enabled": true
+    },
+    {
+     "source": "run",
+     "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+     "name": "OneDrive",
+     "command": "\"%USERPROFILE%\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe\" /background",
+     "target": {
+      "path": "%USERPROFILE%\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe",
+      "exists": true,
+      "size": 1000,
+      "sha256": null,
+      "signature": {
+       "signed": {
+        "publisher": "Microsoft Corporation",
+        "issuer": "Example Code Signing CA",
+        "kind": "embedded",
+        "is_windows_component": false
+       }
+      },
+      "class": "user_app_programs",
+      "user_writable": true
+     },
+     "args": "/background",
+     "host": null,
+     "host_args": null,
+     "enabled": true
+    },
+    {
+     "source": "run",
+     "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+     "name": "com.squirrel.slack.slack",
+     "command": "\"%USERPROFILE%\\AppData\\Local\\slack\\app-4.43.43\\slack.exe\" --process-start-args --startup",
+     "target": {
+      "path": "%USERPROFILE%\\AppData\\Local\\slack\\app-4.43.43\\slack.exe",
+      "exists": true,
+      "size": 1000,
+      "sha256": null,
+      "signature": {
+       "signed": {
+        "publisher": "Slack Technologies, LLC",
+        "issuer": "Example Code Signing CA",
+        "kind": "embedded",
+        "is_windows_component": false
+       }
+      },
+      "class": "user_app_data",
+      "user_writable": true
+     },
+     "args": "--process-start-args --startup",
+     "host": null,
+     "host_args": null,
+     "enabled": true
+    },
+    {
+     "source": "run",
+     "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+     "name": "Steam",
+     "command": "\"C:\\Program Files (x86)\\Steam\\steam.exe\" -silent",
+     "target": {
+      "path": "C:\\Program Files (x86)\\Steam\\steam.exe",
+      "exists": true,
+      "size": 1000,
+      "sha256": null,
+      "signature": {
+       "signed": {
+        "publisher": "Valve Corp.",
+        "issuer": "Example Code Signing CA",
+        "kind": "embedded",
+        "is_windows_component": false
+       }
+      },
+      "class": "program_files",
+      "user_writable": false
+     },
+     "args": "-silent",
+     "host": null,
+     "host_args": null,
+     "enabled": true
+    }
+   ],
+   "services": [
+    {
+     "account": "LocalSystem",
+     "binary": {
+      "class": "program_files",
+      "created": "2026-11-03T15:46:46.5284754Z",
+      "exists": true,
+      "modified": "2026-10-28T23:41:24.935482Z",
+      "path": "C:\\Program Files\\Google\\Chrome\\Application\\156.0.8078.80\\elevation_service.exe",
+      "sha256": "787169d4e922f73da84fa2c2de855f2b4458767297d717db666317837b47682d",
+      "signature": {
+       "signed": {
+        "is_windows_component": false,
+        "issuer": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+        "kind": "embedded",
+        "publisher": "Google LLC"
+       }
+      },
+      "size": 4320920,
+      "user_writable": false
+     },
+     "binary_path": "\"C:\\Program Files\\Google\\Chrome\\Application\\156.0.8078.80\\elevation_service.exe\"",
+     "display_name": "Google Chrome Elevation Service (GoogleChromeElevationService)",
+     "host": null,
+     "host_args": null,
+     "kind": "own_process",
+     "name": "GoogleChromeElevationService",
+     "running": false,
+     "service_dll": null,
+     "start": "demand"
+    },
+    {
+     "account": "LocalSystem",
+     "binary": {
+      "class": "program_files",
+      "created": "2026-11-03T15:46:21.0432103Z",
+      "exists": true,
+      "modified": "2026-10-28T23:49:39.215498Z",
+      "path": "C:\\Program Files (x86)\\Google\\GoogleUpdater\\157.0.8089.0\\updater.exe",
+      "sha256": "a9b4ad5549d4cda72330afa5fd96a823bb810fbe88b7ecdfd95a56882b5f475a",
+      "signature": {
+       "signed": {
+        "is_windows_component": false,
+        "issuer": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+        "kind": "embedded",
+        "publisher": "Google LLC"
+       }
+      },
+      "size": 7815320,
+      "user_writable": false
+     },
+     "binary_path": "\"C:\\Program Files (x86)\\Google\\GoogleUpdater\\157.0.8089.0\\updater.exe\" --system --windows-service --service=update-internal",
+     "display_name": "Google Updater Internal Service (GoogleUpdaterInternalService157.0.8089.0)",
+     "host": null,
+     "host_args": null,
+     "kind": "own_process",
+     "name": "GoogleUpdaterInternalService157.0.8089.0",
+     "running": false,
+     "service_dll": null,
+     "start": "disabled"
+    },
+    {
+     "account": "LocalSystem",
+     "binary": {
+      "class": "program_files",
+      "created": "2026-11-03T15:46:21.0432103Z",
+      "exists": true,
+      "modified": "2026-10-28T23:49:39.215498Z",
+      "path": "C:\\Program Files (x86)\\Google\\GoogleUpdater\\157.0.8089.0\\updater.exe",
+      "sha256": "a9b4ad5549d4cda72330afa5fd96a823bb810fbe88b7ecdfd95a56882b5f475a",
+      "signature": {
+       "signed": {
+        "is_windows_component": false,
+        "issuer": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+        "kind": "embedded",
+        "publisher": "Google LLC"
+       }
+      },
+      "size": 7815320,
+      "user_writable": false
+     },
+     "binary_path": "\"C:\\Program Files (x86)\\Google\\GoogleUpdater\\157.0.8089.0\\updater.exe\" --system --windows-service --service=update",
+     "display_name": "Google Updater Service (GoogleUpdaterService157.0.8089.0)",
+     "host": null,
+     "host_args": null,
+     "kind": "own_process",
+     "name": "GoogleUpdaterService157.0.8089.0",
+     "running": false,
+     "service_dll": null,
+     "start": "disabled"
+    },
+    {
+     "account": "LocalSystem",
+     "binary": {
+      "class": "program_files",
+      "created": "2026-11-03T12:37:48.7121141Z",
+      "exists": true,
+      "modified": "2026-10-30T03:40:44.581651Z",
+      "path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\156.0.4314.58\\elevation_service.exe",
+      "sha256": "3bb4ee6c9da23b856fe52533ad9626ec21d9bc9128914b8291263d4f942e6f8e",
+      "signature": {
+       "signed": {
+        "is_windows_component": false,
+        "issuer": "Microsoft Code Signing PCA 2024",
+        "kind": "embedded",
+        "publisher": "Microsoft Corporation"
+       }
+      },
+      "size": 4322120,
+      "user_writable": false
+     },
+     "binary_path": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\156.0.4314.58\\elevation_service.exe\"",
+     "display_name": "Microsoft Edge Elevation Service (MicrosoftEdgeElevationService)",
+     "host": null,
+     "host_args": null,
+     "kind": "own_process",
+     "name": "MicrosoftEdgeElevationService",
+     "running": false,
+     "service_dll": null,
+     "start": "demand"
+    },
+    {
+     "account": "LocalSystem",
+     "binary": {
+      "class": "program_files",
+      "created": "2026-11-03T15:53:43.9956105Z",
+      "exists": true,
+      "modified": "2026-11-02T17:41:34.4005335Z",
+      "path": "C:\\Program Files (x86)\\Mozilla Maintenance Service\\maintenanceservice.exe",
+      "sha256": "ffc875c34667ef2fbd3662552660b16696870ab0851d7526242ae4b1253352a5",
+      "signature": {
+       "signed": {
+        "is_windows_component": false,
+        "issuer": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+        "kind": "embedded",
+        "publisher": "Mozilla Corporation"
+       }
+      },
+      "size": 282240,
+      "user_writable": false
+     },
+     "binary_path": "\"C:\\Program Files (x86)\\Mozilla Maintenance Service\\maintenanceservice.exe\"",
+     "display_name": "Mozilla Maintenance Service",
+     "host": null,
+     "host_args": null,
+     "kind": "own_process",
+     "name": "MozillaMaintenance",
+     "running": false,
+     "service_dll": null,
+     "start": "demand"
+    }
+   ],
+   "tasks": [
+    {
+     "actions": [
+      {
+       "exec": {
+        "command": "\"C:\\Program Files (x86)\\Google\\GoogleUpdater\\157.0.8089.0\\updater.exe\" --wake --system",
+        "host": null,
+        "host_args": null,
+        "target": {
+         "class": "program_files",
+         "created": "2026-11-03T15:46:21.0432103Z",
+         "exists": true,
+         "modified": "2026-10-28T23:49:39.215498Z",
+         "path": "C:\\Program Files (x86)\\Google\\GoogleUpdater\\157.0.8089.0\\updater.exe",
+         "sha256": "a9b4ad5549d4cda72330afa5fd96a823bb810fbe88b7ecdfd95a56882b5f475a",
+         "signature": {
+          "signed": {
+           "is_windows_component": false,
+           "issuer": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+           "kind": "embedded",
+           "publisher": "Google LLC"
+          }
+         },
+         "size": 7815320,
+         "user_writable": false
+        }
+       }
+      }
+     ],
+     "author": "NT AUTHORITY\\SYSTEM",
+     "elevated": true,
+     "enabled": true,
+     "hidden": true,
+     "last_run": "2026-11-10T09:57:26Z",
+     "path": "\\GoogleSystem\\GoogleUpdater\\GoogleUpdaterTaskSystem157.0.8089.0{D18AA936-B5E3-4376-B9D8-2AD2602E9541}",
+     "user": "SYSTEM"
+    },
+    {
+     "actions": [
+      {
+       "exec": {
+        "command": "\"C:\\Program Files\\Mozilla Firefox\\default-browser-agent.exe\" do-task \"308046B0AF4A39CB\"",
+        "host": null,
+        "host_args": null,
+        "target": {
+         "class": "program_files",
+         "created": "2026-11-03T15:53:41.8625623Z",
+         "exists": true,
+         "modified": "2026-11-02T17:41:34.1813057Z",
+         "path": "C:\\Program Files\\Mozilla Firefox\\default-browser-agent.exe",
+         "sha256": "5a957576777d76c68840290d7e3125c712c4591cbfb5a99b255a750c122b31c7",
+         "signature": {
+          "signed": {
+           "is_windows_component": false,
+           "issuer": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+           "kind": "embedded",
+           "publisher": "Mozilla Corporation"
+          }
+         },
+         "size": 44160,
+         "user_writable": false
+        }
+       }
+      }
+     ],
+     "author": "Mozilla",
+     "elevated": false,
+     "enabled": true,
+     "hidden": false,
+     "last_run": "1999-11-30T00:00:00Z",
+     "path": "\\Mozilla\\Firefox Default Browser Agent 308046B0AF4A39CB",
+     "user": "<user>"
+    }
+   ]
+  }
+ }
+}

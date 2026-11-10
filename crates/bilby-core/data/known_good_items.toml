@@ -1,0 +1,44 @@
+# Named startup items that ordinary software installs (#18). A finding about
+# one of these only softens when its file is also validly signed by the
+# publisher named here, so a look-alike name on someone else's file never
+# matches. Names match from the start, ignoring case, because updaters add
+# a version or GUID (GoogleUpdaterTaskSystem157.0.8089.0{...}).
+#
+# `checked` says where each one was seen: GitHub's windows-latest image,
+# read with Bilby's --dump-snapshot on 10 Nov 2026.
+
+[[item]]
+kind = "task"
+name = "\\MicrosoftEdgeUpdateTaskMachine"
+publisher = "Microsoft Corporation"
+checked = "runner: \\MicrosoftEdgeUpdateTaskMachineCore{...} and ...UA{...}"
+
+[[item]]
+kind = "task"
+name = "\\GoogleSystem\\GoogleUpdater\\GoogleUpdaterTaskSystem"
+publisher = "Google LLC"
+checked = "runner: \\GoogleSystem\\GoogleUpdater\\GoogleUpdaterTaskSystem157.0.8089.0{...}"
+
+[[item]]
+kind = "task"
+name = "\\Mozilla\\Firefox Default Browser Agent"
+publisher = "Mozilla Corporation"
+checked = "runner: \\Mozilla\\Firefox Default Browser Agent 308046B0AF4A39CB"
+
+[[item]]
+kind = "service"
+name = "edgeupdate"
+publisher = "Microsoft Corporation"
+checked = "runner: edgeupdate and edgeupdatem (MicrosoftEdgeUpdate.exe)"
+
+[[item]]
+kind = "service"
+name = "GoogleUpdater"
+publisher = "Google LLC"
+checked = "runner: GoogleUpdaterService157.0.8089.0 and GoogleUpdaterInternalService157.0.8089.0 (updater.exe, Google LLC)"
+
+[[item]]
+kind = "service"
+name = "MozillaMaintenance"
+publisher = "Mozilla Corporation"
+checked = "runner: MozillaMaintenance (maintenanceservice.exe, Mozilla Corporation)"

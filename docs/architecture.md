@@ -38,6 +38,8 @@ crates/
     src/score.rs            findings -> traffic light
     src/engine.rs           snapshot -> report: rules, boosts, grouping, order, light
     src/scrub.rs            removes user name, computer name, profile path and SIDs
+    src/known.rs            known publishers and startup items, and the pass that quiets weak location findings
+    src/suppress.rs         "I know this one": suppressions.json load, atomic save, file-changed check
     src/paths.rs            pure path normalisation and PathClass classification
     src/cim.rs              WMI datetime and OLE date parsing
     src/cmdline.rs          command line to target resolution (CreateProcess rules, hosts)
@@ -45,10 +47,10 @@ crates/
     src/browser.rs          lenient parsing of Preferences, manifests, profiles.ini, extensions.json
     src/hosts.rs            hosts file decoding (UTF-8, UTF-16) and parsing, domain watch list
     src/data/               windows_core_processes.toml (where each core Windows program belongs)
-    data/                   watch_domains.txt, known_bad_roots.toml, known_dev_roots.toml, known_windows_roots.toml, known_driver_publishers.toml (each entry cites its source)
+    data/                   watch_domains.txt, known_bad_roots.toml, known_dev_roots.toml, known_windows_roots.toml, known_driver_publishers.toml, known_publishers.toml, known_good_items.toml (each entry cites its source)
     src/copy/en-AU.toml     every user-facing string
     src/copy.rs             loader and lint for the copy file
-    tests/fixtures/         JSON snapshots used by unit tests
+    tests/fixtures/         JSON snapshots used by unit tests; baseline/ holds clean-machine snapshots (tests/baseline.rs, tests/ci-allow.toml)
   bilby-collect-windows/    #[cfg(windows)] collectors that fill a SystemSnapshot
     src/handle.rs           RAII file handle, read-only opens
     src/sig.rs              Authenticode verification (embedded, then catalog SHA-256, then SHA-1)
@@ -204,6 +206,10 @@ Most rules depend on three facts about a file, worked out once per scan by `bilb
 
 Rules get a `RuleContext` holding the suppressions and `now`, the scan's start time. Rules never read the clock, so the same fixture gives the same findings on any day. `tests/rules.rs` runs every JSON fixture under `tests/fixtures/<family>/` and checks that each rule in `all_rules()` has a `fires` and a `lookalike` fixture, a row in `docs/signals.md`, and `title`, `what`, `why` and `todo` copy keyed by its rule id.
 
+### False-alarm control
+
+After the rules and boosts, `known::soften_known` applies the known-good lists: a valid signature from a publisher in `data/known_publishers.toml` lowers Low or Medium location-based findings about that file by one confidence level, and drops `*unsigned*` findings about it. It never touches masquerading, script hosts, WMI consumers, hosts, roots or drivers. `engine::evaluate` then applies `RuleContext::suppressions` ("I know this one", from `suppressions.json`). An ignored finding stays in the report, listed in `ScanReport.suppressed`, and doesn't count toward the light, unless its file's SHA-256 has changed since. The details and the clean baseline are in `docs/signals.md`, under "Known-good lists".
+
 ### Cross-family facts
 
 Some findings mean more together. An unsigned program in AppData is Low on its own, but it's more interesting if the same file also starts by itself or connects out. `RuleContext::with_relations(now, snapshot)` builds a map from normalised file path to `Relation`s (`StartsByItself`, `OutboundConnection`, `ListeningPort`). `RuleContext::related(path)` reads it. Each family adds its relations in `rules::relations_from` as its collector lands: persistence in #9 to #11, network in #12. Rules only ever raise confidence this way. They never lower a finding because of it.
@@ -274,7 +280,7 @@ See ADR 0003 and the Safe fixes milestone. Every fix:
 `%LOCALAPPDATA%\Bilby\`:
 
 - `settings.json`: online check switches, theme, text size.
-- `suppressions.json`: rule id plus subject for each "I know this one".
+- `suppressions.json`: one entry per "I know this one": finding id, rule id, subject, when, the user's note and the file's SHA-256 (if it's about a file). Written atomically (temp file, then rename).
 - `journal.jsonl`: fix journal.
 - `logs\bilby.log`: scrubbed log, 5 MB at most, plus one older file.
 - `quarantine\`: quarantined files and their restore records.

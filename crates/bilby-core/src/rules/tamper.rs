@@ -115,8 +115,10 @@ fn machine_cert(r: &RootCert, computer: Option<&str>) -> Option<MachineCert> {
     // On a domain-joined PC, Windows names these after the full name
     // (laptop-ab12.corp.example), so the first label is the computer.
     let (host, rest) = cn.split_once('.').map_or((cn, None), |(h, d)| (h, Some(d)));
+    // A scrubbed snapshot (--dump-snapshot, baseline fixtures) has
+    // `<computer>` on both sides, which still means this computer.
     let this = computer.is_some_and(|c| c.eq_ignore_ascii_case(host))
-        && label(host)
+        && (label(host) || host == crate::scrub::COMPUTER)
         && rest.is_none_or(|d| d.split('.').all(label));
     if this {
         return Some(MachineCert::ThisComputer);

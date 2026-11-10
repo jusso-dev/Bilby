@@ -141,6 +141,14 @@ jobs:
           if ($sids) { throw "the snapshot contains $(@($sids).Count) account SID(s)" }
           Copy-Item $out snapshot.json
           Copy-Item "$out.checks.json" snapshot.json.checks.json
+      # #18: the fresh runner snapshot may only show Medium-or-higher
+      # findings that crates/bilby-core/tests/ci-allow.toml explains, so a
+      # noisy rule fails the PR that made it.
+      - name: Runner snapshot has no unexplained findings
+        shell: pwsh
+        env:
+          BILBY_SNAPSHOT: ${{ github.workspace }}/snapshot.json
+        run: cargo test -p bilby-core --locked --test baseline -- --nocapture
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: runner-snapshot

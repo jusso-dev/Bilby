@@ -143,6 +143,7 @@ fn main() {
             demo: args.demo,
             autostart: AtomicBool::new(args.deep_check),
             last_report: Mutex::new(None),
+            last_snapshot: Mutex::new(None),
             scanner: scan::Scanner::default(),
         })
         .invoke_handler(tauri::generate_handler![
@@ -150,7 +151,8 @@ fn main() {
             commands::start_scan,
             commands::cancel_scan,
             commands::scan_state,
-            commands::relaunch_elevated
+            commands::relaunch_elevated,
+            commands::ignore_finding
         ])
         .run(tauri::generate_context!())
         .expect("Bilby couldn't start its window");

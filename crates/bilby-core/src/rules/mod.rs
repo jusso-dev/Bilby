@@ -31,11 +31,17 @@ pub enum Relation {
     ListeningPort,
 }
 
-/// Context every rule can read. Known-good lists are filled in by #18.
+/// Context every rule can read. The known-good lists (`crate::known`) need
+/// no context; "I know this one" arrives here as `suppressions`.
 #[derive(Debug, Clone)]
 pub struct RuleContext {
-    /// Finding ids the user has marked "I know this one".
+    /// Finding ids to treat as ignored outright (tests and callers that
+    /// already worked them out).
     pub suppressed: HashSet<String>,
+    /// What the user marked "I know this one", with file hashes, from
+    /// `suppressions.json`. `engine::evaluate` applies these, dropping any
+    /// whose file has changed.
+    pub suppressions: crate::suppress::Suppressions,
     /// When the scan ran. Rules use this for ages ("updated 9 days ago") so
     /// they never read the clock themselves and fixtures stay repeatable.
     pub now: OffsetDateTime,
@@ -50,6 +56,7 @@ impl RuleContext {
     pub fn at(now: OffsetDateTime) -> Self {
         Self {
             suppressed: HashSet::new(),
+            suppressions: crate::suppress::Suppressions::default(),
             now,
             relations: HashMap::new(),
         }
@@ -139,6 +146,7 @@ pub fn evaluate_all(snap: &SystemSnapshot, ctx: &RuleContext) -> Vec<Finding> {
         .collect();
     network::boost_outbound(snap, &mut findings);
     reputation::soften_known_good(snap, &mut findings);
+    crate::known::soften_known(snap, &mut findings);
     findings
 }
 

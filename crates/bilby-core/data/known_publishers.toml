@@ -1,0 +1,71 @@
+# Publishers whose valid signature makes a location-based finding less
+# likely to matter (#18). Exact signer display names, as Windows shows them
+# (file Properties, Digital Signatures, "Name of signer"; Bilby reads the
+# same simple display name with CertGetNameStringW).
+#
+# Every entry was checked against a real, validly signed file, named in
+# `checked`. "PC" is a Windows 11 Pro 26200 laptop and "runner" is GitHub's
+# windows-latest image, both read on 10 Nov 2026 with
+# Get-AuthenticodeSignature (SignerCertificate simple name) or Bilby's own
+# --dump-snapshot. A wrong string is worse than none: it would quietly
+# trust a stranger, or never match. Names from #18's starting list that
+# weren't checked yet are left out on purpose, listed at the end.
+#
+# Only a Signed status counts (valid, trusted chain). A name alone, or an
+# invalid or untrusted signature, never matches.
+
+[[publisher]]
+name = "Microsoft Windows"
+checked = "PC: Common Files\\Microsoft Shared\\ink\\pipanel.exe"
+
+[[publisher]]
+name = "Microsoft Corporation"
+checked = "PC: Common Files\\Microsoft Shared\\MSEnv\\VSLauncher.exe; runner: Edge elevation_service.exe"
+
+[[publisher]]
+name = "Google LLC"
+checked = "PC and runner: Google\\GoogleUpdater\\157.0.8089.0\\updater.exe; runner: Chrome elevation_service.exe"
+
+[[publisher]]
+name = "Mozilla Corporation"
+checked = "runner: Mozilla Maintenance Service\\maintenanceservice.exe"
+
+[[publisher]]
+name = "Adobe Inc."
+checked = "PC: Common Files\\Adobe\\ARM\\1.0\\AdobeARM.exe"
+
+[[publisher]]
+name = "Zoom Video Communications, Inc."
+checked = "PC: %APPDATA%\\Zoom\\bin\\CptControl.exe"
+
+[[publisher]]
+name = "NVIDIA Corporation"
+checked = "PC: NVIDIA Corporation\\NvInstallerUtil\\NvInstallerUtil.exe"
+
+[[publisher]]
+name = "Realtek Semiconductor Corp."
+checked = "PC: Lenovo\\Thinkpad USB Ethernet Adapter Driver\\RTINSTALLER64.EXE"
+
+[[publisher]]
+name = "HP Inc."
+checked = "PC: HPPrintScanDoctor\\HPPrinterHealthMonitor.exe"
+
+[[publisher]]
+name = "Lenovo"
+checked = "PC: Lenovo\\ldiagx64\\LenovoDiagnosticsCLI.exe"
+
+[[publisher]]
+name = "Slack Technologies, LLC"
+checked = "PC: %LOCALAPPDATA%\\slack\\app-4.43.43\\slack.exe"
+
+[[publisher]]
+name = "Oracle America, Inc."
+checked = "PC: Common Files\\Java\\Java Update\\jaureg.exe"
+
+# Not checked against a signed file yet (from #18's starting list), so not
+# used: Microsoft Windows Publisher, Apple Inc., Valve Corp., Spotify AB,
+# Dropbox, Inc, Intel Corporation, Advanced Micro Devices, Inc.,
+# Logitech Inc, Dell Inc, Discord Inc., Brave Software, Inc.,
+# Opera Norway AS, Vivaldi Technologies AS, Igor Pavlov (7-Zip), VideoLAN.
+# Add each one with a `checked` note once someone has looked at a real
+# signed file from that vendor.

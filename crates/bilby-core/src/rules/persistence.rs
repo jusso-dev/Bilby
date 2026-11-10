@@ -613,9 +613,10 @@ fn task_finding(
     confidence: Confidence,
     t: &TaskFact,
     cmd: &str,
+    target: Option<&FileFacts>,
 ) -> FindingBuilder {
     let name = t.path.rsplit('\\').next().unwrap_or(&t.path);
-    FindingBuilder::new(
+    let mut b = FindingBuilder::new(
         id,
         SignalFamily::Persistence,
         severity,
@@ -624,8 +625,14 @@ fn task_finding(
     )
     .var("name", name)
     .text("evidence.task", &t.path)
-    .text("evidence.command", cmd)
-    .next(NextStepKind::Fix(FIX_DISABLE_TASK.to_owned()))
+    .text("evidence.command", cmd);
+    // The program the task runs, as path evidence, so grouping, the
+    // known-good lists and "I know this one" (which keeps its hash) all see
+    // which file this is about.
+    if let Some(f) = target {
+        b = b.evidence(Evidence::Path(f.path.clone()));
+    }
+    b.next(NextStepKind::Fix(FIX_DISABLE_TASK.to_owned()))
 }
 
 /// Exec actions of enabled tasks, as (command, target, host, host args).
@@ -676,6 +683,7 @@ fn task_user_writable(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
                     confidence,
                     t,
                     cmd,
+                    Some(f),
                 )
                 .build(),
             );
@@ -696,6 +704,7 @@ fn task_script_host(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
                         Confidence::High,
                         t,
                         cmd,
+                        target,
                     )
                     .build(),
                 );
@@ -712,7 +721,7 @@ fn task_hidden_unsigned(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
             t.enabled && t.hidden && !t.path.to_ascii_lowercase().starts_with(r"\microsoft\")
         })
         .filter_map(|t| {
-            let (cmd, _, _, _) = exec_actions(t)
+            let (cmd, target, _, _) = exec_actions(t)
                 .find(|(_, target, _, _)| target.is_some_and(|f| f.exists && unsigned(f)))?;
             Some(
                 task_finding(
@@ -721,6 +730,7 @@ fn task_hidden_unsigned(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
                     Confidence::Medium,
                     t,
                     cmd,
+                    target,
                 )
                 .build(),
             )
@@ -745,6 +755,7 @@ fn task_missing(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
                         Confidence::High,
                         t,
                         cmd,
+                        target,
                     )
                     .next(NextStepKind::Learn)
                     .build(),
