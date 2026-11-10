@@ -68,14 +68,18 @@ fn version() -> u32 {
     VERSION
 }
 
-/// True if the finding is about a file: its subject is a file, or it names
-/// a file the snapshot has facts for (a startup item's target, say).
+/// True if the finding is about a file that exists: its subject is a file,
+/// or it names an existing file the snapshot has facts for (a startup item
+/// or task target, say). A missing target ("starts a program that isn't
+/// there") has nothing to fingerprint, and can be ignored without one.
 fn about_file(f: &Finding, snap: &SystemSnapshot) -> bool {
     if matches!(f.subject, Subject::File(_)) {
         return true;
     }
     let by_path = files(snap);
-    finding_paths(f).iter().any(|p| by_path.contains_key(p))
+    finding_paths(f)
+        .iter()
+        .any(|p| by_path.get(p).is_some_and(|x| x.exists))
 }
 
 /// The SHA-256 of the file a finding is about, from the snapshot.

@@ -153,3 +153,61 @@ fn an_unhashed_file_finding_is_never_silently_ignored() {
             .any(|e| matches!(e, Evidence::Text { label_key, .. } if label_key == UNVERIFIED))
     );
 }
+
+/// An enabled task that runs an unsigned program from Temp
+/// (`persist.task.user_writable`). The finding's subject is the task, so
+/// its file is only known through the task's target.
+fn task_snapshot(sha256: Option<&str>, exists: bool) -> SystemSnapshot {
+    let target = r"C:\Users\Alex\AppData\Local\Temp\updater.exe";
+    serde_json::from_value(serde_json::json!({
+        "persistence": { "tasks": [{
+            "path": r"\Updater", "enabled": true, "hidden": false, "author": null,
+            "user": "Alex", "elevated": false,
+            "actions": [{ "exec": {
+                "command": target,
+                "target": {
+                    "path": target, "exists": exists, "size": 1000, "sha256": sha256,
+                    "signature": "unsigned", "class": "temp", "user_writable": true
+                },
+                "host": null, "host_args": null
+            }}]
+        }]}
+    }))
+    .expect("valid snapshot")
+}
+
+#[test]
+fn task_findings_are_bound_to_their_target_file() {
+    let a = "a".repeat(64);
+    let snap = task_snapshot(Some(&a), true);
+    let finding = scan(&snap, &Suppressions::default())
+        .findings
+        .into_iter()
+        .find(|f| f.rule_id == "persist.task.user_writable")
+        .expect("task finding");
+
+    // Hashed target: ignored, and the hash is kept.
+    let mut s = Suppressions::default();
+    assert!(s.add(&finding, &snap, datetime!(2026-11-10 09:05 UTC), ""));
+    assert_eq!(s.entries[0].sha256.as_deref(), Some(a.as_str()));
+    assert_eq!(scan(&snap, &s).suppressed, vec![finding.id()]);
+
+    // The target changed: it's back, saying so.
+    let changed = scan(&task_snapshot(Some(&"b".repeat(64)), true), &s);
+    assert_eq!(changed.suppressed, Vec::<String>::new());
+    let back = changed
+        .findings
+        .iter()
+        .find(|f| f.id() == finding.id())
+        .expect("finding back");
+    assert!(
+        back.evidence
+            .iter()
+            .any(|e| matches!(e, Evidence::Text { label_key, .. } if label_key == CHANGED))
+    );
+
+    // An unhashed target can't be ignored.
+    let unhashed = task_snapshot(None, true);
+    let mut s = Suppressions::default();
+    assert!(!s.add(&finding, &unhashed, datetime!(2026-11-10 09:05 UTC), ""));
+}
