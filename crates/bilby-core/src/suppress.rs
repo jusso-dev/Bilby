@@ -25,6 +25,10 @@ use crate::snapshot::SystemSnapshot;
 /// ignored.
 pub const CHANGED: &str = "evidence.changed_since_ignored";
 
+/// Copy key for the line on a file finding whose suppression has no stored
+/// hash, so it can't be shown to be the same file.
+pub const UNVERIFIED: &str = "evidence.ignore_unverified";
+
 /// File format version.
 const VERSION: u32 = 1;
 
@@ -62,6 +66,16 @@ pub struct Suppressions {
 
 fn version() -> u32 {
     VERSION
+}
+
+/// True if the finding is about a file: its subject is a file, or it names
+/// a file the snapshot has facts for (a startup item's target, say).
+fn about_file(f: &Finding, snap: &SystemSnapshot) -> bool {
+    if matches!(f.subject, Subject::File(_)) {
+        return true;
+    }
+    let by_path = files(snap);
+    finding_paths(f).iter().any(|p| by_path.contains_key(p))
 }
 
 /// The SHA-256 of the file a finding is about, from the snapshot.
@@ -108,10 +122,26 @@ impl Suppressions {
         std::fs::rename(&tmp, path)
     }
 
-    /// Ignores `f` from now on, remembering its file's hash if it has one.
-    /// Ignoring the same finding twice keeps one entry, with the new note
-    /// and hash.
-    pub fn add(&mut self, f: &Finding, snap: &SystemSnapshot, now: OffsetDateTime, note: &str) {
+    /// Ignores `f` from now on, remembering its file's hash if it's about a
+    /// file. Ignoring the same finding twice keeps one entry, with the new
+    /// note and hash.
+    ///
+    /// Returns false, and changes nothing, for a finding about a file that
+    /// couldn't be hashed (unreadable, or over the size limit): without a
+    /// fingerprint Bilby couldn't tell when the file changes, so the
+    /// suppression would never expire.
+    #[must_use]
+    pub fn add(
+        &mut self,
+        f: &Finding,
+        snap: &SystemSnapshot,
+        now: OffsetDateTime,
+        note: &str,
+    ) -> bool {
+        let hash = file_hash(f, snap);
+        if hash.is_none() && about_file(f, snap) {
+            return false;
+        }
         let id = f.id();
         self.entries.retain(|e| e.finding_id != id);
         self.entries.push(Suppression {
@@ -120,8 +150,9 @@ impl Suppressions {
             subject: f.subject.clone(),
             added_at: now,
             note: note.to_owned(),
-            sha256: file_hash(f, snap),
+            sha256: hash,
         });
+        true
     }
 
     /// Stops ignoring a finding. True if it was ignored.
@@ -133,7 +164,9 @@ impl Suppressions {
 
     /// The ids of findings that are still ignored. A finding whose file
     /// changed (or can no longer be hashed) since it was ignored isn't, and
-    /// gets an evidence line saying so.
+    /// gets an evidence line saying so. Neither is a file finding whose
+    /// entry has no stored hash (a hand-edited file, say): there's nothing
+    /// to compare, so it can't be shown to be the same file.
     pub fn apply(&self, findings: &mut [Finding], snap: &SystemSnapshot) -> HashSet<String> {
         let mut out = HashSet::new();
         for f in findings.iter_mut() {
@@ -142,6 +175,12 @@ impl Suppressions {
                 continue;
             };
             match &entry.sha256 {
+                None if about_file(f, snap) => {
+                    f.evidence.push(Evidence::Text {
+                        label_key: UNVERIFIED.to_owned(),
+                        value: format!("ignored on {}, no fingerprint kept", entry.added_at.date()),
+                    });
+                }
                 Some(then)
                     if file_hash(f, snap).as_deref()
                         != Some(then.to_ascii_lowercase().as_str()) =>

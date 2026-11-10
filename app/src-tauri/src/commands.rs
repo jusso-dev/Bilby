@@ -174,7 +174,11 @@ pub fn ignore_finding(
         .ok_or_else(failed)?;
     let path = crate::scan::suppressions_path().ok_or_else(failed)?;
     let mut all = bilby_core::suppress::Suppressions::load(&path).map_err(|_| failed())?;
-    all.add(finding, snapshot, time::OffsetDateTime::now_utc(), &note);
+    // A file Bilby couldn't fingerprint can't be ignored safely: it would
+    // stay ignored even after the file was replaced.
+    if !all.add(finding, snapshot, time::OffsetDateTime::now_utc(), &note) {
+        return Err(failed());
+    }
     all.save(&path).map_err(|_| failed())?;
     tracing::info!(rule = %finding.rule_id, "finding ignored by the user");
     Ok(())

@@ -23,4 +23,10 @@ reason = "The runner image runs Defender with real-time protection off."
 rule_id = "proc.unsigned_user_writable"
 severity = "medium"
 confidence = "high"
-reason = "The runner's provisioning agent (provjobd.exe) runs unsigned from the runner account's Temp folder."
+reason = "The runner's provisioning agent (provjobd.exe) runs unsigned from the runner account's Temp folder. High when it has a public connection open at dump time (net.outbound_from_suspicious raises it)."
+
+[[allow]]
+rule_id = "proc.unsigned_user_writable"
+severity = "medium"
+confidence = "medium"
+reason = "The same provisioning agent when it has no public connection open at dump time, so the outbound boost doesn't apply."
