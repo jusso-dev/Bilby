@@ -43,6 +43,10 @@ exceptions = [
   { crate = "selectors", allow = ["MPL-2.0"] },
   # Pulled in by Tauri and wry through dirs -> dirs-sys.
   { crate = "option-ext", allow = ["MPL-2.0"] },
+  # Mozilla's CA root list as Rust data, used by ureq's rustls for the opt-in
+  # online checks (bilby-reputation, #16). CDLA-Permissive-2.0 is a
+  # permissive licence for data: use and redistribute, keep the notice.
+  { crate = "webpki-roots", allow = ["CDLA-Permissive-2.0"] },
 ]
 
 [bans]

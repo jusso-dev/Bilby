@@ -1,0 +1,204 @@
+//! Opt-in reputation checks (ADR 0004). Off by default.
+//!
+//! - CIRCL hashlookup and VirusTotal receive SHA-256 hashes only, and only
+//!   when the user switched that service on. Never file contents, names,
+//!   paths, the computer name or the user name.
+//! - Which hashes are looked up is decided by
+//!   [`bilby_core::rules::reputation::lookup_candidates`]: files behind
+//!   findings, startup item targets, and non-Windows running programs.
+//! - HTTP only to [`allowlist::ALLOWED`], through [`allowlist::Http`].
+//! - "Ask Windows Security to check this file" ([`defender`]) is local and
+//!   only runs when the user asks.
+//! - Microsoft's cloud hash lookup isn't available to consumers outside
+//!   Defender for Endpoint, so there's nothing here for it.
+
+pub mod allowlist;
+pub mod circl;
+pub mod defender;
+pub mod key;
+pub mod virustotal;
+
+use std::collections::HashMap;
+use std::sync::Mutex;
+use std::time::{Duration, Instant};
+
+use bilby_core::rules::reputation::MAX_CIRCL_LOOKUPS;
+use bilby_core::settings::OnlineChecks;
+use bilby_core::snapshot::{ReputationFacts, VtResult};
+
+use allowlist::{HttpError, Transport};
+use key::ApiKey;
+
+/// 64 hex characters.
+pub fn is_sha256(s: &str) -> bool {
+    s.len() == 64 && s.bytes().all(|b| b.is_ascii_hexdigit())
+}
+
+/// At most `per_minute` calls in any 60 seconds. `sleep` is injectable so
+/// tests don't wait.
+pub struct RateLimiter {
+    per_minute: u32,
+    sent: Vec<Instant>,
+}
+
+impl RateLimiter {
+    /// A limiter for this many calls a minute (0 means none allowed).
+    pub fn new(per_minute: u32) -> Self {
+        Self {
+            per_minute,
+            sent: Vec::new(),
+        }
+    }
+
+    /// Waits until another call is allowed, then records it.
+    pub fn wait(&mut self, now: impl Fn() -> Instant, sleep: impl Fn(Duration)) {
+        if self.per_minute == 0 {
+            return;
+        }
+        loop {
+            let t = now();
+            self.sent
+                .retain(|s| t.saturating_duration_since(*s) < Duration::from_secs(60));
+            if self.sent.len() < self.per_minute as usize {
+                self.sent.push(t);
+                return;
+            }
+            let oldest = self.sent[0];
+            sleep(Duration::from_secs(60).saturating_sub(t.saturating_duration_since(oldest)));
+        }
+    }
+}
+
+/// Limits for one scan.
+#[derive(Debug, Clone, Copy)]
+pub struct Limits {
+    /// Most CIRCL lookups.
+    pub circl_max: usize,
+    /// Most VirusTotal lookups (the user's remaining daily quota).
+    pub vt_max: usize,
+    /// VirusTotal requests a minute.
+    pub vt_per_minute: u32,
+}
+
+impl Default for Limits {
+    fn default() -> Self {
+        Self {
+            circl_max: MAX_CIRCL_LOOKUPS,
+            vt_max: virustotal::PUBLIC_PER_DAY as usize,
+            vt_per_minute: virustotal::PUBLIC_PER_MINUTE,
+        }
+    }
+}
+
+/// What happened, for the scan's check list. Failures never fail a scan.
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub struct Summary {
+    /// CIRCL lookups sent.
+    pub circl_sent: usize,
+    /// VirusTotal lookups sent.
+    pub vt_sent: usize,
+    /// Lookups that failed (network, timeout, quota). Reasons, no keys.
+    pub errors: Vec<String>,
+}
+
+/// Session cache: results live in memory until the app closes.
+#[derive(Default)]
+pub struct Cache {
+    circl: Mutex<HashMap<String, circl::Known>>,
+    vt: Mutex<HashMap<String, Option<VtResult>>>,
+}
+
+/// Looks up `hashes` with the services switched on in `settings`. With
+/// both off, returns `None` straight away: no client is built and nothing
+/// is sent.
+pub fn check(
+    settings: OnlineChecks,
+    hashes: &[String],
+    vt_key: Option<&ApiKey>,
+    http: &dyn Transport,
+    cache: &Cache,
+    limits: Limits,
+    sleep: &dyn Fn(Duration),
+) -> Option<(ReputationFacts, Summary)> {
+    if !settings.any() {
+        return None;
+    }
+    let mut facts = ReputationFacts::default();
+    let mut summary = Summary::default();
+    let hashes: Vec<String> = hashes
+        .iter()
+        .filter(|h| is_sha256(h))
+        .map(|h| h.to_ascii_lowercase())
+        .collect();
+
+    if settings.circl {
+        for h in hashes.iter().take(limits.circl_max) {
+            let cached = cache.circl.lock().ok().and_then(|c| c.get(h).copied());
+            let known = if let Some(k) = cached {
+                Some(k)
+            } else {
+                summary.circl_sent += 1;
+                match circl::lookup(http, h) {
+                    Ok(k) => {
+                        if let Ok(mut c) = cache.circl.lock() {
+                            c.insert(h.clone(), k);
+                        }
+                        Some(k)
+                    }
+                    Err(e) => {
+                        summary.errors.push(format!("CIRCL: {}", describe(&e)));
+                        None
+                    }
+                }
+            };
+            if known == Some(circl::Known::Yes) {
+                facts.known_good.push(h.clone());
+            }
+        }
+    }
+
+    if settings.virustotal {
+        match vt_key {
+            None => summary.errors.push("VirusTotal: no key saved".to_owned()),
+            Some(key) => {
+                let mut limiter = RateLimiter::new(limits.vt_per_minute);
+                for h in hashes.iter().take(limits.vt_max) {
+                    let cached = cache.vt.lock().ok().and_then(|c| c.get(h).cloned());
+                    let result = if let Some(r) = cached {
+                        r
+                    } else {
+                        limiter.wait(Instant::now, sleep);
+                        summary.vt_sent += 1;
+                        match virustotal::lookup(http, key.expose(), h) {
+                            Ok(r) => {
+                                if let Ok(mut c) = cache.vt.lock() {
+                                    c.insert(h.clone(), r.clone());
+                                }
+                                r
+                            }
+                            Err(e) => {
+                                summary.errors.push(format!("VirusTotal: {}", describe(&e)));
+                                // A bad key or spent quota won't fix itself
+                                // mid-scan: stop asking.
+                                if matches!(&e, HttpError::Failed(m) if m.contains("401") || m.contains("429"))
+                                {
+                                    break;
+                                }
+                                None
+                            }
+                        }
+                    };
+                    facts.virustotal.extend(result);
+                }
+            }
+        }
+    }
+    Some((facts, summary))
+}
+
+fn describe(e: &HttpError) -> String {
+    match e {
+        HttpError::NotAllowed(m) => format!("not sent ({m})"),
+        HttpError::Failed(m) => m.clone(),
+    }
+}

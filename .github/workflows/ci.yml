@@ -77,6 +77,10 @@ jobs:
       - name: Windows collector output
         if: runner.os == 'Windows'
         run: cargo test -p bilby-collect-windows --locked -- --nocapture --test-threads 1
+      # #16: with every online switch off, a full scan makes no network
+      # connections. The guard feature panics if the HTTP client is built.
+      - name: No network with online checks off
+        run: cargo test -p bilby-reputation --locked --features no-network-guard -- --nocapture
 
   copy-lint:
     runs-on: ubuntu-latest

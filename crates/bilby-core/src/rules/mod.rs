@@ -8,6 +8,7 @@ pub mod network;
 pub mod persistence;
 pub mod processes;
 pub mod protection;
+pub mod reputation;
 pub mod tamper;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
@@ -120,13 +121,14 @@ pub fn all_rules() -> Vec<Box<dyn Rule>> {
     rules.extend(browser::rules());
     rules.extend(tamper::rules());
     rules.extend(drivers::rules());
+    rules.extend(reputation::rules());
     rules
 }
 
 /// Ids of rules that only change other findings and never make their own
 /// card. They still need a `docs/signals.md` row and copy for the helper
 /// view.
-pub const BOOST_RULES: &[&str] = &[network::OUTBOUND_FROM_SUSPICIOUS];
+pub const BOOST_RULES: &[&str] = &[network::OUTBOUND_FROM_SUSPICIOUS, reputation::KNOWN_GOOD];
 
 /// Runs every rule over a snapshot, then the boost passes that adjust
 /// findings other rules made.
@@ -136,6 +138,7 @@ pub fn evaluate_all(snap: &SystemSnapshot, ctx: &RuleContext) -> Vec<Finding> {
         .flat_map(|rule| rule.evaluate(snap, ctx))
         .collect();
     network::boost_outbound(snap, &mut findings);
+    reputation::soften_known_good(snap, &mut findings);
     findings
 }
 

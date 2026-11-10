@@ -106,6 +106,10 @@ code_integrity = "Driver checks"
 start_options = "Startup options"
 created = "Added"
 location = "Folder"
+lowered_by = "Lowered by"
+sha256 = "SHA-256"
+vt_stats = "VirusTotal results"
+vt_date = "VirusTotal last checked"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -504,3 +508,35 @@ title = "Secure Boot is switched off."
 what = "Secure Boot checks that Windows starts up untouched. It's off on this computer."
 why = "Many older computers have it off, so this is just for your information."
 todo = "Leave it, or ask your helper about switching it on in the computer's startup settings."
+
+[rep.vt.malicious]
+title = "Many security tools say this program is harmful."
+what = "VirusTotal checked {name}, and {count} security tools flagged it."
+why = "When this many tools agree, it's very likely harmful."
+todo = "Ask Windows Security to scan it. Bilby can start that for you."
+
+[rep.vt.few]
+title = "A few security tools flagged this program."
+what = "VirusTotal checked {name}, and {count} security tools flagged it."
+why = "A few flags on their own are often false alarms, so this might be nothing."
+todo = "Leave it unless something else about this program looks wrong."
+
+[rep.defender.threat]
+title = "Windows Security found a threat in this file."
+what = "You asked Windows Security to check {name}, and it found something harmful."
+why = "Windows Security is confident about what it reports."
+todo = "Open Windows Security and follow what it suggests."
+
+[rep.known_good]
+title = "This file is in a list of known software."
+what = "CIRCL's list of known software recognised {name}."
+why = "Known software is less likely to be harmful, so Bilby is less sure about anything it found here."
+todo = "Nothing to do. This only changes how sure Bilby is."
+
+[settings.online]
+heading = "Online checks"
+intro = "These are off unless you switch them on. Each one sends only a file's fingerprint (a SHA-256 hash), never the file, its name, or anything about you or this computer."
+circl = "Check fingerprints against CIRCL's list of known software. CIRCL is Luxembourg's national computer emergency response team."
+virustotal = "Check fingerprints with VirusTotal, using your own free key. VirusTotal is run by Google. Files are never uploaded."
+defender = "Asking Windows Security to check a file happens on this computer. Windows Security may still use Microsoft's cloud protection, as set in Windows Security."
+
