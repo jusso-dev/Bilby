@@ -104,21 +104,26 @@ enum MachineCert {
 
 fn machine_cert(r: &RootCert, computer: Option<&str>) -> Option<MachineCert> {
     let cn = r.subject_cn.as_deref()?;
-    let looks_like_computer = !cn.is_empty()
-        && cn.len() <= 15
-        && cn.chars().all(|c| c.is_ascii_alphanumeric() || c == '-');
     let self_issued = r
         .issuer
         .as_deref()
         .is_some_and(|i| i.eq_ignore_ascii_case(cn));
-    if !looks_like_computer || !self_issued || r.subject_o.is_some() || r.is_ca == Some(true) {
+    if cn.is_empty() || !self_issued || r.subject_o.is_some() || r.is_ca == Some(true) {
         return None;
     }
-    Some(if computer.is_some_and(|c| c.eq_ignore_ascii_case(cn)) {
-        MachineCert::ThisComputer
-    } else {
-        MachineCert::OtherComputer
-    })
+    let label = |s: &str| !s.is_empty() && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '-');
+    // On a domain-joined PC, Windows names these after the full name
+    // (laptop-ab12.corp.example), so the first label is the computer.
+    let (host, rest) = cn.split_once('.').map_or((cn, None), |(h, d)| (h, Some(d)));
+    let this = computer.is_some_and(|c| c.eq_ignore_ascii_case(host))
+        && label(host)
+        && rest.is_none_or(|d| d.split('.').all(label));
+    if this {
+        return Some(MachineCert::ThisComputer);
+    }
+    // Only a bare NetBIOS-style name counts as "another computer": a
+    // dotted name could be any website, so it stays a plain unknown root.
+    (rest.is_none() && cn.len() <= 15 && label(cn)).then_some(MachineCert::OtherComputer)
 }
 
 /// The known-bad root this certificate is, by thumbprint or subject.
