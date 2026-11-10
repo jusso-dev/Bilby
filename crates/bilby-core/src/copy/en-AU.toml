@@ -92,6 +92,15 @@ policy = "Set by policy"
 update_url = "Updates from"
 management = "Managed because"
 shortcut = "Shortcut"
+hosts_line = "Hosts file line"
+proxy_server = "Proxy server"
+pac_url = "Proxy settings address"
+thumbprint = "Thumbprint"
+cert_store = "Certificate store"
+issuer = "Issued by"
+not_before = "Valid from"
+recent_root = "Recently added"
+ms_list = "Microsoft's root list"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -311,12 +320,6 @@ what = "{name} in {browser} came from the browser's store and can read and chang
 why = "Many useful extensions need this, like ad blockers and password managers. It's for your helper's information."
 todo = "Leave it if you use it."
 
-[tamper.proxy_set]
-title = "Your web traffic goes through another computer."
-what = "Windows is set to send web traffic through {proxy}."
-why = "Some workplaces and security tools do this on purpose. Unwanted programs sometimes do it to watch what you browse."
-todo = "If you didn't set this up, Bilby can switch it off, and you can undo that later."
-
 [protection.no_active_av]
 title = "No antivirus is protecting this computer."
 what = "Windows Security's antivirus is switched off, and no other antivirus reports being on."
@@ -382,6 +385,60 @@ title = "Windows hasn't updated for a while."
 what = "The last update that installed successfully was {days} days ago."
 why = "Updates fix security problems that harmful programs use to get in."
 todo = "Open Windows Update and check for updates."
+
+[tamper.hosts.watch_domain]
+title = "A trusted website has been redirected on this computer."
+what = "The hosts file sends {name} to {ip} instead of the real {domain} site."
+why = "This is how fake login pages steal passwords and banking details. The real site never needs this."
+todo = "If you didn't set this up, Bilby can remove that line and keep a backup, and you can undo that later."
+
+[tamper.hosts.path_moved]
+title = "Windows is reading its hosts file from an unusual place."
+what = "The setting that tells Windows where to find its hosts file has been changed."
+why = "Moving it can hide redirects from tools that only check the usual place."
+todo = "Ask someone you trust to look at this computer."
+
+[tamper.hosts.many_entries]
+title = "The hosts file blocks a lot of websites."
+what = "The hosts file blocks {count} website addresses."
+why = "This usually means an ad-blocking or privacy list was installed. It's for your helper's information."
+todo = "Leave it if you set it up."
+
+[tamper.proxy.unexpected]
+title = "Your web traffic goes through another program or computer."
+what = "Windows is set to send web traffic through {proxy}."
+why = "Some workplaces and security tools do this on purpose. Unwanted programs sometimes do it to watch what you browse."
+todo = "If you didn't set this up, Bilby can switch it off, and you can undo that later."
+
+[tamper.proxy.pac_http]
+title = "Your proxy settings come from an unprotected web address."
+what = "Windows reads its proxy settings from {url}, which isn't a secure address."
+why = "Someone on the network could change those settings and redirect your web traffic."
+todo = "If you didn't set this up, Bilby can switch it off, and you can undo that later."
+
+[tamper.winhttp_proxy]
+title = "Windows itself sends some traffic through a proxy."
+what = "A computer-wide proxy, {proxy}, is set for Windows services."
+why = "Home computers rarely need this. It affects updates and other background traffic."
+todo = "Ask someone you trust to look if you didn't set this up."
+
+[tamper.root.known_bad]
+title = "A dangerous certificate is trusted on this computer."
+what = "A certificate called {known} is trusted. Its secret key was made public, so anyone can use it to fake websites."
+why = "With it, fake websites can look secure, even banking sites."
+todo = "Ask someone you trust to remove it from Windows' trusted certificates."
+
+[tamper.root.unknown]
+title = "An unfamiliar certificate is trusted on this computer."
+what = "A certificate called {name} is trusted, but it isn't one of the certificates Windows normally trusts."
+why = "Trusted certificates let a program read or change secure web traffic. Some security tools and workplaces add their own on purpose."
+todo = "If you don't recognise it, ask someone you trust to look."
+
+[tamper.root.dev_tool]
+title = "A developer tool's certificate is trusted on this computer."
+what = "{tool} added a certificate so it can inspect web traffic."
+why = "Developers use this on purpose. It's for your helper's information."
+todo = "Leave it if you use {tool}. Otherwise remove it from Windows' trusted certificates."
 
 [drivers.memory_integrity_off]
 title = "Memory integrity is switched off."

@@ -738,10 +738,10 @@ pub struct TamperFacts {
     /// The hosts file.
     #[serde(default)]
     pub hosts: Option<HostsFacts>,
-    /// Per-user (WinINet) proxy.
+    /// Per-user (`WinINet`) proxy.
     #[serde(default)]
     pub proxy: Option<ProxyFacts>,
-    /// Machine-wide (WinHTTP) proxy server, if one is set.
+    /// Machine-wide (`WinHTTP`) proxy server, if one is set.
     #[serde(default)]
     pub winhttp_proxy: Option<String>,
     /// Root certificates in the user and machine stores.
@@ -771,7 +771,7 @@ pub struct HostsFacts {
     pub entries: Vec<crate::hosts::HostsEntry>,
 }
 
-/// WinINet proxy settings for the current user.
+/// `WinINet` proxy settings for the current user.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ProxyFacts {
     /// `ProxyEnable`.

@@ -323,13 +323,14 @@ fn proxy_pac_http(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
     };
     // A name, or a public address, is somewhere on the internet. Local
     // addresses (a router, wpad on the LAN) aren't.
-    let public = match host.parse::<std::net::IpAddr>() {
-        Ok(ip) => classify(ip) == AddrClass::Public,
-        Err(_) => {
-            !host.eq_ignore_ascii_case("localhost")
-                && host.contains('.')
-                && !host.ends_with(".local")
-        }
+    let public = if let Ok(ip) = host.parse::<std::net::IpAddr>() {
+        classify(ip) == AddrClass::Public
+    } else {
+        // A single-label name (wpad, localhost) or a .local name stays on
+        // the local network. Names are case-insensitive, so compare the last
+        // label that way: NAS.LOCAL is as local as nas.local.
+        let last = host.rsplit('.').next().unwrap_or_default();
+        host.contains('.') && !last.eq_ignore_ascii_case("local")
     };
     if !public {
         return Vec::new();
@@ -519,5 +520,31 @@ mod tests {
         );
         assert_eq!(url_host("http://192.168.1.1/wpad.dat"), Some("192.168.1.1"));
         assert_eq!(url_host("nonsense"), None);
+    }
+
+    #[test]
+    fn local_pac_hosts_are_not_public() {
+        let facts = |url: &str| TamperFacts {
+            proxy: Some(crate::snapshot::ProxyFacts {
+                pac_url: Some(url.to_owned()),
+                ..Default::default()
+            }),
+            ..TamperFacts::default()
+        };
+        let ctx = RuleContext::at(time::OffsetDateTime::UNIX_EPOCH);
+        for local in [
+            "http://NAS.LOCAL/wpad.dat",
+            "http://localhost/x.pac",
+            "http://wpad/wpad.dat",
+            "http://10.0.0.1/x.pac",
+        ] {
+            assert!(proxy_pac_http(&facts(local), &ctx).is_empty(), "{local}");
+        }
+        for public in [
+            "http://proxy.example.test/x.pac",
+            "HTTP://203.0.113.5/x.pac",
+        ] {
+            assert_eq!(proxy_pac_http(&facts(public), &ctx).len(), 1, "{public}");
+        }
     }
 }

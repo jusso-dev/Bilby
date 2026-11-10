@@ -18,3 +18,4 @@ pub mod persistence;
 pub mod processes;
 pub mod registry;
 pub mod sig;
+pub mod tamper;
