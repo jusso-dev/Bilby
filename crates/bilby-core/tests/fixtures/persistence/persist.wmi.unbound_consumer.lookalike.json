@@ -1,0 +1,47 @@
+{
+  "note": "Unbound mail consumer: not a command or script, nothing.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [],
+      "tasks": [],
+      "wmi": [
+        {
+          "namespace": "root\\subscription",
+          "name": "SCM Event Log Consumer",
+          "consumer": {
+            "other": {
+              "class": "NTEventLogEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "SCM Event Log Filter",
+              "query": "select * from MSFT_SCMEventLogEvent"
+            }
+          ]
+        },
+        {
+          "namespace": "root\\subscription",
+          "name": "Mail",
+          "consumer": {
+            "other": {
+              "class": "SMTPEventConsumer"
+            }
+          },
+          "filters": []
+        }
+      ]
+    }
+  },
+  "expect": [],
+  "absent": [
+    "persist.wmi.command_consumer",
+    "persist.wmi.script_consumer",
+    "persist.wmi.unbound_consumer"
+  ]
+}

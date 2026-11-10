@@ -1,0 +1,58 @@
+{
+  "note": "A program in Program Files: still rare, but Medium.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [],
+      "tasks": [],
+      "wmi": [
+        {
+          "namespace": "root\\subscription",
+          "name": "SCM Event Log Consumer",
+          "consumer": {
+            "other": {
+              "class": "NTEventLogEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "SCM Event Log Filter",
+              "query": "select * from MSFT_SCMEventLogEvent"
+            }
+          ]
+        },
+        {
+          "namespace": "root\\subscription",
+          "name": "Vendor",
+          "consumer": {
+            "command_line": {
+              "command_line": "\"C:\\Program Files\\Vendor\\agent.exe\" /event",
+              "executable": null
+            }
+          },
+          "filters": [
+            {
+              "name": "VendorFilter",
+              "query": "SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "persist.wmi.command_consumer",
+      "severity": "high",
+      "confidence": "medium"
+    }
+  ],
+  "absent": [
+    "persist.wmi.script_consumer",
+    "persist.wmi.unbound_consumer"
+  ]
+}

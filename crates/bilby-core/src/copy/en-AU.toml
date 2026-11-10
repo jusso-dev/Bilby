@@ -77,6 +77,11 @@ startup_state = "Startup state"
 command = "Command"
 service = "Service"
 task = "Scheduled task"
+wmi_namespace = "WMI namespace"
+wmi_filter = "Triggered by"
+wmi_engine = "Script language"
+wmi_script = "Script"
+wmi_class = "Consumer type"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -217,6 +222,24 @@ title = "A scheduled task points to a program that's gone."
 what = "The task {name} runs a program that isn't there any more."
 why = "This is usually left over from a program that was uninstalled. It's harmless."
 todo = "Leave it. Nothing runs."
+
+[persist.wmi.command_consumer]
+title = "A hidden Windows feature has been set up to run a program."
+what = "A hidden Windows feature called a WMI subscription ({name}) has been set up to run a program automatically. This is unusual on home computers."
+why = "It doesn't show in Task Manager or Settings, so it's a way for a program to come back without being seen."
+todo = "Ask someone you trust to look at this computer."
+
+[persist.wmi.script_consumer]
+title = "A hidden Windows feature has been set up to run a script."
+what = "A hidden Windows feature called a WMI subscription ({name}) has been set up to run a script automatically. This is unusual on home computers."
+why = "Scripts run this way don't show in Task Manager or Settings. Harmful programs use this to stay hidden."
+todo = "Ask someone you trust to look at this computer."
+
+[persist.wmi.unbound_consumer]
+title = "A leftover hidden Windows setting was found."
+what = "A WMI subscription called {name} is set up to run something, but nothing triggers it."
+why = "On its own it can't run. It's often left over from software that was removed, but it can also be left behind by harmful programs."
+todo = "Ask someone you trust to look if you're worried. Otherwise you can leave it."
 
 [tamper.proxy_set]
 title = "Your web traffic goes through another computer."

@@ -5,6 +5,7 @@ mod run_keys;
 pub mod services;
 mod startup_folders;
 pub mod tasks;
+pub mod wmi_subs;
 
 use bilby_core::cmdline::{Host, resolve};
 use bilby_core::model::{Check, CheckStatus, SignalFamily};
@@ -48,7 +49,9 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
         Ok(c) => (c.tasks, CheckStatus::Ran),
         Err(e) => (Vec::new(), CheckStatus::Failed(e.message())),
     };
+    let (wmi, wmi_status) = wmi_subs::collect();
     let facts = PersistenceFacts {
+        wmi,
         items,
         winlogon: Some(winlogon()),
         ifeo: ifeo(folders, cache),
@@ -64,6 +67,7 @@ pub fn collect(folders: &KnownFolders, cache: &FileCache) -> Collected {
             check("persistence.winlogon", CheckStatus::Ran),
             check("persistence.services", services_status),
             check("persistence.tasks", tasks_status),
+            check("persistence.wmi", wmi_status),
         ],
     }
 }

@@ -1,0 +1,37 @@
+{
+  "note": "The default SCM Event Log Consumer (NTEventLogEventConsumer) and its filter: nothing.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [],
+      "tasks": [],
+      "wmi": [
+        {
+          "namespace": "root\\subscription",
+          "name": "SCM Event Log Consumer",
+          "consumer": {
+            "other": {
+              "class": "NTEventLogEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "SCM Event Log Filter",
+              "query": "select * from MSFT_SCMEventLogEvent"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": [],
+  "absent": [
+    "persist.wmi.command_consumer",
+    "persist.wmi.script_consumer",
+    "persist.wmi.unbound_consumer"
+  ]
+}

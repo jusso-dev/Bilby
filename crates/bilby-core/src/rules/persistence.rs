@@ -7,7 +7,7 @@ use crate::model::{Confidence, Evidence, Finding, NextStepKind, Severity, Signal
 use crate::paths::{KnownFolders, normalise};
 use crate::snapshot::{
     FileFacts, IfeoEntry, PathClass, PersistenceFacts, ServiceFact, ServiceKind, SignatureStatus,
-    StartType, StartupItem, SystemSnapshot, TaskAction, TaskFact,
+    StartType, StartupItem, SystemSnapshot, TaskAction, TaskFact, WmiConsumerKind, WmiSubscription,
 };
 
 /// Fix id for turning a startup item off the way Task Manager does (#31).
@@ -142,6 +142,9 @@ rule!(
     task_hidden_unsigned
 );
 rule!(TaskMissing, "persist.task.missing_target", task_missing);
+rule!(WmiCommand, "persist.wmi.command_consumer", wmi_command);
+rule!(WmiScript, "persist.wmi.script_consumer", wmi_script);
+rule!(WmiUnbound, "persist.wmi.unbound_consumer", wmi_unbound);
 
 /// Every persistence rule in this module.
 pub fn rules() -> Vec<Box<dyn Rule>> {
@@ -162,6 +165,9 @@ pub fn rules() -> Vec<Box<dyn Rule>> {
         Box::new(TaskScriptHost),
         Box::new(TaskHiddenUnsigned),
         Box::new(TaskMissing),
+        Box::new(WmiCommand),
+        Box::new(WmiScript),
+        Box::new(WmiUnbound),
     ]
 }
 
@@ -747,6 +753,165 @@ fn task_missing(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
         }
     }
     out
+}
+
+/// Does a WMI command line hide what it runs: a script host, encoded or
+/// download-and-run PowerShell, a URL, or a user-writable path?
+fn wmi_command_suspicious(cmd: &str) -> bool {
+    let lower = cmd.to_ascii_lowercase();
+    let script_host = [
+        "powershell",
+        "pwsh",
+        "cmd.exe",
+        "cmd ",
+        "wscript",
+        "cscript",
+        "mshta",
+        "rundll32",
+        "regsvr32",
+    ]
+    .iter()
+    .any(|h| lower.contains(h));
+    let encoded = encoded_powershell(&format!(
+        "powershell {}",
+        lower.split_once("powershell").map_or("", |(_, r)| r)
+    ));
+    let url = lower.contains("http://") || lower.contains("https://");
+    let writable = [
+        r"\appdata\",
+        r"\temp\",
+        r"\downloads\",
+        r"\users\public\",
+        r"\programdata\",
+    ]
+    .iter()
+    .any(|d| lower.contains(d));
+    script_host || encoded || url || writable
+}
+
+fn wmi_finding(
+    id: &str,
+    severity: Severity,
+    confidence: Confidence,
+    w: &WmiSubscription,
+) -> FindingBuilder {
+    let mut b = FindingBuilder::new(
+        id,
+        SignalFamily::Persistence,
+        severity,
+        confidence,
+        Subject::Setting(format!("wmi.{}.{}", w.namespace, w.name).to_lowercase()),
+    )
+    .var("name", &w.name)
+    .text("evidence.wmi_namespace", &w.namespace)
+    .next(NextStepKind::TalkToHelper);
+    for f in &w.filters {
+        b = b.text(
+            "evidence.wmi_filter",
+            format!("{}: {}", f.name, f.query.as_deref().unwrap_or("?")),
+        );
+    }
+    match &w.consumer {
+        WmiConsumerKind::CommandLine {
+            command_line,
+            executable,
+        } => {
+            for v in [executable, command_line].into_iter().flatten() {
+                b = b.text("evidence.command", v);
+            }
+        }
+        WmiConsumerKind::ActiveScript { engine, text, file } => {
+            if let Some(e) = engine {
+                b = b.text("evidence.wmi_engine", e);
+            }
+            if let Some(f) = file {
+                b = b.text("evidence.command", f);
+            }
+            if let Some(t) = text {
+                b = b.text(
+                    "evidence.wmi_script",
+                    t.chars().take(500).collect::<String>(),
+                );
+            }
+        }
+        WmiConsumerKind::Other { class } => b = b.text("evidence.wmi_class", class),
+    }
+    b
+}
+
+fn wmi_command(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.wmi
+        .iter()
+        .filter(|w| !w.filters.is_empty())
+        .filter_map(|w| {
+            let WmiConsumerKind::CommandLine {
+                command_line,
+                executable,
+            } = &w.consumer
+            else {
+                return None;
+            };
+            let all = format!(
+                "{} {}",
+                executable.as_deref().unwrap_or_default(),
+                command_line.as_deref().unwrap_or_default()
+            );
+            let confidence = if wmi_command_suspicious(&all) {
+                Confidence::High
+            } else {
+                Confidence::Medium
+            };
+            Some(
+                wmi_finding(
+                    "persist.wmi.command_consumer",
+                    Severity::High,
+                    confidence,
+                    w,
+                )
+                .build(),
+            )
+        })
+        .collect()
+}
+
+fn wmi_script(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.wmi
+        .iter()
+        .filter(|w| {
+            !w.filters.is_empty() && matches!(w.consumer, WmiConsumerKind::ActiveScript { .. })
+        })
+        .map(|w| {
+            wmi_finding(
+                "persist.wmi.script_consumer",
+                Severity::High,
+                Confidence::High,
+                w,
+            )
+            .build()
+        })
+        .collect()
+}
+
+fn wmi_unbound(p: &PersistenceFacts, _: &RuleContext) -> Vec<Finding> {
+    p.wmi
+        .iter()
+        .filter(|w| {
+            w.filters.is_empty()
+                && matches!(
+                    w.consumer,
+                    WmiConsumerKind::CommandLine { .. } | WmiConsumerKind::ActiveScript { .. }
+                )
+        })
+        .map(|w| {
+            wmi_finding(
+                "persist.wmi.unbound_consumer",
+                Severity::Low,
+                Confidence::Medium,
+                w,
+            )
+            .build()
+        })
+        .collect()
 }
 
 #[cfg(test)]

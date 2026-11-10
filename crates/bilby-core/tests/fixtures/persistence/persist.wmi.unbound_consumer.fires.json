@@ -1,0 +1,53 @@
+{
+  "note": "",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "persistence": {
+      "items": [],
+      "ifeo": [],
+      "appinit": [],
+      "winlogon": null,
+      "services": [],
+      "tasks": [],
+      "wmi": [
+        {
+          "namespace": "root\\subscription",
+          "name": "SCM Event Log Consumer",
+          "consumer": {
+            "other": {
+              "class": "NTEventLogEventConsumer"
+            }
+          },
+          "filters": [
+            {
+              "name": "SCM Event Log Filter",
+              "query": "select * from MSFT_SCMEventLogEvent"
+            }
+          ]
+        },
+        {
+          "namespace": "root\\subscription",
+          "name": "Leftover",
+          "consumer": {
+            "command_line": {
+              "command_line": "C:\\Gone\\x.exe",
+              "executable": null
+            }
+          },
+          "filters": []
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "persist.wmi.unbound_consumer",
+      "severity": "low",
+      "confidence": "medium"
+    }
+  ],
+  "absent": [
+    "persist.wmi.command_consumer",
+    "persist.wmi.script_consumer"
+  ]
+}
