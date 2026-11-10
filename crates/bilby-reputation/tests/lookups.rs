@@ -288,3 +288,101 @@ fn rate_limiter_spaces_virustotal_calls() {
     // Nine calls at four a minute: two full waits of 60 seconds.
     assert_eq!(slept.get(), Duration::from_secs(120));
 }
+
+#[test]
+fn unreachable_service_is_given_up_after_three_failures() {
+    // No recorded replies: every request fails like a blocked network.
+    let http = Recorded::default();
+    let many: Vec<String> = (0..50).map(|i| format!("{i:064x}")).collect();
+    let (_, summary) = check(
+        OnlineChecks {
+            circl: true,
+            virustotal: false,
+        },
+        &many,
+        None,
+        &http,
+        &Cache::default(),
+        Limits::default(),
+        &no_sleep,
+    )
+    .unwrap();
+    assert_eq!(summary.circl_sent, 3, "stops after three failures in a row");
+    assert!(summary.errors.iter().any(|e| e.contains("stopped early")));
+}
+
+#[test]
+fn deadline_stops_lookups() {
+    let http = Recorded::default();
+    let limits = Limits {
+        deadline: Duration::ZERO,
+        ..Limits::default()
+    };
+    let (_, summary) = check(
+        OnlineChecks {
+            circl: true,
+            virustotal: false,
+        },
+        &hashes(),
+        None,
+        &http,
+        &Cache::default(),
+        limits,
+        &no_sleep,
+    )
+    .unwrap();
+    assert_eq!(summary.circl_sent, 0);
+}
+
+#[test]
+fn a_bad_reply_doesnt_stop_virustotal_but_a_bad_key_does() {
+    // A body whose JSON error mentions "429" must not be read as a quota error.
+    let mut http = Recorded::default().with(
+        bilby_reputation::virustotal::url(NOTEPAD),
+        404,
+        "vt_not_found.json",
+    );
+    http.replies.insert(
+        bilby_reputation::virustotal::url(EICAR),
+        Reply {
+            status: 200,
+            body: "{\"data\": 429}".to_owned(),
+        },
+    );
+    let key = ApiKey::new("user-key").unwrap();
+    let on = OnlineChecks {
+        circl: false,
+        virustotal: true,
+    };
+    let (_, summary) = check(
+        on,
+        &hashes(),
+        Some(&key),
+        &http,
+        &Cache::default(),
+        Limits::default(),
+        &no_sleep,
+    )
+    .unwrap();
+    assert_eq!(
+        summary.vt_sent, 3,
+        "bad JSON for one hash, the others still asked"
+    );
+
+    let forbidden = Recorded::default().with(
+        bilby_reputation::virustotal::url(EICAR),
+        403,
+        "vt_quota.json",
+    );
+    let (_, summary) = check(
+        on,
+        &hashes(),
+        Some(&key),
+        &forbidden,
+        &Cache::default(),
+        Limits::default(),
+        &no_sleep,
+    )
+    .unwrap();
+    assert_eq!(summary.vt_sent, 1, "403 stops VirusTotal for the scan");
+}

@@ -535,7 +535,7 @@ todo = "Nothing to do. This only changes how sure Bilby is."
 
 [settings.online]
 heading = "Online checks"
-intro = "These are off unless you switch them on. Each one sends only a file's fingerprint (a SHA-256 hash), never the file, its name, or anything about you or this computer."
+intro = "These are off unless you switch them on. Each one sends a file's fingerprint (a SHA-256 hash), never the file or its name. The service also sees your internet address, and VirusTotal sees your key."
 circl = "Check fingerprints against CIRCL's list of known software. CIRCL is Luxembourg's national computer emergency response team."
 virustotal = "Check fingerprints with VirusTotal, using your own free key. VirusTotal is run by Google. Files are never uploaded."
 defender = "Asking Windows Security to check a file happens on this computer. Windows Security may still use Microsoft's cloud protection, as set in Windows Security."

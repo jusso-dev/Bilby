@@ -61,7 +61,7 @@ struct Stats {
 /// Parses a 200 response body.
 pub fn parse(sha256: &str, body: &str) -> Result<VtResult, HttpError> {
     let r: Report =
-        serde_json::from_str(body).map_err(|e| HttpError::Failed(format!("bad JSON: {e}")))?;
+        serde_json::from_str(body).map_err(|e| HttpError::BadReply(format!("bad JSON: {e}")))?;
     let a = r.data.attributes;
     Ok(VtResult {
         sha256: sha256.to_ascii_lowercase(),
@@ -89,6 +89,6 @@ pub fn lookup(
         200 => parse(sha256, &r.body).map(Some),
         404 => Ok(None),
         // 401 bad key, 429 quota: the scan carries on without VirusTotal.
-        s => Err(HttpError::Failed(format!("VirusTotal returned {s}"))),
+        s => Err(HttpError::Status(s)),
     }
 }

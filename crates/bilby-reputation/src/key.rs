@@ -55,8 +55,13 @@ mod store {
         // is CredentialBlobSize bytes.
         let key = unsafe {
             let c = &*cred;
-            let blob = std::slice::from_raw_parts(c.CredentialBlob, c.CredentialBlobSize as usize);
-            String::from_utf8(blob.to_vec()).ok()
+            if c.CredentialBlob.is_null() || c.CredentialBlobSize == 0 {
+                None
+            } else {
+                let blob =
+                    std::slice::from_raw_parts(c.CredentialBlob, c.CredentialBlobSize as usize);
+                String::from_utf8(blob.to_vec()).ok()
+            }
         };
         // SAFETY: freeing what CredReadW allocated.
         unsafe { CredFree(cred.cast()) };

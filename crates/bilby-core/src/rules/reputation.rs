@@ -76,22 +76,40 @@ fn finding_paths(f: &Finding) -> Vec<String> {
     out
 }
 
-/// Hashes worth looking up: files behind findings of Low or higher, the
-/// targets of startup items, and running programs that aren't part of
-/// Windows. Never every file. Sorted, at most `cap`.
+/// Hashes worth looking up, most important first: files behind findings
+/// of Low or higher (by severity), then the targets of startup items, then
+/// running programs that aren't part of Windows. Never every file. Each
+/// hash once, at most `cap`, so a long list drops the least important.
 pub fn lookup_candidates(snap: &SystemSnapshot, findings: &[Finding], cap: usize) -> Vec<String> {
     let by_path = files(snap);
-    let mut out = BTreeSet::new();
-    for f in findings.iter().filter(|f| f.severity >= Severity::Low) {
+    let mut ordered: Vec<String> = Vec::new();
+    let mut push = |h: &str| {
+        let h = h.to_ascii_lowercase();
+        if !ordered.contains(&h) {
+            ordered.push(h);
+        }
+    };
+    let mut flagged: Vec<&Finding> = findings
+        .iter()
+        .filter(|f| f.severity >= Severity::Low)
+        .collect();
+    flagged.sort_by(|a, b| {
+        b.severity
+            .cmp(&a.severity)
+            .then(b.confidence.cmp(&a.confidence))
+    });
+    for f in flagged {
         for p in finding_paths(f) {
-            if let Some(h) = by_path.get(&p).and_then(|x| x.sha256.clone()) {
-                out.insert(h);
+            if let Some(h) = by_path.get(&p).and_then(|x| x.sha256.as_deref()) {
+                push(h);
             }
         }
     }
     if let Some(p) = &snap.persistence {
         for t in p.items.iter().filter_map(|i| i.target.as_ref()) {
-            out.extend(t.sha256.clone());
+            if let Some(h) = t.sha256.as_deref() {
+                push(h);
+            }
         }
     }
     if let Some(ps) = &snap.processes {
@@ -103,15 +121,13 @@ pub fn lookup_candidates(snap: &SystemSnapshot, findings: &[Finding], cap: usize
                     ..
                 }
             );
-            if !windows {
-                out.extend(f.sha256.clone());
+            if let (false, Some(h)) = (windows, f.sha256.as_deref()) {
+                push(h);
             }
         }
     }
-    out.into_iter()
-        .map(|h| h.to_ascii_lowercase())
-        .take(cap)
-        .collect()
+    ordered.truncate(cap);
+    ordered
 }
 
 fn down(c: Confidence) -> Confidence {

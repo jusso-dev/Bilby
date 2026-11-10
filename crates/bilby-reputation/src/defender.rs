@@ -50,12 +50,13 @@ fn version_key(p: &Path) -> Vec<u64> {
 
 /// Turns `MpCmdRun` output and exit code into an outcome.
 pub fn interpret(exit_code: Option<i32>, stdout: &str) -> DefenderScanOutcome {
-    let threat = stdout
-        .lines()
-        .find_map(|l| l.trim().strip_prefix("Threat").map(str::trim))
-        .and_then(|rest| rest.strip_prefix(':').map(str::trim))
-        .filter(|n| !n.is_empty())
-        .map(str::to_owned);
+    // The first "Threat <spaces> : <name>" line. Lines like "Threat
+    // information" without a colon are skipped, not taken as the answer.
+    let threat = stdout.lines().find_map(|l| {
+        let rest = l.trim().strip_prefix("Threat")?.trim_start();
+        let name = rest.strip_prefix(':')?.trim();
+        (!name.is_empty()).then(|| name.to_owned())
+    });
     match (exit_code, threat) {
         (Some(_), Some(name)) => DefenderScanOutcome::Threat { name: Some(name) },
         (Some(0), None) => DefenderScanOutcome::Clean,
@@ -144,6 +145,16 @@ mod tests {
         assert_eq!(
             interpret(Some(0), "----- Threat information -----"),
             DefenderScanOutcome::Clean
+        );
+        // A heading-like "Threat" line first doesn't hide the real one.
+        assert_eq!(
+            interpret(
+                Some(2),
+                "Threat information\nThreats found: 1\nThreat : Trojan:Win32/X"
+            ),
+            DefenderScanOutcome::Threat {
+                name: Some("Trojan:Win32/X".to_owned())
+            }
         );
     }
 

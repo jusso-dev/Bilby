@@ -35,6 +35,6 @@ pub fn lookup(http: &dyn Transport, sha256: &str) -> Result<Known, HttpError> {
     match r.status {
         200 => Ok(Known::Yes),
         404 => Ok(Known::No),
-        s => Err(HttpError::Failed(format!("CIRCL returned {s}"))),
+        s => Err(HttpError::Status(s)),
     }
 }

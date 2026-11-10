@@ -10,7 +10,15 @@ Bilby looks at your computer and tells you what it finds. It doesn't send anythi
 
 ## Online checks (off unless you switch them on)
 
-Each online check is a separate switch in Settings. When one is on, Bilby sends a file's fingerprint (a SHA-256 hash, a long string of letters and numbers worked out from the file) and nothing else. A fingerprint can't be turned back into the file.
+Each online check is a separate switch in Settings. When one is on, Bilby asks that service about a file's fingerprint (a SHA-256 hash, a long string of letters and numbers worked out from the file). A fingerprint can't be turned back into the file.
+
+Along with the fingerprint, the service also sees:
+
+- your internet address (IP address), as with any website you visit,
+- that the request came from Bilby and which version (`Bilby/0.1.0`), and
+- for VirusTotal only, your own VirusTotal key, which tells VirusTotal which account is asking.
+
+Bilby never sends the file, its name or folder, your computer's name or your user name.
 
 Bilby only sends fingerprints for:
 

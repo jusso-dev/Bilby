@@ -47,7 +47,11 @@ pub struct Reply {
 pub enum HttpError {
     /// The URL isn't HTTPS to an allowed host. Never sent.
     NotAllowed(String),
-    /// Network, TLS, timeout or redirect.
+    /// The service answered with an unexpected HTTP status.
+    Status(u16),
+    /// The reply couldn't be read (bad JSON and so on).
+    BadReply(String),
+    /// Network, TLS, timeout or redirect: the service couldn't be reached.
     Failed(String),
 }
 

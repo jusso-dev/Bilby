@@ -78,6 +78,12 @@ pub struct Limits {
     pub vt_max: usize,
     /// VirusTotal requests a minute.
     pub vt_per_minute: u32,
+    /// Longest the whole online step may take. Lookups not done by then
+    /// are skipped, so a slow or blocked network can't stall a scan.
+    pub deadline: Duration,
+    /// Network failures in a row before a service is given up for this
+    /// scan.
+    pub max_failures_in_a_row: u32,
 }
 
 impl Default for Limits {
@@ -86,6 +92,8 @@ impl Default for Limits {
             circl_max: MAX_CIRCL_LOOKUPS,
             vt_max: virustotal::PUBLIC_PER_DAY as usize,
             vt_per_minute: virustotal::PUBLIC_PER_MINUTE,
+            deadline: Duration::from_secs(120),
+            max_failures_in_a_row: 3,
         }
     }
 }
@@ -101,16 +109,18 @@ pub struct Summary {
     pub errors: Vec<String>,
 }
 
-/// Session cache: results live in memory until the app closes.
+/// Session state: results, and VirusTotal's rate limiter, live in memory
+/// until the app closes, so back-to-back scans share one budget.
 #[derive(Default)]
 pub struct Cache {
     circl: Mutex<HashMap<String, circl::Known>>,
     vt: Mutex<HashMap<String, Option<VtResult>>>,
+    vt_limiter: Mutex<Option<RateLimiter>>,
 }
 
-/// Looks up `hashes` with the services switched on in `settings`. With
-/// both off, returns `None` straight away: no client is built and nothing
-/// is sent.
+/// Looks up `hashes` (most important first) with the services switched
+/// on in `settings`. With both off, returns `None` straight away: no
+/// client is built and nothing is sent.
 pub fn check(
     settings: OnlineChecks,
     hashes: &[String],
@@ -123,6 +133,8 @@ pub fn check(
     if !settings.any() {
         return None;
     }
+    let started = Instant::now();
+    let in_time = || started.elapsed() < limits.deadline;
     let mut facts = ReputationFacts::default();
     let mut summary = Summary::default();
     let hashes: Vec<String> = hashes
@@ -132,20 +144,31 @@ pub fn check(
         .collect();
 
     if settings.circl {
+        let mut failures = 0;
         for h in hashes.iter().take(limits.circl_max) {
             let cached = cache.circl.lock().ok().and_then(|c| c.get(h).copied());
             let known = if let Some(k) = cached {
                 Some(k)
             } else {
+                if !in_time() || failures >= limits.max_failures_in_a_row {
+                    summary
+                        .errors
+                        .push("CIRCL: stopped early (slow or unreachable)".to_owned());
+                    break;
+                }
                 summary.circl_sent += 1;
                 match circl::lookup(http, h) {
                     Ok(k) => {
+                        failures = 0;
                         if let Ok(mut c) = cache.circl.lock() {
                             c.insert(h.clone(), k);
                         }
                         Some(k)
                     }
                     Err(e) => {
+                        if matches!(e, HttpError::Failed(_)) {
+                            failures += 1;
+                        }
                         summary.errors.push(format!("CIRCL: {}", describe(&e)));
                         None
                     }
@@ -160,45 +183,80 @@ pub fn check(
     if settings.virustotal {
         match vt_key {
             None => summary.errors.push("VirusTotal: no key saved".to_owned()),
-            Some(key) => {
-                let mut limiter = RateLimiter::new(limits.vt_per_minute);
-                for h in hashes.iter().take(limits.vt_max) {
-                    let cached = cache.vt.lock().ok().and_then(|c| c.get(h).cloned());
-                    let result = if let Some(r) = cached {
-                        r
-                    } else {
-                        limiter.wait(Instant::now, sleep);
-                        summary.vt_sent += 1;
-                        match virustotal::lookup(http, key.expose(), h) {
-                            Ok(r) => {
-                                if let Ok(mut c) = cache.vt.lock() {
-                                    c.insert(h.clone(), r.clone());
-                                }
-                                r
-                            }
-                            Err(e) => {
-                                summary.errors.push(format!("VirusTotal: {}", describe(&e)));
-                                // A bad key or spent quota won't fix itself
-                                // mid-scan: stop asking.
-                                if matches!(&e, HttpError::Failed(m) if m.contains("401") || m.contains("429"))
-                                {
-                                    break;
-                                }
-                                None
-                            }
-                        }
-                    };
-                    facts.virustotal.extend(result);
-                }
-            }
+            Some(key) => vt_lookups(
+                &hashes,
+                key,
+                http,
+                cache,
+                limits,
+                sleep,
+                &in_time,
+                &mut facts,
+                &mut summary,
+            ),
         }
     }
     Some((facts, summary))
 }
 
+#[allow(clippy::too_many_arguments)]
+fn vt_lookups(
+    hashes: &[String],
+    key: &ApiKey,
+    http: &dyn Transport,
+    cache: &Cache,
+    limits: Limits,
+    sleep: &dyn Fn(Duration),
+    in_time: &dyn Fn() -> bool,
+    facts: &mut ReputationFacts,
+    summary: &mut Summary,
+) {
+    let mut failures = 0;
+    for h in hashes.iter().take(limits.vt_max) {
+        let cached = cache.vt.lock().ok().and_then(|c| c.get(h).cloned());
+        let result = if let Some(r) = cached {
+            r
+        } else {
+            if !in_time() || failures >= limits.max_failures_in_a_row {
+                summary
+                    .errors
+                    .push("VirusTotal: stopped early (slow or unreachable)".to_owned());
+                break;
+            }
+            if let Ok(mut l) = cache.vt_limiter.lock() {
+                l.get_or_insert_with(|| RateLimiter::new(limits.vt_per_minute))
+                    .wait(Instant::now, sleep);
+            }
+            summary.vt_sent += 1;
+            match virustotal::lookup(http, key.expose(), h) {
+                Ok(r) => {
+                    failures = 0;
+                    if let Ok(mut c) = cache.vt.lock() {
+                        c.insert(h.clone(), r.clone());
+                    }
+                    r
+                }
+                Err(e) => {
+                    summary.errors.push(format!("VirusTotal: {}", describe(&e)));
+                    match e {
+                        // A bad or blocked key, or a spent quota, won't fix
+                        // itself mid-scan: stop asking.
+                        HttpError::Status(401 | 403 | 429) => break,
+                        HttpError::Failed(_) => failures += 1,
+                        _ => {}
+                    }
+                    None
+                }
+            }
+        };
+        facts.virustotal.extend(result);
+    }
+}
+
 fn describe(e: &HttpError) -> String {
     match e {
         HttpError::NotAllowed(m) => format!("not sent ({m})"),
-        HttpError::Failed(m) => m.clone(),
+        HttpError::Status(s) => format!("returned HTTP {s}"),
+        HttpError::BadReply(m) | HttpError::Failed(m) => m.clone(),
     }
 }
