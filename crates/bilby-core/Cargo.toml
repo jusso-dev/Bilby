@@ -11,7 +11,7 @@ publish = false
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
 # Same versions Tauri already pulls in, so no new copies in the tree.
-sha2 = "0.10.9"
+sha2 = "0.11.1"
 # Same version Tauri already pulls in. Parsing only.
 toml = { version = "1.2.1", default-features = false, features = ["parse", "std", "serde"] }
 time = { version = "0.3.55", default-features = false, features = ["std", "serde-well-known"] }
