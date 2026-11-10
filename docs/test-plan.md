@@ -16,7 +16,9 @@
 
 Use a fresh Windows 11 Enterprise evaluation VM (free 90-day ISO from Microsoft's Evaluation Center) with Hyper-V, VirtualBox or UTM. Install: Chrome, Firefox, Microsoft 365 apps or LibreOffice, Zoom, Teams, Spotify, Steam, Adobe Acrobat Reader, 7-Zip, VLC, Dropbox or OneDrive. Fully update Windows.
 
-Run Bilby as a standard user and as admin. Pass: **Looks healthy**, and zero Medium or High findings. Save the JSON snapshot (`bilby.exe --dump-snapshot <file>`, a hidden flag that writes the scrubbed snapshot and exits without a window) with user names and hostnames scrubbed, and add it to `tests/fixtures/baseline/` as a regression fixture.
+Run Bilby as a standard user and as admin. Pass: **Looks healthy**, and zero Medium or High findings. Save the JSON snapshot (`bilby.exe --dump-snapshot <file>`, a hidden flag that writes the scrubbed snapshot and exits without a window) with user names and hostnames scrubbed, and add it to `crates/bilby-core/tests/fixtures/baseline/` as a regression fixture: `{ "note", "now", "snapshot", "expected": [] }`, with any expected finding listed alongside its reason. `tests/baseline.rs` checks every file there on every PR.
+
+Until someone runs the VM, two stand-ins are in that folder: `runner_windows_latest.json`, the scrubbed `--dump-snapshot` of GitHub's windows-latest runner, and `home_apps.json`, a hand-written PC with the apps above. CI also checks each fresh runner dump against `crates/bilby-core/tests/ci-allow.toml`, so a rule that gets noisy fails the PR that changed it.
 
 ## Benign simulations
 

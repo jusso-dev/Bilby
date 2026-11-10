@@ -283,6 +283,11 @@ pub struct ScanReport {
     /// How long each collector took, for the helper view.
     #[serde(default)]
     pub timings: Vec<Timing>,
+    /// Ids of findings the user told Bilby to ignore. They stay in
+    /// `findings`, shown under "Things you've told Bilby to ignore", and
+    /// don't count toward the light.
+    #[serde(default)]
+    pub suppressed: Vec<String>,
 }
 
 /// How long one collector took.

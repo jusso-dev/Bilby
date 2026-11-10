@@ -10,6 +10,7 @@ use askama::Template;
 use bilby_core::copy;
 use bilby_core::demo::{self, DemoKind};
 use bilby_core::model::{Light, ScanReport};
+use bilby_core::snapshot::SystemSnapshot;
 use tauri::{AppHandle, Emitter, State};
 
 use crate::scan::{ProgressEvent, Scanner};
@@ -23,6 +24,9 @@ pub struct AppState {
     pub autostart: AtomicBool,
     /// The last report, kept in memory only.
     pub last_report: Mutex<Option<ScanReport>>,
+    /// The snapshot behind the last report, so "I know this one" can store
+    /// the file's hash. Memory only, gone when Bilby closes.
+    pub last_snapshot: Mutex<Option<SystemSnapshot>>,
     /// The running scan, if any.
     pub scanner: Scanner,
 }
@@ -84,10 +88,10 @@ pub async fn start_scan(app: AppHandle, state: State<'_, AppState>) -> Result<St
     let Some((_running, cancel)) = state.scanner.begin() else {
         return Err(copy::t("scan.busy").to_owned());
     };
-    let report = match state.demo {
-        Some(kind) => demo_scan(&app, kind).await?,
+    let (report, snapshot) = match state.demo {
+        Some(kind) => (demo_scan(&app, kind).await?, None),
         None => match real_scan(&app, cancel).await? {
-            Some(report) => report,
+            Some((report, snapshot)) => (report, Some(snapshot)),
             None => {
                 return render(&Home {
                     autostart: false,
@@ -98,6 +102,7 @@ pub async fn start_scan(app: AppHandle, state: State<'_, AppState>) -> Result<St
     };
     let html = render_results(&report)?;
     *state.last_report.lock().map_err(|e| e.to_string())? = Some(report);
+    *state.last_snapshot.lock().map_err(|e| e.to_string())? = snapshot;
     Ok(html)
 }
 
@@ -125,7 +130,7 @@ async fn demo_scan(app: &AppHandle, kind: DemoKind) -> Result<ScanReport, String
 async fn real_scan(
     app: &AppHandle,
     cancel: std::sync::Arc<AtomicBool>,
-) -> Result<Option<ScanReport>, String> {
+) -> Result<Option<(ScanReport, SystemSnapshot)>, String> {
     let app = app.clone();
     tauri::async_runtime::spawn_blocking(move || {
         crate::scan::run(cancel, &|p| {
@@ -140,8 +145,39 @@ async fn real_scan(
 async fn real_scan(
     _app: &AppHandle,
     _cancel: std::sync::Arc<AtomicBool>,
-) -> Result<Option<ScanReport>, String> {
+) -> Result<Option<(ScanReport, SystemSnapshot)>, String> {
     Err(copy::t("scan.not_available").to_owned())
+}
+
+/// "I know this one": ignore a finding from the last report from now on.
+/// Saved to `%LOCALAPPDATA%\Bilby\suppressions.json` with the file's hash,
+/// so the finding comes back if the file changes. The results screen (#23)
+/// adds the button.
+#[tauri::command]
+// Tauri hands command arguments over by value.
+#[allow(clippy::needless_pass_by_value)]
+pub fn ignore_finding(
+    state: State<'_, AppState>,
+    finding_id: String,
+    note: String,
+) -> Result<(), String> {
+    let failed = || copy::t("ignore.failed").to_owned();
+    let report = state.last_report.lock().map_err(|_| failed())?;
+    let snapshot = state.last_snapshot.lock().map_err(|_| failed())?;
+    let (Some(report), Some(snapshot)) = (report.as_ref(), snapshot.as_ref()) else {
+        return Err(failed());
+    };
+    let finding = report
+        .findings
+        .iter()
+        .find(|f| f.id() == finding_id)
+        .ok_or_else(failed)?;
+    let path = crate::scan::suppressions_path().ok_or_else(failed)?;
+    let mut all = bilby_core::suppress::Suppressions::load(&path).map_err(|_| failed())?;
+    all.add(finding, snapshot, time::OffsetDateTime::now_utc(), &note);
+    all.save(&path).map_err(|_| failed())?;
+    tracing::info!(rule = %finding.rule_id, "finding ignored by the user");
+    Ok(())
 }
 
 /// Stops the running scan. The scan command then returns the home screen.

@@ -91,13 +91,38 @@ impl Scanner {
     }
 }
 
-/// Runs a full scan on this computer: collectors, then rules. Returns
-/// `None` if it was cancelled.
+/// `%LOCALAPPDATA%\Bilby\suppressions.json`, where "I know this one" is kept.
+pub fn suppressions_path() -> Option<std::path::PathBuf> {
+    std::env::var_os("LOCALAPPDATA").map(|base| {
+        std::path::PathBuf::from(base)
+            .join("Bilby")
+            .join("suppressions.json")
+    })
+}
+
+/// What the user told Bilby to ignore. A file that can't be read is logged
+/// and treated as empty for this scan; it's left on disk untouched.
+pub fn load_suppressions() -> bilby_core::suppress::Suppressions {
+    let Some(path) = suppressions_path() else {
+        return bilby_core::suppress::Suppressions::default();
+    };
+    bilby_core::suppress::Suppressions::load(&path).unwrap_or_else(|e| {
+        tracing::info!(error = %e, "suppressions.json couldn't be read; ignoring nothing this scan");
+        bilby_core::suppress::Suppressions::default()
+    })
+}
+
+/// Runs a full scan on this computer: collectors, then rules. Returns the
+/// report and the snapshot it came from (kept for "I know this one", which
+/// stores the file's hash), or `None` if it was cancelled.
 #[cfg(windows)]
 pub fn run(
     cancel: Arc<AtomicBool>,
     progress: &dyn Fn(ProgressEvent),
-) -> Option<bilby_core::model::ScanReport> {
+) -> Option<(
+    bilby_core::model::ScanReport,
+    bilby_core::snapshot::SystemSnapshot,
+)> {
     use bilby_collect_windows::scan::{CollectOptions, StepState, collect};
     use bilby_core::engine::{ScanMeta, evaluate};
     use bilby_core::rules::RuleContext;
@@ -138,7 +163,8 @@ pub fn run(
     // Online checks join here once the settings screen can turn them on.
     // With both switches off (the only state today) nothing is sent and no
     // HTTP client is built (docs/privacy.md).
-    let ctx = RuleContext::with_relations(c.started_at, &c.snapshot);
+    let mut ctx = RuleContext::with_relations(c.started_at, &c.snapshot);
+    ctx.suppressions = load_suppressions();
     let report = evaluate(
         &c.snapshot,
         &ctx,
@@ -155,9 +181,10 @@ pub fn run(
         findings = report.findings.len(),
         light = ?report.light,
         admin = report.is_admin,
+        ignored = report.suppressed.len(),
         "scan finished"
     );
-    Some(report)
+    Some((report, c.snapshot))
 }
 
 #[cfg(test)]

@@ -44,9 +44,19 @@ pub fn evaluate(
     ctx: &RuleContext,
     meta: ScanMeta,
 ) -> ScanReport {
-    let findings = order(group(evaluate_all(snap, ctx)));
-    let light = score::overall(&findings, &ctx.suppressed);
+    let mut findings = order(group(evaluate_all(snap, ctx)));
+    let mut suppressed = ctx.suppressions.apply(&mut findings, snap);
+    suppressed.extend(
+        findings
+            .iter()
+            .map(Finding::id)
+            .filter(|id| ctx.suppressed.contains(id)),
+    );
+    let light = score::overall(&findings, &suppressed);
+    let mut ignored: Vec<String> = suppressed.into_iter().collect();
+    ignored.sort();
     ScanReport {
+        suppressed: ignored,
         started_at: meta.started_at,
         finished_at: meta.finished_at,
         light,

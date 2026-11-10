@@ -41,6 +41,10 @@ fn in_word(c: char) -> bool {
 
 const PROFILE: &str = "%USERPROFILE%";
 const SID: &str = "<sid>";
+/// What a user name becomes.
+pub const USER: &str = "<user>";
+/// What the computer name becomes.
+pub const COMPUTER: &str = "<computer>";
 /// SID prefixes that identify one computer or account.
 const SID_PREFIXES: &[&str] = &["s-1-5-21-", "s-1-12-1-"];
 
@@ -65,15 +69,14 @@ impl Scrubber {
             .collect();
         p.sort_by_key(|v| std::cmp::Reverse(v.len()));
         p.dedup();
-        let mut words: Vec<(Vec<char>, &'static str)> =
-            [(user, "<user>"), (computer, "<computer>")]
-                .into_iter()
-                .filter_map(|(v, with)| {
-                    v.map(str::trim)
-                        .filter(|v| v.chars().count() > 1)
-                        .map(|v| (folded(v), with))
-                })
-                .collect();
+        let mut words: Vec<(Vec<char>, &'static str)> = [(user, USER), (computer, COMPUTER)]
+            .into_iter()
+            .filter_map(|(v, with)| {
+                v.map(str::trim)
+                    .filter(|v| v.chars().count() > 1)
+                    .map(|v| (folded(v), with))
+            })
+            .collect();
         words.sort_by_key(|(v, _)| std::cmp::Reverse(v.len()));
         Self { profiles: p, words }
     }

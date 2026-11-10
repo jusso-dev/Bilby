@@ -1,0 +1,26 @@
+# Findings the CI job may see on GitHub's windows-latest runner (#18), each
+# with why. Read by tests/baseline.rs when BILBY_SNAPSHOT names a fresh
+# `bilby.exe --dump-snapshot` file. Anything Medium or higher (at Medium
+# confidence or more) that isn't listed here fails the build, so a noisy
+# rule shows up on the PR that made it.
+#
+# These are true facts about the runner image, not false alarms. Don't
+# quieten a rule to get one of them off this list.
+
+[[allow]]
+rule_id = "drivers.test_signing"
+severity = "high"
+confidence = "high"
+reason = "GitHub's windows-latest image boots with TESTSIGNING on. Real on that image, and it must stay High/High."
+
+[[allow]]
+rule_id = "protection.realtime_off"
+severity = "high"
+confidence = "high"
+reason = "The runner image runs Defender with real-time protection off."
+
+[[allow]]
+rule_id = "proc.unsigned_user_writable"
+severity = "medium"
+confidence = "high"
+reason = "The runner's provisioning agent (provjobd.exe) runs unsigned from the runner account's Temp folder."

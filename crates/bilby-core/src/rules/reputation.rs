@@ -27,7 +27,7 @@ fn norm(p: &str) -> String {
 }
 
 /// Every file fact in the snapshot, by normalised path.
-fn files(snap: &SystemSnapshot) -> HashMap<String, &FileFacts> {
+pub(crate) fn files(snap: &SystemSnapshot) -> HashMap<String, &FileFacts> {
     let mut all: Vec<&FileFacts> = Vec::new();
     if let Some(p) = &snap.processes {
         all.extend(p.iter().filter_map(|x| x.file.as_ref()));
@@ -60,7 +60,7 @@ fn files(snap: &SystemSnapshot) -> HashMap<String, &FileFacts> {
 }
 
 /// Every file path a finding is about: its subject and path evidence.
-fn finding_paths(f: &Finding) -> Vec<String> {
+pub(crate) fn finding_paths(f: &Finding) -> Vec<String> {
     let mut out = Vec::new();
     if let Subject::File(p) = &f.subject {
         out.push(norm(p));
@@ -130,7 +130,7 @@ pub fn lookup_candidates(snap: &SystemSnapshot, findings: &[Finding], cap: usize
     ordered
 }
 
-fn down(c: Confidence) -> Confidence {
+pub(crate) fn down(c: Confidence) -> Confidence {
     match c {
         Confidence::High => Confidence::Medium,
         Confidence::Medium | Confidence::Low => Confidence::Low,
