@@ -170,8 +170,10 @@ pub fn save_key(service: String, key: String) -> Result<String, String> {
             .zip(ApiKey::new(&key))
             .is_some_and(|(s, k)| save(s, &k).is_ok());
         drop(key);
+        // An error, not a screen: the webview keeps the typed key and
+        // shows this line.
         if !saved {
-            return render(Some(copy::t("settings.key.failed")));
+            return Err(copy::t("settings.key.failed").to_owned());
         }
         tracing::info!(service = %service, "key saved");
         render(Some(copy::t("settings.key.done")))
@@ -179,7 +181,7 @@ pub fn save_key(service: String, key: String) -> Result<String, String> {
     #[cfg(not(windows))]
     {
         let _ = (service, key);
-        render(Some(copy::t("settings.key.failed")))
+        Err(copy::t("settings.key.failed").to_owned())
     }
 }
 
