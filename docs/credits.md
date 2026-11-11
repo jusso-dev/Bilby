@@ -10,6 +10,8 @@ Bilby uses two photographs, cropped and resized. Both are © State of Queensland
 | `app/ui/img/bilby-face.jpg` | "Macrotis lagotis1.jpg", [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Macrotis_lagotis1.jpg), 650×553 | Cropped square around the face, 400×400. |
 | `app/src-tauri/icons/*` | The same "Macrotis lagotis1.jpg" | Cropped square, scaled to 1024×1024, then made into the app icons with `cargo tauri icon`. |
 
-Both Commons pages give the State of Queensland as the source, under the Queensland Government's CC BY 4.0 website licence. Neither names a photographer. The licence excludes third-party material that is "clearly labelled", and neither page labels these photos that way. To remove any doubt, ask the Queensland Department of the Environment to confirm before a public release.
+Both Commons pages give the State of Queensland as the source, under the Queensland Government's CC BY 4.0 website licence. Neither names a photographer. That licence excludes third-party material whether or not it's labelled, and Queensland only promises to label it where practicable, so a missing label doesn't prove the State owns these photos. Ask the Queensland Department of the Environment to confirm before a public release, or swap in the public domain fallback in the next paragraph.
+
+Public domain fallback, if Queensland can't confirm: "Bilby at Sydney Wildlife World" by Dcoetzee, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Bilby_at_Sydney_Wildlife_World.jpg).
 
 Licences checked 2026-11-11. Photos with CC BY-SA, NC or ND licences weren't used: ShareAlike would bind the app's artwork, and NC or ND can't be used at all.

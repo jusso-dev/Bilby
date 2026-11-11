@@ -42,11 +42,11 @@ Three more switches check the internet addresses that a program Bilby already fl
 
 Bilby only sends:
 
-- public internet addresses (never addresses on your home network),
+- public internet addresses, never private, loopback or link-local ones (some home devices get a public IPv6 address from your internet provider, and those look public to Bilby too),
 - of programs that already have a finding (something unsigned running from Temp, say),
 - at most 20 in one check, and at most 10 to CrowdSec.
 
-It never sends the program's name, your computer's name, your user name, or the addresses your browser and other programs are talking to.
+It never sends the program's name, your computer's name, your user name, or the addresses of programs Bilby didn't flag. If Bilby flagged a browser (one running from an odd folder, say), the public addresses that browser is connected to can be sent too.
 
 | Switch | What's sent | Who receives it | What comes back |
 |---|---|---|---|

@@ -238,19 +238,19 @@ ip_reputation = "Address reports"
 title = "A program is pretending to be part of Windows."
 what = "A file called {name} is running from {location}."
 why = "The real {name} only lives inside Windows' own folder, so this is a common trick."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [proc.masquerade.lookalike]
 title = "A program has a name very like part of Windows."
 what = "A file called {name} is running from {location}. Its name is one letter away from {real}, a part of Windows."
 why = "Harmful programs often pick names that look like Windows' own so they don't stand out."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [proc.unsigned_user_writable]
 title = "A program without a digital signature is running from an unusual place."
 what = "{name} is running from {location}. It has no valid digital signature (a seal that shows who made it)."
 why = "Installed programs are usually signed and kept in Program Files. Downloads and temporary folders are where unwanted programs often land."
-todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can open it for you."
 
 [proc.unsigned_appdata]
 title = "An unsigned program is running from a hidden folder."
@@ -394,13 +394,13 @@ todo = "Ask someone you trust to look if you're worried. Otherwise you can leave
 title = "This program is also talking to the internet."
 what = "{name} has a connection to an address on the internet."
 why = "A program that was already unusual is more worth checking when it's online."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [net.listen_unsigned_user_writable]
 title = "An unsigned program is waiting for connections from other computers."
 what = "{name} runs from a folder anyone's programs can write to, has no digital signature, and is waiting for other computers to connect to it."
 why = "Programs that accept connections from outside can be used to control a computer remotely."
-todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can open it for you."
 
 [net.listen_script_host]
 title = "A Windows scripting tool is waiting for connections from other computers."
@@ -412,7 +412,7 @@ todo = "Ask someone you trust to look at this computer."
 title = "An unsigned program is talking to a lot of internet addresses."
 what = "{name} has connections to {count} different internet addresses, and it has no digital signature."
 why = "Ordinary programs usually talk to a handful of addresses. This might be nothing, but it's worth a check."
-todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can open it for you."
 
 [browser.sideloaded_wide]
 title = "A browser extension was added outside the store and can see every website."
@@ -525,7 +525,7 @@ todo = "If you didn't set this up, Bilby can remove that line and keep a backup,
 [tamper.hosts.blocked_subdomain]
 title = "The hosts file blocks part of a well-known website."
 what = "The hosts file sends {name} to {ip}, so this computer can't reach it. The main {domain} site isn't affected."
-why = "Privacy tools often block tracking and data collection addresses like this. It doesn't send you to a different site."
+why = "Privacy tools often block tracking and data collection addresses like this. Nothing on this computer is set up to answer in its place."
 todo = "Leave it if you or a privacy tool set this up. If part of {domain} stops working, this may be why."
 
 [tamper.hosts.path_moved]
@@ -640,7 +640,7 @@ todo = "Leave it, or ask your helper about switching it on in the computer's sta
 title = "Many security tools say this program is harmful."
 what = "VirusTotal checked {name}, and {count} security tools flagged it."
 why = "When this many tools agree, it's very likely harmful."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [rep.vt.few]
 title = "A few security tools flagged this program."
@@ -658,7 +658,7 @@ todo = "Open Windows Security and follow what it suggests."
 title = "A program Bilby flagged is talking to an address reported for harm."
 what = "{name} is connected to {ip}, which security services have reported as harmful."
 why = "A program that already looked unusual, connected to a reported address, is a strong sign something is wrong."
-todo = "Ask Windows Security to scan it. Bilby can start that for you. Then ask someone you trust to look."
+todo = "Ask Windows Security to scan it. Bilby can open it for you. Then ask someone you trust to look."
 
 [rep.ip.some_reports]
 title = "A program Bilby flagged is talking to an address with a few reports."

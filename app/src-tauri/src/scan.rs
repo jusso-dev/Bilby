@@ -174,6 +174,7 @@ pub fn run(
         &mut snapshot,
         c.started_at,
         online_cache,
+        cancel,
         progress,
     ));
     if cancel.load(std::sync::atomic::Ordering::SeqCst) {
@@ -204,6 +205,39 @@ pub fn run(
     Some((report, snapshot))
 }
 
+/// The online client, refusing to send anything once the user pressed
+/// "Stop checking". Each service then stops after its run of failures.
+#[cfg(windows)]
+struct Cancellable<'a> {
+    inner: bilby_reputation::allowlist::Http,
+    cancel: &'a AtomicBool,
+}
+
+#[cfg(windows)]
+impl bilby_reputation::allowlist::Transport for Cancellable<'_> {
+    fn get(
+        &self,
+        url: &str,
+        headers: &[(&str, &str)],
+    ) -> Result<bilby_reputation::allowlist::Reply, bilby_reputation::allowlist::HttpError> {
+        if self.cancel.load(Ordering::SeqCst) {
+            return Err(bilby_reputation::allowlist::HttpError::Failed(
+                "check stopped".to_owned(),
+            ));
+        }
+        self.inner.get(url, headers)
+    }
+}
+
+/// A rate-limit wait that ends early on "Stop checking".
+#[cfg(windows)]
+fn sleep_unless_cancelled(cancel: &AtomicBool, d: std::time::Duration) {
+    let until = std::time::Instant::now() + d;
+    while !cancel.load(Ordering::SeqCst) && std::time::Instant::now() < until {
+        std::thread::sleep(std::time::Duration::from_millis(100).min(d));
+    }
+}
+
 /// Ran, unless nothing was sent and something went wrong.
 #[cfg(windows)]
 fn lookup_status(sent: usize, errors: &[String]) -> bilby_core::model::CheckStatus {
@@ -224,6 +258,7 @@ fn online_checks(
     snapshot: &mut bilby_core::snapshot::SystemSnapshot,
     now: time::OffsetDateTime,
     cache: &bilby_reputation::Cache,
+    cancel: &AtomicBool,
     progress: &dyn Fn(ProgressEvent),
 ) -> Vec<bilby_core::model::Check> {
     use bilby_core::model::{Check, CheckStatus, SignalFamily};
@@ -258,11 +293,14 @@ fn online_checks(
     let first = evaluate_all(snapshot, &RuleContext::with_relations(now, snapshot));
     let hashes = lookup_candidates(snapshot, &first, MAX_CIRCL_LOOKUPS);
     let ips = ip_candidates(snapshot, &first, MAX_IP_LOOKUPS);
-    let http = Http::new(true);
+    let http = Cancellable {
+        inner: Http::new(true),
+        cancel,
+    };
     let vt_key = key::load(Service::VirusTotal);
     let ab_key = key::load(Service::AbuseIpDb);
     let cs_key = key::load(Service::CrowdSec);
-    let sleep = |d| std::thread::sleep(d);
+    let sleep = |d| sleep_unless_cancelled(cancel, d);
     let mut facts = snapshot.reputation.take().unwrap_or_default();
     let files = match check(
         online,

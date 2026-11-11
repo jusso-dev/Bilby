@@ -1,5 +1,5 @@
 {
-  "note": "A privacy tweak blocking Microsoft telemetry to 127.0.0.1, as seen on a real PC: data.microsoft.com and edge.microsoft.com.",
+  "note": "A privacy tweak blocking Microsoft telemetry to 127.0.0.1, as seen on a real PC: data.microsoft.com and edge.microsoft.com. Nothing listens on port 80 or 443 on loopback (a Tailscale listener on its own address doesn't count).",
   "now": "2026-11-09T09:00:00Z",
   "snapshot": {
     "tamper": {
@@ -89,6 +89,17 @@
         "managed": false,
         "reasons": []
       }
+    },
+    "network": {
+      "connections": [
+        {
+          "proto": "tcp",
+          "local": "100.127.222.54:443",
+          "remote": null,
+          "state": "listen",
+          "pid": 27444
+        }
+      ]
     }
   },
   "expect": [

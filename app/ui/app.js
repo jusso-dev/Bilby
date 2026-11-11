@@ -76,13 +76,13 @@ function clearSlowTimers() {
 }
 
 async function startScan() {
-  await show("render_progress");
   try {
+    await show("render_progress");
     screen.innerHTML = await invoke("start_scan");
   } catch (message) {
-    await show("render_home");
+    await show("render_home").catch(() => {});
     const status = document.getElementById("scan-status");
-    if (status) status.textContent = message;
+    if (status) status.textContent = String(message);
     return;
   } finally {
     clearSlowTimers();
@@ -165,9 +165,10 @@ const actions = {
   "open-settings": () => show("render_settings"),
   "save-key": async (button) => {
     const input = button.closest(".service").querySelector(".key-input");
-    const key = input.value;
-    input.value = "";
-    await refreshScreen("save_key", { service: button.dataset.service, key });
+    // The key is cleared only once Rust has it; a failure keeps it typed.
+    if (await refreshScreen("save_key", { service: button.dataset.service, key: input.value })) {
+      input.value = "";
+    }
   },
   "remove-key": (button) => refreshScreen("remove_key", { service: button.dataset.service }),
   "open-licence": () => invoke("open_key_page", { service: "licence" }).catch(() => {}),
@@ -193,10 +194,25 @@ document.addEventListener("change", (event) => {
 });
 
 // Swap in a fresh copy of the current screen, keeping the scroll position.
+// On failure the screen stays and the reason shows in a status line.
 async function refreshScreen(command, args) {
   const y = window.scrollY;
-  screen.innerHTML = await invoke(command, args);
-  window.scrollTo(0, y);
+  try {
+    screen.innerHTML = await invoke(command, args);
+    window.scrollTo(0, y);
+    return true;
+  } catch (message) {
+    let status = screen.querySelector("#screen-status");
+    if (!status) {
+      status = document.createElement("p");
+      status.id = "screen-status";
+      status.className = "message notice";
+      status.setAttribute("role", "status");
+      screen.querySelector("h1")?.after(status);
+    }
+    status.textContent = String(message);
+    return false;
+  }
 }
 
 document.addEventListener("click", (event) => {

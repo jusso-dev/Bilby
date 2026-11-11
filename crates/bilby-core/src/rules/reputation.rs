@@ -241,12 +241,13 @@ struct IpReports<'a> {
 
 fn ip_verdict(r: IpReports<'_>) -> Option<IpVerdict> {
     let vt_m = r.vt.map_or(0, |v| v.malicious);
-    // An address on AbuseIPDB's allow list, or that CrowdSec calls safe,
-    // known or a false positive (a big search engine or CDN, say), never
-    // goes past "some reports".
+    // An address on AbuseIPDB's allow list, or that CrowdSec calls safe or
+    // benign or tags as a false positive (a big search engine or CDN, say),
+    // never goes past "some reports". CrowdSec's "known" means it has seen
+    // the address but can't decide yet, so it doesn't count either way.
     let listed = r.ab.is_some_and(|a| a.whitelisted == Some(true))
         || r.cs.is_some_and(|c| {
-            c.false_positive || matches!(c.reputation.as_str(), "safe" | "known" | "benign")
+            c.false_positive || matches!(c.reputation.as_str(), "safe" | "benign")
         });
     let score = r.ab.map_or(0, |a| a.score);
     let cs_rep = r.cs.map_or("", |c| c.reputation.as_str());

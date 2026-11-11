@@ -10,7 +10,7 @@
 //! ```
 //!
 //! `expect` lists findings that must appear (with that severity and
-//! confidence). `absent` lists rule ids that must not fire at all. Every
+//! confidence). An entry listed n times needs n matching findings. `absent` lists rule ids that must not fire at all. Every
 //! rule in `all_rules()` needs at least one `fires` and one `lookalike`
 //! fixture (ADR 0007).
 
@@ -76,14 +76,28 @@ fn every_fixture_holds() {
         };
         let findings = evaluate_all(&fixture.snapshot, &RuleContext::at(fixture.now));
         for want in &fixture.expect {
-            let found = findings.iter().any(|f| {
-                f.rule_id == want.rule_id
-                    && f.severity == want.severity
-                    && f.confidence == want.confidence
-            });
-            if !found {
+            // Listing the same expectation twice means two findings must
+            // match it, so a fixture can check each of several subjects.
+            let wanted = fixture
+                .expect
+                .iter()
+                .filter(|w| {
+                    w.rule_id == want.rule_id
+                        && w.severity == want.severity
+                        && w.confidence == want.confidence
+                })
+                .count();
+            let matching = findings
+                .iter()
+                .filter(|f| {
+                    f.rule_id == want.rule_id
+                        && f.severity == want.severity
+                        && f.confidence == want.confidence
+                })
+                .count();
+            if matching < wanted {
                 failures.push(format!(
-                    "{name}: expected {} {:?}/{:?}, got {:?}",
+                    "{name}: expected {wanted}x {} {:?}/{:?}, got {:?}",
                     want.rule_id,
                     want.severity,
                     want.confidence,

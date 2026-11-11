@@ -68,8 +68,8 @@ crates/
     src/elevation.rs        own-token elevation check and the "Check more deeply" UAC relaunch
     src/drivers.rs          EnumDeviceDrivers paths, code integrity (NtQuerySystemInformation), DeviceGuard WMI, blocklist and Secure Boot values
   bilby-collect-macos/      later
-  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal); see docs/privacy.md
-    src/allowlist.rs        the only HTTP client: HTTPS to two hosts, no redirects, no env proxy, 10 s timeout
+  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal) and IP lookups (VirusTotal, AbuseIPDB, CrowdSec); see docs/privacy.md
+    src/allowlist.rs        the only HTTP client: HTTPS to four hosts (hashlookup.circl.lu, www.virustotal.com, api.abuseipdb.com, cti.api.crowdsec.net), no redirects, no env proxy, 10 s timeout
     src/circl.rs            hashlookup.circl.lu, 200 known / 404 unknown
     src/virustotal.rs       /api/v3/files/<sha256> last_analysis_stats, key from Credential Manager (key.rs)
     src/defender.rs         MpCmdRun custom scan of one file, user-started only

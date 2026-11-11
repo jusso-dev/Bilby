@@ -132,6 +132,10 @@ pub fn render_settings() -> Result<String, String> {
     render(None)
 }
 
+/// One settings change at a time: Tauri runs commands on separate threads,
+/// and two quick toggles could otherwise both read the old file.
+static SETTINGS_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 /// Turns one online check on or off and saves it.
 #[tauri::command]
 // Tauri hands command arguments over by value.
@@ -140,6 +144,9 @@ pub fn set_online(name: String, on: bool) -> Result<String, String> {
     let Some(switch) = Switch::parse(&name) else {
         return render(Some(copy::t("settings.save_failed")));
     };
+    let _guard = SETTINGS_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let mut s = settings::load();
     switch.set(&mut s.online, on);
     if let Err(e) = settings::save(s) {
