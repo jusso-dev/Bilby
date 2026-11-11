@@ -48,8 +48,9 @@ listen("scan-progress", ({ payload }) => {
     bar.max = payload.total;
     bar.value = payload.done;
   }
-  const walker = screen.querySelector(".walker");
-  if (walker && payload.total) walker.style.setProperty("--p", String(payload.done / payload.total));
+  // The torch moves across the photo as each area finishes.
+  const scene = screen.querySelector(".scene");
+  if (scene && payload.total) scene.style.setProperty("--p", String(payload.done / payload.total));
   const now = document.getElementById("scan-now");
   if (now && payload.state === "running") now.textContent = payload.label;
   if (!row) return;
@@ -169,6 +170,7 @@ const actions = {
     await refreshScreen("save_key", { service: button.dataset.service, key });
   },
   "remove-key": (button) => refreshScreen("remove_key", { service: button.dataset.service }),
+  "open-licence": () => invoke("open_key_page", { service: "licence" }).catch(() => {}),
   "open-key-page": (button) => invoke("open_key_page", { service: button.dataset.service }).catch(() => {}),
   "toggle-theme": () => {
     const dark = root.dataset.theme

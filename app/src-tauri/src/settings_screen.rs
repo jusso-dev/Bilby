@@ -203,6 +203,8 @@ pub fn open_key_page(service: String) -> Result<(), String> {
         "virustotal" => "https://www.virustotal.com/gui/join-us",
         "abuseipdb" => "https://www.abuseipdb.com/register",
         "crowdsec" => "https://app.crowdsec.net/signup",
+        // The photo licence, for the About section.
+        "licence" => "https://creativecommons.org/licenses/by/4.0/",
         _ => return Err(copy::t("results.open_failed").to_owned()),
     };
     #[cfg(windows)]

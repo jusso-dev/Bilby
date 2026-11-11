@@ -13,7 +13,8 @@ private = "Nothing leaves your computer."
 last = "Last check: {light} at {time}."
 see_results = "See results"
 admin_note = "Some checks need admin. You can run a deeper check after this one."
-mascot = "Bilby, a small Australian desert animal with big ears, sniffing the ground."
+mascot = "A greater bilby, a small Australian desert animal with big ears, peeking out of its burrow."
+photo_credit = "Photo: State of Queensland, CC BY 4.0, cropped."
 
 [scan]
 heading = "Checking your computer"
@@ -675,6 +676,11 @@ todo = "Nothing to do. This only changes how sure Bilby is."
 heading = "Settings"
 back = "Back"
 save_failed = "Bilby couldn't save that setting, so it stays as it was."
+
+[settings.about]
+heading = "About Bilby"
+photos = "Bilby photographs: \"Greater bilby at its burrow, Astrebla Downs National Park, 2024\" and \"Macrotis lagotis\", both by the State of Queensland, under CC BY 4.0. Cropped and resized."
+licence = "See the licence"
 
 [settings.service]
 circl = "CIRCL known software"
