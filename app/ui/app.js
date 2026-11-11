@@ -44,7 +44,10 @@ function word(state) {
 listen("scan-progress", ({ payload }) => {
   const row = screen.querySelector(`.step[data-step="${payload.step}"]`);
   const bar = document.getElementById("scan-bar");
-  if (bar) bar.value = payload.done;
+  if (bar) {
+    bar.max = payload.total;
+    bar.value = payload.done;
+  }
   const walker = screen.querySelector(".walker");
   if (walker && payload.total) walker.style.setProperty("--p", String(payload.done / payload.total));
   const now = document.getElementById("scan-now");
@@ -158,6 +161,15 @@ const actions = {
   },
   "ignore-yes": (button) => refreshResults("ignore_finding", { findingId: button.dataset.id, note: "" }),
   unignore: (button) => refreshResults("unignore_finding", { findingId: button.dataset.id }),
+  "open-settings": () => show("render_settings"),
+  "save-key": async (button) => {
+    const input = button.closest(".service").querySelector(".key-input");
+    const key = input.value;
+    input.value = "";
+    await refreshScreen("save_key", { service: button.dataset.service, key });
+  },
+  "remove-key": (button) => refreshScreen("remove_key", { service: button.dataset.service }),
+  "open-key-page": (button) => invoke("open_key_page", { service: button.dataset.service }).catch(() => {}),
   "toggle-theme": () => {
     const dark = root.dataset.theme
       ? root.dataset.theme === "dark"
@@ -171,6 +183,19 @@ const actions = {
     }
   },
 };
+
+// Settings switches: save on change, then show the screen Rust returns.
+document.addEventListener("change", (event) => {
+  const input = event.target.closest("[data-setting]");
+  if (input) refreshScreen("set_online", { name: input.dataset.setting, on: input.checked });
+});
+
+// Swap in a fresh copy of the current screen, keeping the scroll position.
+async function refreshScreen(command, args) {
+  const y = window.scrollY;
+  screen.innerHTML = await invoke(command, args);
+  window.scrollTo(0, y);
+}
 
 document.addEventListener("click", (event) => {
   const target = event.target.closest("[data-action]");

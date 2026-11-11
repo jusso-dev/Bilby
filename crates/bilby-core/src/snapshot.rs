@@ -912,6 +912,85 @@ pub struct ReputationFacts {
     /// Defender scans the user started from a finding.
     #[serde(default)]
     pub defender_scans: Vec<DefenderScan>,
+    /// VirusTotal reports for remote addresses that flagged programs were
+    /// connected to. Only with IP lookups switched on.
+    #[serde(default)]
+    pub ip_virustotal: Vec<VtIpResult>,
+    /// AbuseIPDB reports for the same addresses.
+    #[serde(default)]
+    pub ip_abuseipdb: Vec<AbuseIpResult>,
+    /// CrowdSec CTI reports for the same addresses.
+    #[serde(default)]
+    pub ip_crowdsec: Vec<CrowdSecIpResult>,
+}
+
+/// CrowdSec CTI's view of one IP address.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CrowdSecIpResult {
+    /// The address.
+    pub ip: std::net::IpAddr,
+    /// `reputation`: `malicious`, `suspicious`, `known`, `safe`, `benign`
+    /// or `unknown`.
+    pub reputation: String,
+    /// `classifications.false_positives` wasn't empty: CrowdSec says not
+    /// to treat it as malicious.
+    #[serde(default)]
+    pub false_positive: bool,
+    /// Behaviour labels, for example "HTTP Scan".
+    #[serde(default)]
+    pub behaviors: Vec<String>,
+    /// `as_name`, for the helper.
+    #[serde(default)]
+    pub as_name: Option<String>,
+    /// `location.country`.
+    #[serde(default)]
+    pub country: Option<String>,
+}
+
+/// VirusTotal's `last_analysis_stats` for one IP address.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct VtIpResult {
+    /// The address.
+    pub ip: std::net::IpAddr,
+    /// Engines that call it malicious.
+    pub malicious: u32,
+    /// Engines that call it suspicious.
+    #[serde(default)]
+    pub suspicious: u32,
+    /// Engines that call it harmless.
+    #[serde(default)]
+    pub harmless: u32,
+    /// Owner of the network it's in, for the helper.
+    #[serde(default)]
+    pub as_owner: Option<String>,
+    /// ISO country code.
+    #[serde(default)]
+    pub country: Option<String>,
+}
+
+/// AbuseIPDB's check result for one IP address.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AbuseIpResult {
+    /// The address.
+    pub ip: std::net::IpAddr,
+    /// `abuseConfidenceScore`, 0 to 100.
+    pub score: u8,
+    /// `totalReports` in the last 90 days.
+    #[serde(default)]
+    pub total_reports: u32,
+    /// `isWhitelisted`: on a known-good list (search engines, big
+    /// services). Not trusted on its own, but it stops a High.
+    #[serde(default)]
+    pub whitelisted: Option<bool>,
+    /// `isp`, for the helper.
+    #[serde(default)]
+    pub isp: Option<String>,
+    /// `usageType`, for example "Data Center/Web Hosting/Transit".
+    #[serde(default)]
+    pub usage_type: Option<String>,
+    /// `countryCode`.
+    #[serde(default)]
+    pub country: Option<String>,
 }
 
 /// VirusTotal's `last_analysis_stats` for one file.

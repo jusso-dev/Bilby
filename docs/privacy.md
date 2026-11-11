@@ -7,6 +7,7 @@ Bilby looks at your computer and tells you what it finds. It doesn't send anythi
 - It never sends telemetry, crash reports, usage statistics or update checks. Not even anonymous ones.
 - It never uploads your files.
 - It never sends file names, folder paths, your computer's name or your user name.
+- It never sends a list of everything your computer talks to.
 
 ## Online checks (off unless you switch them on)
 
@@ -35,7 +36,27 @@ It never sends fingerprints for every file on your computer. It sends at most 10
 
 Your VirusTotal key is stored in Windows Credential Manager under `Bilby/VirusTotal`, the same place Windows keeps other saved passwords. It's never written to Bilby's settings file, logs or reports. VirusTotal's free key allows 4 checks a minute and 500 a day, and is for personal, non-commercial use.
 
-Bilby only connects to those two addresses, over an encrypted connection (HTTPS). It refuses to follow a redirect anywhere else, and it doesn't use proxy settings from the environment.
+### Checking internet addresses (also off unless you switch them on)
+
+Three more switches check the internet addresses that a program Bilby already flagged is talking to. This tells the service which addresses that program was connected to, so each one is a separate choice.
+
+Bilby only sends:
+
+- public internet addresses (never addresses on your home network),
+- of programs that already have a finding (something unsigned running from Temp, say),
+- at most 20 in one check, and at most 10 to CrowdSec.
+
+It never sends the program's name, your computer's name, your user name, or the addresses your browser and other programs are talking to.
+
+| Switch | What's sent | Who receives it | What comes back |
+|---|---|---|---|
+| VirusTotal addresses | Addresses, and your VirusTotal key | VirusTotal (`www.virustotal.com`) | How many security tools flag the address. Shares the 4 a minute and 500 a day limit with file checks. |
+| AbuseIPDB | Addresses, and your AbuseIPDB key | AbuseIPDB (`api.abuseipdb.com`) | A 0 to 100 abuse score and how many people reported it in the last 90 days. The free key allows 1,000 checks a day. |
+| CrowdSec | Addresses, and your CrowdSec key | CrowdSec, a French security company (`cti.api.crowdsec.net`) | Whether CrowdSec's users have seen the address attacking them, and what it did. The free key allows 120 checks a month. |
+
+Your AbuseIPDB and CrowdSec keys are stored in Windows Credential Manager under `Bilby/AbuseIPDB` and `Bilby/CrowdSec`.
+
+Bilby only connects to those addresses, over an encrypted connection (HTTPS). It refuses to follow a redirect anywhere else, and it doesn't use proxy settings from the environment.
 
 ## Ask Windows Security to check a file
 
@@ -56,6 +77,6 @@ When Bilby checks a program's digital signature (a seal that shows who made it),
 ## For your helper
 
 - Design decision: `docs/adr/0004-no-telemetry-opt-in-online-checks.md`.
-- Settings: `OnlineChecks { circl, virustotal }` in `crates/bilby-core/src/settings.rs`. Booleans only, both `false` by default. The file refuses unknown fields, so a key can't end up there.
+- Settings: `OnlineChecks { circl, virustotal, virustotal_ips, abuseipdb, crowdsec }` in `crates/bilby-core/src/settings.rs`, saved in `%LOCALAPPDATA%\Bilby\settings.json`. Booleans only, all `false` by default. The file refuses unknown fields, so a key can't end up there.
 - Hosts: `crates/bilby-reputation/src/allowlist.rs`. HTTPS only, redirects refused, environment proxies ignored, 10 second timeout, User-Agent `Bilby/<version>`. TLS is rustls with Mozilla's roots; no OpenSSL.
 - Proof of "nothing sent by default": CI builds `bilby-reputation` with the `no-network-guard` feature, which panics if the HTTP client is built while every switch is off. On Windows it runs every collector and then checks the test process's own TCP connections (`GetExtendedTcpTable`, what `Get-NetTCPConnection -OwningProcess` reads).

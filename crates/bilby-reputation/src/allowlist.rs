@@ -9,7 +9,12 @@
 use std::time::Duration;
 
 /// Hosts Bilby may connect to. Nothing else, ever.
-pub const ALLOWED: &[&str] = &["hashlookup.circl.lu", "www.virustotal.com"];
+pub const ALLOWED: &[&str] = &[
+    "hashlookup.circl.lu",
+    "www.virustotal.com",
+    "api.abuseipdb.com",
+    "cti.api.crowdsec.net",
+];
 
 /// Per-request timeout.
 pub const TIMEOUT: Duration = Duration::from_secs(10);
@@ -133,7 +138,17 @@ mod tests {
             allowed_host("https://www.virustotal.com/api/v3/files/ab"),
             Some("www.virustotal.com")
         );
+        assert_eq!(
+            allowed_host("https://api.abuseipdb.com/api/v2/check?ipAddress=203.0.113.9"),
+            Some("api.abuseipdb.com")
+        );
+        assert_eq!(
+            allowed_host("https://cti.api.crowdsec.net/v2/smoke/203.0.113.9"),
+            Some("cti.api.crowdsec.net")
+        );
         for bad in [
+            "https://abuseipdb.com/api/v2/check",
+            "https://crowdsec.net/v2/smoke/1.2.3.4",
             "http://hashlookup.circl.lu/lookup/sha256/ab",
             "https://virustotal.com/api/v3/files/ab",
             "https://www.virustotal.com.evil.test/api",

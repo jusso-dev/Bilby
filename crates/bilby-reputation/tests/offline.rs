@@ -47,7 +47,8 @@ fn defaults_never_build_a_client() {
         OnlineChecks::default(),
         OnlineChecks {
             circl: false,
-            virustotal: false
+            virustotal: false,
+            ..OnlineChecks::default()
         }
     );
     assert!(!reputation_step(

@@ -43,6 +43,7 @@ network = "Looking at network connections"
 browser = "Looking at browser extensions"
 tamper = "Checking your internet settings"
 drivers = "Checking drivers and start-up settings"
+reputation = "Asking the online services you switched on"
 
 [deep]
 intro = "Some things can only be checked with administrator permission. Windows will ask you first."
@@ -228,6 +229,7 @@ lowered_by = "Lowered by"
 sha256 = "SHA-256"
 vt_stats = "VirusTotal results"
 vt_date = "VirusTotal last checked"
+ip_reputation = "Address reports"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -651,16 +653,52 @@ what = "You asked Windows Security to check {name}, and it found something harmf
 why = "Windows Security is confident about what it reports."
 todo = "Open Windows Security and follow what it suggests."
 
+[rep.ip.known_bad]
+title = "A program Bilby flagged is talking to an address reported for harm."
+what = "{name} is connected to {ip}, which security services have reported as harmful."
+why = "A program that already looked unusual, connected to a reported address, is a strong sign something is wrong."
+todo = "Ask Windows Security to scan it. Bilby can start that for you. Then ask someone you trust to look."
+
+[rep.ip.some_reports]
+title = "A program Bilby flagged is talking to an address with a few reports."
+what = "{name} is connected to {ip}, which has a few reports against it."
+why = "Shared internet addresses sometimes collect reports by mistake, so this might be nothing."
+todo = "Leave it unless something else about this program looks wrong."
+
 [rep.known_good]
 title = "This file is in a list of known software."
 what = "CIRCL's list of known software recognised {name}."
 why = "Known software is less likely to be harmful, so Bilby is less sure about anything it found here."
 todo = "Nothing to do. This only changes how sure Bilby is."
 
+[settings]
+heading = "Settings"
+back = "Back"
+save_failed = "Bilby couldn't save that setting, so it stays as it was."
+
+[settings.service]
+circl = "CIRCL known software"
+virustotal = "VirusTotal"
+abuseipdb = "AbuseIPDB"
+crowdsec = "CrowdSec"
+
 [settings.online]
 heading = "Online checks"
-intro = "These are off unless you switch them on. Each one sends a file's fingerprint (a SHA-256 hash), never the file or its name. The service also sees your internet address, and VirusTotal sees your key."
+intro = "These are off unless you switch them on. File checks send a fingerprint (a SHA-256 hash), never the file or its name. Address checks send only the internet addresses that programs Bilby flagged are talking to."
 circl = "Check fingerprints against CIRCL's list of known software. CIRCL is Luxembourg's national computer emergency response team."
 virustotal = "Check fingerprints with VirusTotal, using your own free key. VirusTotal is run by Google. Files are never uploaded."
-defender = "Asking Windows Security to check a file happens on this computer. Windows Security may still use Microsoft's cloud protection, as set in Windows Security."
+virustotal_ips = "Also check the internet addresses that flagged programs are talking to, with the same key."
+abuseipdb = "Check those addresses with AbuseIPDB, which collects reports of abuse from around the world. Uses your own free key, up to 20 addresses a check."
+crowdsec = "Check those addresses with CrowdSec, a French security company that pools what its users see. Uses your own free key, which allows 120 checks a month, so Bilby sends at most 10 a check."
+defender = "Each service also sees your internet address and your key. Asking Windows Security to check a file happens on this computer. Windows Security may still use Microsoft's cloud protection, as set in Windows Security."
 
+[settings.key]
+label = "Paste your key"
+save = "Save key"
+remove = "Remove key"
+saved = "Key saved in Windows Credential Manager."
+missing = "No key saved yet. This check can't run without one."
+get = "Get a free key"
+done = "Key saved."
+failed = "Bilby couldn't save that key."
+help = "Bilby keeps your keys in Windows Credential Manager, never in a file, a log or a report."

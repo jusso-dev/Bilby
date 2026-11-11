@@ -31,6 +31,10 @@ pub struct AppState {
     pub last_snapshot: Mutex<Option<SystemSnapshot>>,
     /// The running scan, if any.
     pub scanner: Scanner,
+    /// Online check answers and VirusTotal's rate limit, kept in memory
+    /// until Bilby closes so back-to-back checks share one budget.
+    #[cfg(windows)]
+    pub online_cache: bilby_reputation::Cache,
 }
 
 /// The rule catalogue, opened by "How this rule works". A fixed address:
@@ -43,7 +47,7 @@ const SIGNALS_URL: &str = "https://github.com/jusso-dev/Bilby/blob/main/docs/sig
 // `#[inline(always)]` method with an unused `self`. These lints only fire on
 // that required shape and the generated code.
 #[allow(clippy::inline_always, clippy::unused_self, clippy::unnecessary_wraps)]
-mod filters {
+pub(crate) mod filters {
     use askama::Values;
 
     #[askama::filter_fn]
@@ -237,11 +241,17 @@ async fn real_scan(
     app: &AppHandle,
     cancel: std::sync::Arc<AtomicBool>,
 ) -> Result<Option<(ScanReport, SystemSnapshot)>, String> {
+    use tauri::Manager;
     let app = app.clone();
     tauri::async_runtime::spawn_blocking(move || {
-        crate::scan::run(cancel, &|p| {
-            let _ = app.emit("scan-progress", p);
-        })
+        let state = app.state::<AppState>();
+        crate::scan::run(
+            &cancel,
+            &|p| {
+                let _ = app.emit("scan-progress", p);
+            },
+            &state.online_cache,
+        )
     })
     .await
     .map_err(|e| e.to_string())

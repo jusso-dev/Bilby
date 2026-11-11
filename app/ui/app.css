@@ -453,6 +453,34 @@ details[open] > summary::before { transform: rotate(45deg); }
 
 .footer-actions { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; margin-top: var(--s6); }
 
+/* ---------- Settings ---------- */
+
+.top-actions { display: inline-flex; gap: var(--s2); }
+.gear { fill: none !important; stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
+.settings .back { padding-left: 0; }
+.notice { padding: var(--s3) var(--s4); border-radius: var(--r2); background: var(--info-bg); color: var(--info); }
+.services { display: grid; gap: var(--s4); margin: var(--s4) 0; }
+.service { padding: var(--s5); background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3); box-shadow: var(--shadow); }
+.service h3 { margin-bottom: var(--s4); }
+.switch { display: grid; grid-template-columns: auto 1fr; gap: var(--s3); align-items: start; margin-bottom: var(--s4); cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.track { position: relative; width: 52px; height: 30px; border-radius: 999px; background: var(--border); transition: background-color 150ms ease; flex: none; margin-top: 2px; }
+.thumb { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgb(0 0 0 / 30%); transition: transform 150ms ease; }
+.switch input:checked + .track { background: var(--healthy); }
+.switch input:checked + .track .thumb { transform: translateX(22px); }
+.switch input:focus-visible + .track { outline: 3px solid var(--focus); outline-offset: 2px; }
+.key { border-top: 1px solid var(--border); padding-top: var(--s4); }
+.key-state { display: flex; align-items: center; gap: var(--s2); color: var(--muted); font-size: 0.9375rem; }
+.key-state.warn { color: var(--worth); font-weight: 600; }
+.key-row { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s3); }
+.key-input { flex: 1 1 16rem; min-height: 40px; padding: 0 var(--s3); font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r2); }
+.key-input:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+@media (forced-colors: active) {
+  .service, .key-input { border: 2px solid CanvasText; }
+  .track { border: 2px solid ButtonText; forced-color-adjust: none; background: Canvas; }
+  .switch input:checked + .track { background: Highlight; }
+}
+
 /* ---------- Motion ---------- */
 
 @media (prefers-reduced-motion: no-preference) {

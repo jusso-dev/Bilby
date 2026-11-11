@@ -1,0 +1,39 @@
+<section class="settings" aria-labelledby="settings-heading">
+  <button type="button" class="tertiary back" data-action="go-home">{{ "settings.back"|t }}</button>
+  <h1 id="settings-heading" tabindex="-1">{{ "settings.heading"|t }}</h1>
+  {% if let Some(m) = message %}<p class="message notice" role="status">{{ m }}</p>{% endif %}
+  <h2>{{ "settings.online.heading"|t }}</h2>
+  <p class="lead">{{ "settings.online.intro"|t }}</p>
+  <p class="quiet">{{ "settings.online.defender"|t }}</p>
+  <div class="services">
+    {% for svc in services %}
+    <article class="service" data-service="{{ svc.id }}">
+      <h3>{{ svc.name }}</h3>
+      {% for sw in svc.switches %}
+      <label class="switch">
+        <input type="checkbox" role="switch" data-setting="{{ sw.name }}"{% if sw.on %} checked{% endif %}>
+        <span class="track" aria-hidden="true"><span class="thumb"></span></span>
+        <span class="switch-text">{{ sw.label }}</span>
+      </label>
+      {% endfor %}
+      {% if let Some(saved) = svc.key_saved %}
+      <div class="key">
+        {% if saved %}
+        <p class="key-state ok"><span class="area-dot" aria-hidden="true"></span>{{ "settings.key.saved"|t }}</p>
+        <button type="button" class="tertiary" data-action="remove-key" data-service="{{ svc.id }}">{{ "settings.key.remove"|t }}</button>
+        {% else %}
+        <p class="key-state{% if svc.needs_key %} warn{% endif %}">{{ "settings.key.missing"|t }}</p>
+        <div class="key-row">
+          <label class="visually-hidden" for="key-{{ svc.id }}">{{ "settings.key.label"|t }}</label>
+          <input id="key-{{ svc.id }}" class="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="{{ "settings.key.label"|t }}">
+          <button type="button" class="secondary small" data-action="save-key" data-service="{{ svc.id }}">{{ "settings.key.save"|t }}</button>
+        </div>
+        <button type="button" class="link-button" data-action="open-key-page" data-service="{{ svc.id }}">{{ "settings.key.get"|t }}</button>
+        {% endif %}
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  <p class="quiet">{{ "settings.key.help"|t }}</p>
+</section>

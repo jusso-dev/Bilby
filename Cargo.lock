@@ -148,6 +148,7 @@ dependencies = [
  "askama",
  "bilby-collect-windows",
  "bilby-core",
+ "bilby-reputation",
  "serde",
  "serde_json",
  "tauri",

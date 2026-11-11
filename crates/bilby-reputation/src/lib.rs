@@ -15,6 +15,7 @@
 pub mod allowlist;
 pub mod circl;
 pub mod defender;
+pub mod ip;
 pub mod key;
 pub mod virustotal;
 
@@ -22,9 +23,11 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
-use bilby_core::rules::reputation::MAX_CIRCL_LOOKUPS;
+use bilby_core::rules::reputation::{MAX_CIRCL_LOOKUPS, MAX_IP_LOOKUPS};
 use bilby_core::settings::OnlineChecks;
-use bilby_core::snapshot::{ReputationFacts, VtResult};
+use bilby_core::snapshot::{
+    AbuseIpResult, CrowdSecIpResult, ReputationFacts, VtIpResult, VtResult,
+};
 
 use allowlist::{HttpError, Transport};
 use key::ApiKey;
@@ -100,6 +103,10 @@ pub struct Limits {
     /// Network failures in a row before a service is given up for this
     /// scan.
     pub max_failures_in_a_row: u32,
+    /// Most IP addresses looked up with each IP service.
+    pub ip_max: usize,
+    /// Most CrowdSec lookups a scan: the free key allows 120 a month.
+    pub crowdsec_max: usize,
 }
 
 impl Default for Limits {
@@ -110,6 +117,8 @@ impl Default for Limits {
             vt_per_minute: virustotal::PUBLIC_PER_MINUTE,
             deadline: Duration::from_secs(120),
             max_failures_in_a_row: 3,
+            ip_max: MAX_IP_LOOKUPS,
+            crowdsec_max: ip::CROWDSEC_PER_SCAN,
         }
     }
 }
@@ -121,6 +130,12 @@ pub struct Summary {
     pub circl_sent: usize,
     /// VirusTotal lookups sent.
     pub vt_sent: usize,
+    /// VirusTotal IP reports asked for.
+    pub vt_ip_sent: usize,
+    /// AbuseIPDB checks sent.
+    pub abuseipdb_sent: usize,
+    /// CrowdSec lookups sent.
+    pub crowdsec_sent: usize,
     /// Lookups that failed (network, timeout, quota). Reasons, no keys.
     pub errors: Vec<String>,
 }
@@ -131,6 +146,10 @@ pub struct Summary {
 pub struct Cache {
     circl: Mutex<HashMap<String, circl::Known>>,
     vt: Mutex<HashMap<String, Option<VtResult>>>,
+    vt_ip: Mutex<HashMap<std::net::IpAddr, Option<VtIpResult>>>,
+    abuse: Mutex<HashMap<std::net::IpAddr, Option<AbuseIpResult>>>,
+    crowdsec: Mutex<HashMap<std::net::IpAddr, Option<CrowdSecIpResult>>>,
+    /// Shared by file and IP lookups: one key, one budget.
     vt_limiter: Mutex<Option<RateLimiter>>,
 }
 
@@ -146,7 +165,7 @@ pub fn check(
     limits: Limits,
     sleep: &dyn Fn(Duration),
 ) -> Option<(ReputationFacts, Summary)> {
-    if !settings.any() {
+    if !(settings.circl || settings.virustotal) {
         return None;
     }
     let deadline = Instant::now() + limits.deadline;
@@ -277,7 +296,7 @@ fn vt_lookups(
     }
 }
 
-fn describe(e: &HttpError) -> String {
+pub(crate) fn describe(e: &HttpError) -> String {
     match e {
         HttpError::NotAllowed(m) => format!("not sent ({m})"),
         HttpError::Status(s) => format!("returned HTTP {s}"),

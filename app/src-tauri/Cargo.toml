@@ -27,6 +27,8 @@ tracing-subscriber = { version = "0.3.20", default-features = false, features = 
 
 [target.'cfg(windows)'.dependencies]
 bilby-collect-windows = { path = "../../crates/bilby-collect-windows" }
+# Opt-in online checks (ADR 0004). Nothing is sent unless a switch is on.
+bilby-reputation = { path = "../../crates/bilby-reputation" }
 
 [lints]
 workspace = true
