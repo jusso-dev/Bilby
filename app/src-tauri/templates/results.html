@@ -1,9 +1,92 @@
 <section class="results" aria-labelledby="results-heading">
-  <h1 id="results-heading">{{ headline_key|t }}</h1>
-  <p>{{ placeholder }}</p>
-  {% if offer_deep_check %}
-  <p>{{ "deep.intro"|t }}</p>
-  <button type="button" data-action="deep-check">{{ "deep.button"|t }}</button>
-  <p id="deep-status" role="status"></p>
+  <div class="verdict verdict-{{ light }}">
+    <img class="verdict-photo" src="img/bilby-face.jpg" alt="" width="400" height="400">
+    <div class="verdict-words">
+      <div class="verdict-title">{% include "_status_icon.html" %}<h1 id="results-heading" tabindex="-1">{{ headline }}</h1></div>
+      <p class="lead">{{ sub }}</p>
+    </div>
+  </div>
+
+  {% if let Some(card) = first %}
+  <div class="first-step">
+    <h2>{{ "results.first_step"|t }}</h2>
+    <p class="first-title">{{ card.title }}</p>
+    <p>{{ card.todo }}</p>
+    {% if let Some(a) = card.action %}
+    <button type="button" class="big-button" data-action="{{ a.kind }}" data-id="{{ card.id }}">{{ a.label }}</button>
+    {% endif %}
+  </div>
   {% endif %}
+
+  {% if !cards.is_empty() %}
+  <h2 class="section-heading">{{ "results.cards_heading"|t }}</h2>
+  <div class="filters" role="group" aria-label="{{ "results.filter_label"|t }}">
+    <button type="button" class="filter" data-action="filter" data-filter="all" aria-pressed="true">{{ "results.filter_all"|t }} <span class="count">{{ cards.len() }}</span></button>
+    {% if n_high > 0 %}<button type="button" class="filter f-high" data-action="filter" data-filter="high" aria-pressed="false">{{ "sev.high"|t }} <span class="count">{{ n_high }}</span></button>{% endif %}
+    {% if n_medium > 0 %}<button type="button" class="filter f-medium" data-action="filter" data-filter="medium" aria-pressed="false">{{ "sev.medium"|t }} <span class="count">{{ n_medium }}</span></button>{% endif %}
+    {% if n_low > 0 %}<button type="button" class="filter f-low" data-action="filter" data-filter="low" aria-pressed="false">{{ "sev.low"|t }} <span class="count">{{ n_low }}</span></button>{% endif %}
+  </div>
+  <div class="cards" data-filter="all">
+    {% for card in cards %}{% let ignorable = true %}{% include "_card.html" %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="tips">
+    <h2>{{ "results.healthy_tips"|t }}</h2>
+    <ul>
+      <li>{{ "results.tip_updates"|t }}</li>
+      <li>{{ "results.tip_security"|t }}</li>
+      <li>{{ "results.tip_unknown"|t }}</li>
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if !notes.is_empty() %}
+  <details class="fold">
+    <summary><span>{{ "results.notes_heading"|t }}</span> <span class="count">{{ notes.len() }}</span></summary>
+    <p class="quiet">{{ "results.notes_intro"|t }}</p>
+    <div class="cards">{% for card in notes %}{% let ignorable = true %}{% include "_card.html" %}{% endfor %}</div>
+  </details>
+  {% endif %}
+
+  {% if !ignored.is_empty() %}
+  <details class="fold">
+    <summary><span>{{ "results.ignored_heading"|t }}</span> <span class="count">{{ ignored.len() }}</span></summary>
+    <div class="cards">{% for card in ignored %}{% let ignorable = false %}{% include "_card.html" %}{% endfor %}</div>
+  </details>
+  {% endif %}
+
+  <h2 class="section-heading">{{ "results.checked_heading"|t }}</h2>
+  <p class="quiet">{{ "results.checked_intro"|t }}</p>
+  <ul class="areas">
+    {% for a in areas %}
+    <li class="area" data-state="{{ a.state }}" data-family="{{ a.id }}">
+      <details>
+        <summary><span class="area-dot" aria-hidden="true"></span><span class="area-name">{{ a.name }}</span><span class="area-state">{{ a.state_word }}</span></summary>
+        <dl class="facts">{% for row in a.checks %}<dt><code>{{ row.label }}</code></dt><dd>{{ row.value }}</dd>{% endfor %}</dl>
+      </details>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if offer_deep_check %}
+  <div class="deep">
+    <p>{{ "deep.intro"|t }}</p>
+    <button type="button" class="secondary" data-action="deep-check">{{ "deep.button"|t }}</button>
+    <p id="deep-status" role="status"></p>
+  </div>
+  {% endif %}
+
+  <details class="fold helper">
+    <summary><span>{{ "results.helper_heading"|t }}</span></summary>
+    <p class="quiet">{{ "results.helper_intro"|t }}</p>
+    <dl class="facts">{% for row in helper %}<dt>{{ row.label }}</dt><dd>{{ row.value }}</dd>{% endfor %}</dl>
+    {% if !timings.is_empty() %}
+    <h3>{{ "helper.timings"|t }}</h3>
+    <dl class="facts">{% for row in timings %}<dt>{{ row.label }}</dt><dd>{{ row.value }}</dd>{% endfor %}</dl>
+    {% endif %}
+  </details>
+
+  <div class="footer-actions">
+    <button type="button" class="primary" data-action="start-scan">{{ "results.check_again"|t }}</button>
+    <button type="button" class="tertiary" data-action="go-home">{{ "results.home"|t }}</button>
+  </div>
 </section>

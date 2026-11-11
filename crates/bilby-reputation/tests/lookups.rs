@@ -108,6 +108,7 @@ fn circl_marks_known_software() {
         OnlineChecks {
             circl: true,
             virustotal: false,
+            ..OnlineChecks::default()
         },
         &hashes(),
         None,
@@ -153,6 +154,7 @@ fn virustotal_reads_stats_and_404() {
         OnlineChecks {
             circl: false,
             virustotal: true,
+            ..OnlineChecks::default()
         },
         &hashes(),
         Some(&key),
@@ -194,6 +196,7 @@ fn quota_stops_virustotal_without_failing_the_scan() {
         OnlineChecks {
             circl: false,
             virustotal: true,
+            ..OnlineChecks::default()
         },
         &hashes(),
         Some(&key),
@@ -219,6 +222,7 @@ fn virustotal_without_a_key_sends_nothing() {
         OnlineChecks {
             circl: false,
             virustotal: true,
+            ..OnlineChecks::default()
         },
         &hashes(),
         None,
@@ -252,6 +256,7 @@ fn caps_cache_and_bad_hashes() {
     let on = OnlineChecks {
         circl: true,
         virustotal: false,
+        ..OnlineChecks::default()
     };
     let (_, first) = check(on, &input, None, &http, &cache, limits, &no_sleep).unwrap();
     assert_eq!(first.circl_sent, 2, "cap applies; paths are never sent");
@@ -298,6 +303,7 @@ fn unreachable_service_is_given_up_after_three_failures() {
         OnlineChecks {
             circl: true,
             virustotal: false,
+            ..OnlineChecks::default()
         },
         &many,
         None,
@@ -322,6 +328,7 @@ fn deadline_stops_lookups() {
         OnlineChecks {
             circl: true,
             virustotal: false,
+            ..OnlineChecks::default()
         },
         &hashes(),
         None,
@@ -353,6 +360,7 @@ fn a_bad_reply_doesnt_stop_virustotal_but_a_bad_key_does() {
     let on = OnlineChecks {
         circl: false,
         virustotal: true,
+        ..OnlineChecks::default()
     };
     let (_, summary) = check(
         on,
@@ -410,6 +418,7 @@ fn deadline_during_virustotal_pacing_sends_nothing_late() {
         OnlineChecks {
             circl: false,
             virustotal: true,
+            ..OnlineChecks::default()
         },
         &many,
         Some(&key),

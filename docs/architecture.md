@@ -34,7 +34,7 @@ crates/
     src/model.rs            Finding, Severity, Confidence, Evidence, NextStep, ScanReport
     src/snapshot.rs         SystemSnapshot: the raw facts collectors return
     src/rules/              one module per signal family, pure functions snapshot -> findings
-    src/settings.rs         OnlineChecks { circl, virustotal }, both off by default, booleans only
+    src/settings.rs         OnlineChecks { circl, virustotal, virustotal_ips, abuseipdb, crowdsec }, all off by default, booleans only
     src/score.rs            findings -> traffic light
     src/engine.rs           snapshot -> report: rules, boosts, grouping, order, light
     src/scrub.rs            removes user name, computer name, profile path and SIDs
@@ -68,8 +68,8 @@ crates/
     src/elevation.rs        own-token elevation check and the "Check more deeply" UAC relaunch
     src/drivers.rs          EnumDeviceDrivers paths, code integrity (NtQuerySystemInformation), DeviceGuard WMI, blocklist and Secure Boot values
   bilby-collect-macos/      later
-  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal); see docs/privacy.md
-    src/allowlist.rs        the only HTTP client: HTTPS to two hosts, no redirects, no env proxy, 10 s timeout
+  bilby-reputation/         opt-in hash lookups (Defender file scan, CIRCL, VirusTotal) and IP lookups (VirusTotal, AbuseIPDB, CrowdSec); see docs/privacy.md
+    src/allowlist.rs        the only HTTP client: HTTPS to four hosts (hashlookup.circl.lu, www.virustotal.com, api.abuseipdb.com, cti.api.crowdsec.net), no redirects, no env proxy, 10 s timeout
     src/circl.rs            hashlookup.circl.lu, 200 known / 404 unknown
     src/virustotal.rs       /api/v3/files/<sha256> last_analysis_stats, key from Credential Manager (key.rs)
     src/defender.rs         MpCmdRun custom scan of one file, user-started only
@@ -253,7 +253,8 @@ See ADR 0002. In short:
 
 Off by default. When on:
 
-- Only SHA-256 hashes leave the machine, never files, file names or paths.
+- Only SHA-256 hashes leave the machine, never files, file names or paths. The one exception is the IP switches (ADR 0004 amendment): public peer addresses of programs that already have a finding, at most 20 a scan (`rules::reputation::ip_candidates`, then `bilby_reputation::ip::check_ips`).
+- The app runs the online step after the collectors: a first rules pass picks the hashes and addresses, the services answer, and their facts go into `snapshot.reputation` before the real evaluation. Answers are cached for the session in `AppState.online_cache`. With every switch off no HTTP client is built.
 - Each lookup service is a separate switch with a plain-English description of who receives the hash.
 - A VirusTotal key is the user's own and is stored in Windows Credential Manager, never in a config file.
 - The scan screen says "Online checks: off" or names the services in use.

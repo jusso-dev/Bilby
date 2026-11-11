@@ -1,5 +1,5 @@
 {
-  "note": "The IPv6 unroutable address, same as 0.0.0.0.",
+  "note": "Near misses: a bank subdomain sent to 127.0.0.1, a sign-in subdomain sent to another address, and the whole microsoft.com blocked. All stay tamper.hosts.watch_domain.",
   "now": "2026-11-09T09:00:00Z",
   "snapshot": {
     "tamper": {
@@ -23,9 +23,23 @@
           },
           {
             "line": 25,
-            "ip": "::",
+            "ip": "127.0.0.1",
             "names": [
-              "telemetry.microsoft.com"
+              "www.commbank.com.au"
+            ]
+          },
+          {
+            "line": 26,
+            "ip": "203.0.113.7",
+            "names": [
+              "login.microsoftonline.com"
+            ]
+          },
+          {
+            "line": 27,
+            "ip": "0.0.0.0",
+            "names": [
+              "microsoft.com"
             ]
           }
         ]
@@ -88,17 +102,20 @@
     {
       "rule_id": "tamper.hosts.watch_domain",
       "severity": "high",
-      "confidence": "medium"
+      "confidence": "high"
+    },
+    {
+      "rule_id": "tamper.hosts.watch_domain",
+      "severity": "high",
+      "confidence": "high"
+    },
+    {
+      "rule_id": "tamper.hosts.watch_domain",
+      "severity": "high",
+      "confidence": "high"
     }
   ],
   "absent": [
-    "tamper.hosts.path_moved",
-    "tamper.hosts.many_entries",
-    "tamper.proxy.unexpected",
-    "tamper.proxy.pac_http",
-    "tamper.winhttp_proxy",
-    "tamper.root.known_bad",
-    "tamper.root.unknown",
-    "tamper.root.dev_tool"
+    "tamper.hosts.blocked_subdomain"
   ]
 }

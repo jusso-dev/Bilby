@@ -4,6 +4,9 @@
 mod commands;
 mod logging;
 mod scan;
+mod settings;
+mod settings_screen;
+mod view;
 
 use std::sync::Mutex;
 use std::sync::atomic::AtomicBool;
@@ -145,14 +148,26 @@ fn main() {
             last_report: Mutex::new(None),
             last_snapshot: Mutex::new(None),
             scanner: scan::Scanner::default(),
+            #[cfg(windows)]
+            online_cache: bilby_reputation::Cache::default(),
         })
         .invoke_handler(tauri::generate_handler![
             commands::render_home,
+            commands::render_progress,
+            commands::render_last_results,
             commands::start_scan,
             commands::cancel_scan,
             commands::scan_state,
             commands::relaunch_elevated,
-            commands::ignore_finding
+            commands::ignore_finding,
+            commands::unignore_finding,
+            commands::open_next_step,
+            commands::open_rules,
+            settings_screen::render_settings,
+            settings_screen::set_online,
+            settings_screen::save_key,
+            settings_screen::remove_key,
+            settings_screen::open_key_page
         ])
         .run(tauri::generate_context!())
         .expect("Bilby couldn't start its window");

@@ -34,6 +34,7 @@ pub fn step_key(step: &str) -> &'static str {
         "browser" => "scan.step.browser",
         "tamper" => "scan.step.tamper",
         "drivers" => "scan.step.drivers",
+        "reputation" => "scan.step.reputation",
         _ => "scan.heading",
     }
 }
@@ -119,8 +120,9 @@ pub fn load_suppressions() -> bilby_core::suppress::Suppressions {
 /// stores the file's hash), or `None` if it was cancelled.
 #[cfg(windows)]
 pub fn run(
-    cancel: Arc<AtomicBool>,
+    cancel: &Arc<AtomicBool>,
     progress: &dyn Fn(ProgressEvent),
+    online_cache: &bilby_reputation::Cache,
 ) -> Option<(
     bilby_core::model::ScanReport,
     bilby_core::snapshot::SystemSnapshot,
@@ -130,7 +132,7 @@ pub fn run(
     use bilby_core::rules::RuleContext;
 
     let opts = CollectOptions {
-        cancel,
+        cancel: Arc::clone(cancel),
         ..CollectOptions::default()
     };
     tracing::info!("scan started");
@@ -162,18 +164,32 @@ pub fn run(
         tracing::info!("scan cancelled");
         return None;
     }
-    // Online checks join here once the settings screen can turn them on.
-    // With both switches off (the only state today) nothing is sent and no
-    // HTTP client is built (docs/privacy.md).
-    let mut ctx = RuleContext::with_relations(c.started_at, &c.snapshot);
+    let mut snapshot = c.snapshot;
+    let mut checks = c.checks;
+    // Online checks, only those the user switched on. With every switch
+    // off nothing is sent and no HTTP client is built (docs/privacy.md).
+    let online = crate::settings::load().online;
+    checks.extend(online_checks(
+        online,
+        &mut snapshot,
+        c.started_at,
+        online_cache,
+        cancel,
+        progress,
+    ));
+    if cancel.load(std::sync::atomic::Ordering::SeqCst) {
+        tracing::info!("scan cancelled");
+        return None;
+    }
+    let mut ctx = RuleContext::with_relations(c.started_at, &snapshot);
     ctx.suppressions = load_suppressions();
     let report = evaluate(
-        &c.snapshot,
+        &snapshot,
         &ctx,
         ScanMeta {
             started_at: c.started_at,
-            finished_at: c.finished_at,
-            checked: c.checks,
+            finished_at: time::OffsetDateTime::now_utc(),
+            checked: checks,
             machine: c.machine,
             is_admin: c.is_admin,
             timings: c.timings,
@@ -186,7 +202,166 @@ pub fn run(
         ignored = report.suppressed.len(),
         "scan finished"
     );
-    Some((report, c.snapshot))
+    Some((report, snapshot))
+}
+
+/// The online client, refusing to send anything once the user pressed
+/// "Stop checking". Each service then stops after its run of failures.
+#[cfg(windows)]
+struct Cancellable<'a> {
+    inner: bilby_reputation::allowlist::Http,
+    cancel: &'a AtomicBool,
+}
+
+#[cfg(windows)]
+impl bilby_reputation::allowlist::Transport for Cancellable<'_> {
+    fn get(
+        &self,
+        url: &str,
+        headers: &[(&str, &str)],
+    ) -> Result<bilby_reputation::allowlist::Reply, bilby_reputation::allowlist::HttpError> {
+        if self.cancel.load(Ordering::SeqCst) {
+            return Err(bilby_reputation::allowlist::HttpError::Failed(
+                "check stopped".to_owned(),
+            ));
+        }
+        self.inner.get(url, headers)
+    }
+}
+
+/// A rate-limit wait that ends early on "Stop checking".
+#[cfg(windows)]
+fn sleep_unless_cancelled(cancel: &AtomicBool, d: std::time::Duration) {
+    let until = std::time::Instant::now() + d;
+    while !cancel.load(Ordering::SeqCst) && std::time::Instant::now() < until {
+        std::thread::sleep(std::time::Duration::from_millis(100).min(d));
+    }
+}
+
+/// Ran, unless nothing was sent and something went wrong.
+#[cfg(windows)]
+fn lookup_status(sent: usize, errors: &[String]) -> bilby_core::model::CheckStatus {
+    if sent == 0 && !errors.is_empty() {
+        bilby_core::model::CheckStatus::Failed(errors.join("; "))
+    } else {
+        bilby_core::model::CheckStatus::Ran
+    }
+}
+
+/// The online step: works out which hashes and addresses the rules allow
+/// (`lookup_candidates`, `ip_candidates`), asks the services the user
+/// switched on, and puts the answers in the snapshot for the rules.
+/// Returns the "What we checked" rows for it. Never fails a scan.
+#[cfg(windows)]
+fn online_checks(
+    online: bilby_core::settings::OnlineChecks,
+    snapshot: &mut bilby_core::snapshot::SystemSnapshot,
+    now: time::OffsetDateTime,
+    cache: &bilby_reputation::Cache,
+    cancel: &AtomicBool,
+    progress: &dyn Fn(ProgressEvent),
+) -> Vec<bilby_core::model::Check> {
+    use bilby_core::model::{Check, CheckStatus, SignalFamily};
+    use bilby_core::rules::reputation::{
+        MAX_CIRCL_LOOKUPS, MAX_IP_LOOKUPS, ip_candidates, lookup_candidates,
+    };
+    use bilby_core::rules::{RuleContext, evaluate_all};
+    use bilby_reputation::key::{self, Service};
+    use bilby_reputation::{Limits, allowlist::Http, check, ip};
+
+    let row = |id: &str, status| Check {
+        id: id.to_owned(),
+        family: SignalFamily::Reputation,
+        status,
+    };
+    let off = || CheckStatus::Skipped("check.skipped.online_off".to_owned());
+    if !online.any() {
+        return vec![row("reputation.files", off()), row("reputation.ips", off())];
+    }
+    let total = crate::view::STEPS.len() + 1;
+    let step = |state| {
+        progress(ProgressEvent {
+            step: "reputation",
+            state,
+            done: if state == "running" { total - 1 } else { total },
+            total,
+            label: step_label("reputation"),
+        });
+    };
+    step("running");
+    // A first pass of the rules decides what's worth looking up.
+    let first = evaluate_all(snapshot, &RuleContext::with_relations(now, snapshot));
+    let hashes = lookup_candidates(snapshot, &first, MAX_CIRCL_LOOKUPS);
+    let ips = ip_candidates(snapshot, &first, MAX_IP_LOOKUPS);
+    let http = Cancellable {
+        inner: Http::new(true),
+        cancel,
+    };
+    let vt_key = key::load(Service::VirusTotal);
+    let ab_key = key::load(Service::AbuseIpDb);
+    let cs_key = key::load(Service::CrowdSec);
+    let sleep = |d| sleep_unless_cancelled(cancel, d);
+    let mut facts = snapshot.reputation.take().unwrap_or_default();
+    let files = match check(
+        online,
+        &hashes,
+        vt_key.as_ref(),
+        &http,
+        cache,
+        Limits::default(),
+        &sleep,
+    ) {
+        Some((f, sum)) => {
+            facts.virustotal.extend(f.virustotal);
+            facts.known_good.extend(f.known_good);
+            tracing::info!(
+                circl = sum.circl_sent,
+                vt = sum.vt_sent,
+                problems = sum.errors.len(),
+                "file lookups done"
+            );
+            lookup_status(sum.circl_sent + sum.vt_sent, &sum.errors)
+        }
+        None => off(),
+    };
+    let addresses = match ip::check_ips(
+        online,
+        &ips,
+        ip::IpKeys {
+            virustotal: vt_key.as_ref(),
+            abuseipdb: ab_key.as_ref(),
+            crowdsec: cs_key.as_ref(),
+        },
+        &http,
+        cache,
+        Limits::default(),
+        &sleep,
+    ) {
+        Some((f, sum)) => {
+            facts.ip_virustotal.extend(f.virustotal);
+            facts.ip_abuseipdb.extend(f.abuseipdb);
+            facts.ip_crowdsec.extend(f.crowdsec);
+            tracing::info!(
+                candidates = ips.len(),
+                vt = sum.vt_ip_sent,
+                abuseipdb = sum.abuseipdb_sent,
+                crowdsec = sum.crowdsec_sent,
+                problems = sum.errors.len(),
+                "address lookups done"
+            );
+            lookup_status(
+                sum.vt_ip_sent + sum.abuseipdb_sent + sum.crowdsec_sent,
+                &sum.errors,
+            )
+        }
+        None => off(),
+    };
+    snapshot.reputation = Some(facts);
+    step("done");
+    vec![
+        row("reputation.files", files),
+        row("reputation.ips", addresses),
+    ]
 }
 
 #[cfg(test)]

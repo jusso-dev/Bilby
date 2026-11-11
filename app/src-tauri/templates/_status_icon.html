@@ -1,0 +1,9 @@
+<svg class="status-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+{% if light == "healthy" %}
+  <circle cx="24" cy="24" r="21"/><path class="mark" d="M14 25 l7 7 l13 -15"/>
+{% else if light == "worth" %}
+  <rect x="3" y="3" width="42" height="42" rx="10"/><path class="mark" d="M24 21 v14 M24 13 v1"/>
+{% else %}
+  <path d="M15 3 h18 l12 12 v18 l-12 12 h-18 l-12 -12 v-18 Z"/><path class="mark" d="M24 12 v15 M24 35 v1"/>
+{% endif %}
+</svg>

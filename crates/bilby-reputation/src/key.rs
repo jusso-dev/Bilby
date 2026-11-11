@@ -1,9 +1,38 @@
-//! The VirusTotal key, kept in Windows Credential Manager as a generic
-//! credential named `Bilby/VirusTotal`. Never written to `settings.json`,
-//! logs or reports, and never printed.
+//! The user's own API keys, kept in Windows Credential Manager as generic
+//! credentials named `Bilby/VirusTotal`, `Bilby/AbuseIPDB` and
+//! `Bilby/CrowdSec`. Never
+//! written to `settings.json`, logs or reports, and never printed.
 
-/// Credential Manager target name.
+/// Credential Manager target name for the VirusTotal key.
 pub const TARGET: &str = "Bilby/VirusTotal";
+
+/// Credential Manager target name for the AbuseIPDB key.
+pub const ABUSEIPDB_TARGET: &str = "Bilby/AbuseIPDB";
+
+/// Credential Manager target name for the CrowdSec CTI key.
+pub const CROWDSEC_TARGET: &str = "Bilby/CrowdSec";
+
+/// Which service a key is for.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Service {
+    /// VirusTotal: file hashes and IP reports.
+    VirusTotal,
+    /// AbuseIPDB: IP reports.
+    AbuseIpDb,
+    /// CrowdSec CTI: IP reports.
+    CrowdSec,
+}
+
+impl Service {
+    /// The Credential Manager target name.
+    pub fn target(self) -> &'static str {
+        match self {
+            Self::VirusTotal => TARGET,
+            Self::AbuseIpDb => ABUSEIPDB_TARGET,
+            Self::CrowdSec => CROWDSEC_TARGET,
+        }
+    }
+}
 
 /// A key that never shows itself in `Debug` output.
 #[derive(Clone)]
@@ -30,21 +59,21 @@ impl std::fmt::Debug for ApiKey {
 
 #[cfg(windows)]
 mod store {
-    use super::{ApiKey, TARGET};
+    use super::{ApiKey, Service};
     use windows::Win32::Security::Credentials::{
         CRED_FLAGS, CRED_PERSIST_LOCAL_MACHINE, CRED_TYPE_GENERIC, CREDENTIALW, CredDeleteW,
         CredFree, CredReadW, CredWriteW,
     };
     use windows::core::{HSTRING, PWSTR};
 
-    /// Reads the key, if one is saved.
-    pub fn load() -> Option<ApiKey> {
+    /// Reads a service's key, if one is saved.
+    pub fn load(service: Service) -> Option<ApiKey> {
         let mut cred: *mut CREDENTIALW = std::ptr::null_mut();
         // SAFETY: reads a generic credential by name; Windows allocates
         // `cred`, freed below with CredFree.
         unsafe {
             CredReadW(
-                &HSTRING::from(TARGET),
+                &HSTRING::from(service.target()),
                 CRED_TYPE_GENERIC,
                 None,
                 &raw mut cred,
@@ -68,9 +97,9 @@ mod store {
         key.and_then(|k| ApiKey::new(&k))
     }
 
-    /// Saves the key for this user on this computer.
-    pub fn save(key: &ApiKey) -> windows::core::Result<()> {
-        let mut target: Vec<u16> = TARGET.encode_utf16().chain([0]).collect();
+    /// Saves a service's key for this user on this computer.
+    pub fn save(service: Service, key: &ApiKey) -> windows::core::Result<()> {
+        let mut target: Vec<u16> = service.target().encode_utf16().chain([0]).collect();
         let mut blob = key.expose().as_bytes().to_vec();
         let cred = CREDENTIALW {
             Flags: CRED_FLAGS(0),
@@ -87,10 +116,10 @@ mod store {
         r
     }
 
-    /// Removes the key.
-    pub fn delete() -> windows::core::Result<()> {
+    /// Removes a service's key.
+    pub fn delete(service: Service) -> windows::core::Result<()> {
         // SAFETY: deletes a generic credential by name.
-        unsafe { CredDeleteW(&HSTRING::from(TARGET), CRED_TYPE_GENERIC, None) }
+        unsafe { CredDeleteW(&HSTRING::from(service.target()), CRED_TYPE_GENERIC, None) }
     }
 }
 

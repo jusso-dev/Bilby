@@ -1,0 +1,58 @@
+{
+  "note": "Adobe Acrobat's Chrome extension, added by the Acrobat installer through external preferences (location 6) and downloaded from the Chrome Web Store. It's a store extension, so only the Info finding. Seen on a real PC.",
+  "now": "2026-11-09T09:00:00Z",
+  "snapshot": {
+    "browser": {
+      "extensions": [
+        {
+          "browser": "chrome",
+          "profile": "Profile 1",
+          "id": "efaidnbmnnnibpcajpcglclefindmkaj",
+          "name": "Adobe Acrobat: PDF edit, convert, sign tools",
+          "version": "26.9.3.1",
+          "source": "external",
+          "raw_location": "6",
+          "enabled": true,
+          "permissions": [
+            "tabs",
+            "webRequest",
+            "<all_urls>"
+          ],
+          "update_url": "https://clients2.google.com/service/update2/crx",
+          "signed_state": null
+        }
+      ],
+      "policies": [],
+      "shortcuts": [
+        {
+          "path": "C:\\Users\\Alex\\Desktop\\Google Chrome.lnk",
+          "browser": "chrome",
+          "arguments": ""
+        },
+        {
+          "path": "C:\\Users\\Alex\\Desktop\\Chrome (Work).lnk",
+          "browser": "chrome",
+          "arguments": "--profile-directory=\"Profile 1\""
+        }
+      ],
+      "management": {
+        "managed": false,
+        "reasons": []
+      }
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "browser.store_wide",
+      "severity": "info",
+      "confidence": "high"
+    }
+  ],
+  "absent": [
+    "browser.sideloaded_wide",
+    "browser.forced_unmanaged",
+    "browser.forced_managed",
+    "browser.shortcut_load_extension",
+    "browser.firefox_unsigned"
+  ]
+}

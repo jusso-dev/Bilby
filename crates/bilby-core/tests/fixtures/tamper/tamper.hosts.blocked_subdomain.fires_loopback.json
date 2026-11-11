@@ -1,5 +1,5 @@
 {
-  "note": "A privacy list blocking a telemetry subdomain: an unroutable address, so Medium.",
+  "note": "A privacy tweak blocking Microsoft telemetry to 127.0.0.1, as seen on a real PC: data.microsoft.com and edge.microsoft.com. Nothing listens on port 80 or 443 on loopback (a Tailscale listener on its own address doesn't count).",
   "now": "2026-11-09T09:00:00Z",
   "snapshot": {
     "tamper": {
@@ -23,9 +23,16 @@
           },
           {
             "line": 25,
-            "ip": "0.0.0.0",
+            "ip": "127.0.0.1",
             "names": [
-              "telemetry.microsoft.com"
+              "data.microsoft.com"
+            ]
+          },
+          {
+            "line": 26,
+            "ip": "::1",
+            "names": [
+              "edge.microsoft.com"
             ]
           }
         ]
@@ -82,16 +89,33 @@
         "managed": false,
         "reasons": []
       }
+    },
+    "network": {
+      "connections": [
+        {
+          "proto": "tcp",
+          "local": "100.127.222.54:443",
+          "remote": null,
+          "state": "listen",
+          "pid": 27444
+        }
+      ]
     }
   },
   "expect": [
     {
-      "rule_id": "tamper.hosts.watch_domain",
-      "severity": "high",
-      "confidence": "medium"
+      "rule_id": "tamper.hosts.blocked_subdomain",
+      "severity": "info",
+      "confidence": "high"
+    },
+    {
+      "rule_id": "tamper.hosts.blocked_subdomain",
+      "severity": "info",
+      "confidence": "high"
     }
   ],
   "absent": [
+    "tamper.hosts.watch_domain",
     "tamper.hosts.path_moved",
     "tamper.hosts.many_entries",
     "tamper.proxy.unexpected",

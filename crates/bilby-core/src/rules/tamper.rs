@@ -11,7 +11,7 @@ use crate::hosts::{WatchGroup, is_blackhole, watched};
 use crate::model::{Confidence, Evidence, Finding, NextStepKind, Severity, SignalFamily, Subject};
 use crate::net::{AddrClass, classify};
 use crate::snapshot::{
-    PathClass, RootCert, RootStore, SignatureStatus, SystemSnapshot, TamperFacts,
+    PathClass, Proto, RootCert, RootStore, SignatureStatus, SystemSnapshot, TamperFacts, TcpState,
 };
 
 /// Fix id for removing a hosts line, with a backup (#32).
@@ -182,7 +182,33 @@ macro_rules! rule {
     };
 }
 
-rule!(HostsWatch, "tamper.hosts.watch_domain", hosts_watch);
+/// Like `rule!`, for rules that also need the rest of the snapshot.
+macro_rules! rule_snap {
+    ($name:ident, $id:literal, $fn:ident) => {
+        struct $name;
+        impl Rule for $name {
+            fn id(&self) -> &'static str {
+                $id
+            }
+            fn family(&self) -> SignalFamily {
+                SignalFamily::Tamper
+            }
+            fn evaluate(&self, snap: &SystemSnapshot, _: &RuleContext) -> Vec<Finding> {
+                snap.tamper
+                    .as_ref()
+                    .map(|t| $fn(t, snap))
+                    .unwrap_or_default()
+            }
+        }
+    };
+}
+
+rule_snap!(HostsWatch, "tamper.hosts.watch_domain", hosts_watch);
+rule_snap!(
+    HostsBlocked,
+    "tamper.hosts.blocked_subdomain",
+    hosts_blocked
+);
 rule!(HostsMoved, "tamper.hosts.path_moved", hosts_moved);
 rule!(HostsMany, "tamper.hosts.many_entries", hosts_many);
 rule!(ProxyUnexpected, "tamper.proxy.unexpected", proxy_unexpected);
@@ -196,6 +222,7 @@ rule!(RootDevTool, "tamper.root.dev_tool", root_dev_tool);
 pub fn rules() -> Vec<Box<dyn Rule>> {
     vec![
         Box::new(HostsWatch),
+        Box::new(HostsBlocked),
         Box::new(HostsMoved),
         Box::new(HostsMany),
         Box::new(ProxyUnexpected),
@@ -207,14 +234,18 @@ pub fn rules() -> Vec<Box<dyn Rule>> {
     ]
 }
 
-fn hosts_watch(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
+fn hosts_watch(t: &TamperFacts, snap: &SystemSnapshot) -> Vec<Finding> {
     let Some(h) = &t.hosts else { return Vec::new() };
+    let web = local_web_server(snap);
     let mut out = Vec::new();
     for e in &h.entries {
         for name in &e.names {
             let Some((domain, group)) = watched(name) else {
                 continue;
             };
+            if blocks_sign_in_subdomain(&e.ip, name, domain, group, web) {
+                continue;
+            }
             // Some privacy tools block update and security sites on purpose,
             // and privacy lists block telemetry subdomains (for example
             // telemetry.microsoft.com). An unroutable address can't reach an
@@ -244,6 +275,83 @@ fn hosts_watch(t: &TamperFacts, _: &RuleContext) -> Vec<Finding> {
                     format!("line {}: {} {}", e.line, e.ip, e.names.join(" ")),
                 )
                 .next(NextStepKind::Fix(FIX_HOSTS_LINE.to_owned()))
+                .build(),
+            );
+        }
+    }
+    out
+}
+
+/// Whether something on this computer could answer a hosts redirect to
+/// 127.0.0.1 or `::1`: a TCP listener on port 80 or 443 bound to loopback
+/// or to every address. `None` when the connection list wasn't read, which
+/// counts as "might".
+fn local_web_server(snap: &SystemSnapshot) -> Option<bool> {
+    let net = snap.network.as_ref()?;
+    Some(net.connections.iter().any(|c| {
+        c.proto == Proto::Tcp
+            && c.state == Some(TcpState::Listen)
+            && matches!(c.local.port(), 80 | 443)
+            && matches!(
+                classify(c.local.ip()),
+                AddrClass::Loopback | AddrClass::Unspecified
+            )
+    }))
+}
+
+/// Privacy tweaks block Microsoft's and Google's telemetry and tracking
+/// subdomains (`data.microsoft.com`, `edge.microsoft.com`), often to
+/// 127.0.0.1. Sent to `0.0.0.0` or `::` the name goes nowhere. Sent to
+/// loopback it only reaches a fake site if something on this computer
+/// answers on port 80 or 443, so loopback counts as a block only when the
+/// connection list shows nothing there. A block is
+/// `tamper.hosts.blocked_subdomain` (Info). Only for the email and sign-in
+/// group, and only subdomains: banks, government, payments, security
+/// updates and whole sign-in domains keep `tamper.hosts.watch_domain`.
+fn blocks_sign_in_subdomain(
+    ip: &str,
+    name: &str,
+    domain: &str,
+    group: WatchGroup,
+    local_web: Option<bool>,
+) -> bool {
+    let blocked = match ip {
+        "0.0.0.0" | "::" => true,
+        "127.0.0.1" | "::1" => local_web == Some(false),
+        _ => false,
+    };
+    blocked && group == WatchGroup::Email && name.trim_end_matches('.') != domain
+}
+
+fn hosts_blocked(t: &TamperFacts, snap: &SystemSnapshot) -> Vec<Finding> {
+    let Some(h) = &t.hosts else { return Vec::new() };
+    let web = local_web_server(snap);
+    let mut out = Vec::new();
+    for e in &h.entries {
+        for name in &e.names {
+            let Some((domain, group)) = watched(name) else {
+                continue;
+            };
+            if !blocks_sign_in_subdomain(&e.ip, name, domain, group, web) {
+                continue;
+            }
+            out.push(
+                FindingBuilder::new(
+                    "tamper.hosts.blocked_subdomain",
+                    SignalFamily::Tamper,
+                    Severity::Info,
+                    Confidence::High,
+                    Subject::HostsEntry(format!("{}:{name}", e.line)),
+                )
+                .var("name", name)
+                .var("domain", domain)
+                .var("ip", &e.ip)
+                .evidence(Evidence::Path(h.path.clone()))
+                .text(
+                    "evidence.hosts_line",
+                    format!("line {}: {} {}", e.line, e.ip, e.names.join(" ")),
+                )
+                .next(NextStepKind::Learn)
                 .build(),
             );
         }

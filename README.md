@@ -14,9 +14,25 @@ Every finding says what Bilby saw, why it matters, how sure it is, and one safe 
 
 Bilby is named after the bilby, a small Australian marsupial with big ears that digs around at night. It listens carefully and doesn't make a fuss.
 
+## Screenshots
+
+These come from demo mode, which shows a fixed report.
+
+| Home | Checking |
+|---|---|
+| ![The home screen: a photo of a bilby at its burrow, "Is your computer OK?" and the Check my computer button](docs/screenshots/home.png) | ![The progress screen in dark mode: a torch beam lights the bilby photo while each area is checked](docs/screenshots/progress.png) |
+
+| Results | Results, dark |
+|---|---|
+| ![Results for a computer that needs attention: what to do first, then a card per finding with what was found, why it matters and what to do](docs/screenshots/results.png) | ![The same results in dark mode](docs/screenshots/results-dark.png) |
+
+| Looks healthy | Settings |
+|---|---|
+| ![Results for a healthy computer, with good habits and what was checked](docs/screenshots/healthy.png) | ![Settings: a switch for each online check and a field for your own key](docs/screenshots/settings.png) |
+
 ## Status
 
-Early. On Windows, **Check my computer** now runs every check and shows the overall result. The full results screen, fixes and reports are still to come. The plan lives in the [issues](https://github.com/jusso-dev/Bilby/issues) and [milestones](https://github.com/jusso-dev/Bilby/milestones). Windows comes first. macOS is a later milestone.
+Early. On Windows, **Check my computer** runs every check and shows the results: the overall light, a card for each finding with a next step, what was checked, and technical detail for a helper. Online checks can be switched on in Settings. Fixes and saved reports are still to come. The plan lives in the [issues](https://github.com/jusso-dev/Bilby/issues) and [milestones](https://github.com/jusso-dev/Bilby/milestones). Windows comes first. macOS is a later milestone.
 
 ## What Bilby checks (Windows)
 
@@ -27,7 +43,8 @@ Early. On Windows, **Check my computer** now runs every check and shows the over
 - Browser extensions that were installed outside the store or have very wide access.
 - Changes to the hosts file, proxy settings and trusted root certificates that can redirect or read your web traffic.
 - Drivers that were added recently or aren't signed, and whether driver signature checks have been turned off.
-- Optional online lookups of file fingerprints (hashes). These are off unless you turn them on, and Bilby never uploads your files.
+- Optional online lookups of file fingerprints (hashes) with CIRCL and VirusTotal. These are off unless you turn them on, and Bilby never uploads your files.
+- Optional checks of the internet addresses that a program Bilby already flagged is talking to, with VirusTotal, AbuseIPDB or CrowdSec, using your own free keys. Also off unless you turn them on. See [docs/privacy.md](docs/privacy.md).
 
 ## Promises
 
@@ -75,6 +92,8 @@ cargo check --workspace --locked --target x86_64-pc-windows-msvc
 Bilby is tested with fixture data and a clean virtual machine where we plant harmless look-alikes, such as the EICAR test file and a self-built "hello world" program renamed to look suspicious. We never use real malware. See [docs/test-plan.md](docs/test-plan.md).
 
 ## Credits
+
+The bilby photographs are © State of Queensland, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), cropped and resized. Sources and details are in [docs/credits.md](docs/credits.md).
 
 Some of Bilby's ideas come from [System Informer](https://github.com/winsiderss/systeminformer) by Winsider Seminars & Solutions (MIT licence). No System Informer code has been copied into Bilby. If that changes, the copied file will carry its original copyright notice and be listed in [NOTICE](NOTICE).
 

@@ -9,9 +9,22 @@
     <script type="module" src="app.js"></script>
   </head>
   <body>
+    <header class="topbar">
+      <span class="brand">
+        <img class="brand-mark" src="img/bilby-face.jpg" alt="" width="40" height="40">
+        Bilby
+      </span>
+      <span class="top-actions">
+        <button type="button" class="theme-toggle" data-action="toggle-theme" aria-label="Light or dark">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5 A8 8 0 1 1 9.5 4 a6.5 6.5 0 0 0 10.5 10.5 Z"/></svg>
+        </button>
+        <button type="button" class="theme-toggle" data-action="open-settings" aria-label="Settings">
+          <svg class="gear" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
+        </button>
+      </span>
+    </header>
     <main id="screen" tabindex="-1">
-      <h1>Bilby</h1>
-      <p>Getting ready</p>
+      <p class="quiet">Getting ready</p>
     </main>
   </body>
 </html>

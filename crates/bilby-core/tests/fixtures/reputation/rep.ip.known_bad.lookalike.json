@@ -1,0 +1,154 @@
+{
+  "note": "Near misses: a Google address with a high AbuseIPDB score but on its allow list, and one VirusTotal flag, stays a few reports at most. A clean address makes nothing.",
+  "now": "2026-11-11T09:00:00Z",
+  "snapshot": {
+    "processes": [
+      {
+        "pid": 4000,
+        "ppid": 4000,
+        "name": "explorer.exe",
+        "image_path": "C:\\Windows\\explorer.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Windows\\explorer.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Microsoft Windows",
+              "issuer": "Microsoft Windows Production PCA 2011",
+              "kind": "catalog",
+              "is_windows_component": true
+            }
+          },
+          "class": "windows_system",
+          "user_writable": false
+        }
+      },
+      {
+        "pid": 5100,
+        "ppid": 4000,
+        "name": "updater.exe",
+        "image_path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\updater.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Users\\<user>\\AppData\\Local\\Temp\\updater.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": "unsigned",
+          "class": "temp",
+          "user_writable": true
+        }
+      },
+      {
+        "pid": 5200,
+        "ppid": 4000,
+        "name": "chrome.exe",
+        "image_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "created": "2026-11-09T08:00:00Z",
+        "session_id": 1,
+        "file": {
+          "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "exists": true,
+          "size": 1000,
+          "sha256": null,
+          "signature": {
+            "signed": {
+              "publisher": "Google LLC",
+              "issuer": "DigiCert",
+              "kind": "embedded",
+              "is_windows_component": false
+            }
+          },
+          "class": "program_files",
+          "user_writable": false
+        }
+      }
+    ],
+    "network": {
+      "connections": [
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50123",
+          "remote": "203.0.113.66:443",
+          "state": "established",
+          "pid": 5100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50124",
+          "remote": "198.51.100.9:8080",
+          "state": "established",
+          "pid": 5100
+        },
+        {
+          "proto": "tcp",
+          "local": "192.168.1.20:50200",
+          "remote": "142.250.70.78:443",
+          "state": "established",
+          "pid": 5200
+        }
+      ]
+    },
+    "reputation": {
+      "virustotal": [],
+      "known_good": [],
+      "defender_scans": [],
+      "ip_virustotal": [
+        {
+          "ip": "142.250.70.78",
+          "malicious": 1,
+          "suspicious": 0,
+          "harmless": 80,
+          "as_owner": "GOOGLE",
+          "country": null
+        },
+        {
+          "ip": "203.0.113.66",
+          "malicious": 0,
+          "suspicious": 0,
+          "harmless": 60,
+          "as_owner": null,
+          "country": null
+        }
+      ],
+      "ip_abuseipdb": [
+        {
+          "ip": "142.250.70.78",
+          "score": 95,
+          "total_reports": 900,
+          "whitelisted": true,
+          "isp": null,
+          "usage_type": "Search Engine Spider",
+          "country": null
+        },
+        {
+          "ip": "203.0.113.66",
+          "score": 0,
+          "total_reports": 0,
+          "whitelisted": null,
+          "isp": null,
+          "usage_type": "Data Center/Web Hosting/Transit",
+          "country": null
+        }
+      ]
+    }
+  },
+  "expect": [
+    {
+      "rule_id": "rep.ip.some_reports",
+      "severity": "low",
+      "confidence": "low"
+    }
+  ],
+  "absent": [
+    "rep.ip.known_bad",
+    "rep.vt.malicious",
+    "rep.vt.few",
+    "rep.defender.threat"
+  ]
+}

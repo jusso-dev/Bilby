@@ -6,17 +6,35 @@
 name = "Bilby"
 
 [home]
-heading = "Bilby"
-intro = "Bilby checks whether anything on your computer looks wrong. It only looks, it doesn't change anything."
+heading = "Is your computer OK?"
+intro = "Bilby looks for signs of harmful software and checks your protection is switched on. It takes about a minute and doesn't change anything."
 button = "Check my computer"
+private = "Nothing leaves your computer."
+last = "Last check: {light} at {time}."
+see_results = "See results"
+admin_note = "Some checks need admin. You can run a deeper check after this one."
+mascot = "A greater bilby, a small Australian desert animal with big ears, peeking out of its burrow."
+photo_credit = "Photo: State of Queensland, CC BY 4.0, cropped."
 
 [scan]
 heading = "Checking your computer"
+intro = "Bilby is having a careful look around. You can keep using your computer."
 online_off = "Online checks: off"
 not_available = "Checking isn't available in this build yet."
 busy = "A check is already running."
 cancel = "Stop checking"
 cancelled = "Bilby stopped checking. Nothing was changed."
+progress = "How far the check has got"
+slow = "This one can take a little while."
+step_done = "{step}: done"
+
+[scan.state]
+waiting = "Waiting"
+running = "Checking"
+done = "Done"
+needs_admin = "Needs admin"
+failed = "Couldn't check"
+skipped = "Skipped"
 
 [scan.step]
 protection = "Checking your antivirus"
@@ -26,6 +44,7 @@ network = "Looking at network connections"
 browser = "Looking at browser extensions"
 tamper = "Checking your internet settings"
 drivers = "Checking drivers and start-up settings"
+reputation = "Asking the online services you switched on"
 
 [deep]
 intro = "Some things can only be checked with administrator permission. Windows will ask you first."
@@ -37,7 +56,83 @@ failed = "Bilby couldn't ask Windows for administrator permission. The check abo
 failed = "Bilby couldn't save that, so it will still show next time."
 
 [results]
-placeholder = "{count} thing(s) to show. The full results screen comes later."
+first_step = "What to do first"
+cards_heading = "What we found"
+filter_label = "Show"
+filter_all = "Everything"
+what_found = "What we found"
+why_matters = "Why it matters"
+what_to_do = "What to do"
+more_detail = "More detail"
+know_this = "I know this one"
+know_confirm = "Bilby will stop counting this. You can undo this further down this screen."
+know_yes = "Stop counting it"
+know_no = "Keep it"
+open_setting = "Open the setting"
+open_security = "Open Windows Security"
+open_failed = "Bilby couldn't open that. You can find it in the Windows Settings app."
+talk = "Talk to someone you trust"
+talk_help = "Show this screen to a family member, friend or local computer shop you trust. The More detail parts have what they need. Don't let anyone who phoned you out of the blue take control of your computer."
+notes_heading = "Other things we noticed"
+notes_intro = "These are normal on most computers. They don't change the result."
+ignored_heading = "Things you've told Bilby to ignore"
+unignore = "Stop ignoring"
+checked_heading = "What we checked"
+checked_intro = "Every area Bilby looked at, and how it went."
+healthy_tips = "Good habits that keep it this way"
+tip_updates = "Keep Windows updated."
+tip_security = "Keep Windows Security switched on."
+tip_unknown = "Only install programs from places you trust."
+check_again = "Check again"
+home = "Back to the start"
+helper_heading = "For your helper"
+helper_intro = "Technical details for someone who knows computers."
+
+[sev]
+high = "Needs attention"
+medium = "Worth a look"
+low = "Minor"
+info = "For your information"
+
+[family]
+protection = "Your antivirus and protection"
+processes = "Running programs"
+persistence = "Programs that start by themselves"
+network = "Network connections"
+browser = "Browser extensions"
+tamper = "Web traffic settings"
+drivers = "Drivers"
+reputation = "Online checks"
+
+[status]
+ran = "Checked"
+needs_admin = "Needs admin"
+skipped = "Skipped"
+failed = "Couldn't check"
+partial = "Partly checked"
+
+[helper]
+rule = "Rule"
+severity = "Severity"
+confidence = "Confidence"
+path = "Path"
+registry_key = "Registry key"
+registry_name = "Value name"
+registry_data = "Value data"
+signature = "Signature"
+process = "Program"
+pid = "Process id"
+connection = "Connection"
+version = "Bilby version"
+windows = "Windows"
+admin = "Ran as administrator"
+yes = "Yes"
+no = "No"
+started = "Started"
+took = "Took"
+timings = "Time per area"
+millis = "{ms} ms"
+details_link = "How this rule works"
 
 [light.healthy]
 headline = "Looks healthy"
@@ -135,6 +230,7 @@ lowered_by = "Lowered by"
 sha256 = "SHA-256"
 vt_stats = "VirusTotal results"
 vt_date = "VirusTotal last checked"
+ip_reputation = "Address reports"
 
 # Finding copy used by the demo reports. The scan engine issues replace and
 # extend these as each rule lands.
@@ -142,19 +238,19 @@ vt_date = "VirusTotal last checked"
 title = "A program is pretending to be part of Windows."
 what = "A file called {name} is running from {location}."
 why = "The real {name} only lives inside Windows' own folder, so this is a common trick."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [proc.masquerade.lookalike]
 title = "A program has a name very like part of Windows."
 what = "A file called {name} is running from {location}. Its name is one letter away from {real}, a part of Windows."
 why = "Harmful programs often pick names that look like Windows' own so they don't stand out."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [proc.unsigned_user_writable]
 title = "A program without a digital signature is running from an unusual place."
 what = "{name} is running from {location}. It has no valid digital signature (a seal that shows who made it)."
 why = "Installed programs are usually signed and kept in Program Files. Downloads and temporary folders are where unwanted programs often land."
-todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can open it for you."
 
 [proc.unsigned_appdata]
 title = "An unsigned program is running from a hidden folder."
@@ -298,13 +394,13 @@ todo = "Ask someone you trust to look if you're worried. Otherwise you can leave
 title = "This program is also talking to the internet."
 what = "{name} has a connection to an address on the internet."
 why = "A program that was already unusual is more worth checking when it's online."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [net.listen_unsigned_user_writable]
 title = "An unsigned program is waiting for connections from other computers."
 what = "{name} runs from a folder anyone's programs can write to, has no digital signature, and is waiting for other computers to connect to it."
 why = "Programs that accept connections from outside can be used to control a computer remotely."
-todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can open it for you."
 
 [net.listen_script_host]
 title = "A Windows scripting tool is waiting for connections from other computers."
@@ -316,7 +412,7 @@ todo = "Ask someone you trust to look at this computer."
 title = "An unsigned program is talking to a lot of internet addresses."
 what = "{name} has connections to {count} different internet addresses, and it has no digital signature."
 why = "Ordinary programs usually talk to a handful of addresses. This might be nothing, but it's worth a check."
-todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can start that for you."
+todo = "If you don't recognise it, ask Windows Security to scan it. Bilby can open it for you."
 
 [browser.sideloaded_wide]
 title = "A browser extension was added outside the store and can see every website."
@@ -425,6 +521,12 @@ title = "A trusted website has been redirected on this computer."
 what = "The hosts file sends {name} to {ip} instead of the real {domain} site."
 why = "This is how fake login pages steal passwords and banking details. The real site never needs this."
 todo = "If you didn't set this up, Bilby can remove that line and keep a backup, and you can undo that later."
+
+[tamper.hosts.blocked_subdomain]
+title = "The hosts file blocks part of a well-known website."
+what = "The hosts file sends {name} to {ip}, so this computer can't reach it. The main {domain} site isn't affected."
+why = "Privacy tools often block tracking and data collection addresses like this. Nothing on this computer is set up to answer in its place."
+todo = "Leave it if you or a privacy tool set this up. If part of {domain} stops working, this may be why."
 
 [tamper.hosts.path_moved]
 title = "Windows is reading its hosts file from an unusual place."
@@ -538,7 +640,7 @@ todo = "Leave it, or ask your helper about switching it on in the computer's sta
 title = "Many security tools say this program is harmful."
 what = "VirusTotal checked {name}, and {count} security tools flagged it."
 why = "When this many tools agree, it's very likely harmful."
-todo = "Ask Windows Security to scan it. Bilby can start that for you."
+todo = "Ask Windows Security to scan it. Bilby can open it for you."
 
 [rep.vt.few]
 title = "A few security tools flagged this program."
@@ -552,16 +654,57 @@ what = "You asked Windows Security to check {name}, and it found something harmf
 why = "Windows Security is confident about what it reports."
 todo = "Open Windows Security and follow what it suggests."
 
+[rep.ip.known_bad]
+title = "A program Bilby flagged is talking to an address reported for harm."
+what = "{name} is connected to {ip}, which security services have reported as harmful."
+why = "A program that already looked unusual, connected to a reported address, is a strong sign something is wrong."
+todo = "Ask Windows Security to scan it. Bilby can open it for you. Then ask someone you trust to look."
+
+[rep.ip.some_reports]
+title = "A program Bilby flagged is talking to an address with a few reports."
+what = "{name} is connected to {ip}, which has a few reports against it."
+why = "Shared internet addresses sometimes collect reports by mistake, so this might be nothing."
+todo = "Leave it unless something else about this program looks wrong."
+
 [rep.known_good]
 title = "This file is in a list of known software."
 what = "CIRCL's list of known software recognised {name}."
 why = "Known software is less likely to be harmful, so Bilby is less sure about anything it found here."
 todo = "Nothing to do. This only changes how sure Bilby is."
 
+[settings]
+heading = "Settings"
+back = "Back"
+save_failed = "Bilby couldn't save that setting, so it stays as it was."
+
+[settings.about]
+heading = "About Bilby"
+photos = "Bilby photographs: \"Greater bilby at its burrow, Astrebla Downs National Park, 2024\" and \"Macrotis lagotis\", both by the State of Queensland, under CC BY 4.0. Cropped and resized."
+licence = "See the licence"
+
+[settings.service]
+circl = "CIRCL known software"
+virustotal = "VirusTotal"
+abuseipdb = "AbuseIPDB"
+crowdsec = "CrowdSec"
+
 [settings.online]
 heading = "Online checks"
-intro = "These are off unless you switch them on. Each one sends a file's fingerprint (a SHA-256 hash), never the file or its name. The service also sees your internet address, and VirusTotal sees your key."
+intro = "These are off unless you switch them on. File checks send a fingerprint (a SHA-256 hash), never the file or its name. Address checks send only the internet addresses that programs Bilby flagged are talking to."
 circl = "Check fingerprints against CIRCL's list of known software. CIRCL is Luxembourg's national computer emergency response team."
 virustotal = "Check fingerprints with VirusTotal, using your own free key. VirusTotal is run by Google. Files are never uploaded."
-defender = "Asking Windows Security to check a file happens on this computer. Windows Security may still use Microsoft's cloud protection, as set in Windows Security."
+virustotal_ips = "Also check the internet addresses that flagged programs are talking to, with the same key."
+abuseipdb = "Check those addresses with AbuseIPDB, which collects reports of abuse from around the world. Uses your own free key, up to 20 addresses a check."
+crowdsec = "Check those addresses with CrowdSec, a French security company that pools what its users see. Uses your own free key, which allows 120 checks a month, so Bilby sends at most 10 a check."
+defender = "Each service also sees your internet address and your key. Asking Windows Security to check a file happens on this computer. Windows Security may still use Microsoft's cloud protection, as set in Windows Security."
 
+[settings.key]
+label = "Paste your key"
+save = "Save key"
+remove = "Remove key"
+saved = "Key saved in Windows Credential Manager."
+missing = "No key saved yet. This check can't run without one."
+get = "Get a free key"
+done = "Key saved."
+failed = "Bilby couldn't save that key."
+help = "Bilby keeps your keys in Windows Credential Manager, never in a file, a log or a report."

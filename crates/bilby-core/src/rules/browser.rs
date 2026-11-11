@@ -112,6 +112,22 @@ pub fn rules() -> Vec<Box<dyn Rule>> {
     ]
 }
 
+/// From the browser's own store: installed there, or installed by another
+/// program (Adobe Acrobat adds its Chrome extension this way) through
+/// external preferences with the store as its update URL. That is location
+/// 6, `kExternalPrefDownload`, which Chromium downloads from the update URL
+/// itself, and on Windows and macOS that URL must be the Chrome Web Store.
+/// Locations 2 and 3 carry a local crx whose manifest could name any URL,
+/// so they don't count.
+fn from_store(e: &ExtensionFact) -> bool {
+    e.source == ExtensionSource::Store
+        || (e.source == ExtensionSource::External
+            && e.raw_location.as_deref() == Some("6")
+            && e.update_url
+                .as_deref()
+                .is_some_and(|u| official_update_url(Some(u))))
+}
+
 fn sideloaded_wide(b: &BrowserFacts) -> Vec<Finding> {
     b.extensions
         .iter()
@@ -123,6 +139,7 @@ fn sideloaded_wide(b: &BrowserFacts) -> Vec<Finding> {
                         | ExtensionSource::CommandLine
                         | ExtensionSource::External
                 )
+                && !from_store(e)
                 && broad_access(e)
         })
         .map(|e| {
@@ -256,7 +273,7 @@ fn firefox_unsigned(b: &BrowserFacts) -> Vec<Finding> {
 fn store_wide(b: &BrowserFacts) -> Vec<Finding> {
     b.extensions
         .iter()
-        .filter(|e| e.enabled && e.source == ExtensionSource::Store && broad_access(e))
+        .filter(|e| e.enabled && from_store(e) && broad_access(e))
         .map(|e| {
             ext_finding("browser.store_wide", Severity::Info, Confidence::High, e)
                 .next(NextStepKind::Learn)
